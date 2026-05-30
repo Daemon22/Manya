@@ -1,0 +1,14 @@
+{
+  "name": "manya",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Manya parent repository for sites, tools, packages, and models.",
+  "workspaces": [
+    "site/manya"
+  ],
+  "scripts": {
+    "site:dev": "npm --workspace site/manya run dev",
+    "site:build": "npm --workspace site/manya run build",
+    "site:typecheck": "npm --workspace site/manya run typecheck"
+  }
+}
