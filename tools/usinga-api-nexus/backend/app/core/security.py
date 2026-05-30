@@ -1,24 +1,36 @@
 from datetime import datetime, timedelta, timezone
 import base64
-from hashlib import sha256
+import hmac
+import os
+from hashlib import pbkdf2_hmac, sha256
 
 from cryptography.fernet import Fernet
 from jose import jwt
-from passlib.context import CryptContext
 
 from app.core.config import get_settings
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
+PBKDF2_ITERATIONS = 260_000
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    salt = os.urandom(16)
+    digest = pbkdf2_hmac("sha256", password.encode(), salt, PBKDF2_ITERATIONS)
+    return f"pbkdf2_sha256${PBKDF2_ITERATIONS}${base64.urlsafe_b64encode(salt).decode()}${base64.urlsafe_b64encode(digest).decode()}"
 
 
 def verify_password(password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(password, hashed_password)
+    try:
+        algorithm, iterations, encoded_salt, encoded_digest = hashed_password.split("$", 3)
+    except ValueError:
+        return False
+    if algorithm != "pbkdf2_sha256":
+        return False
+    salt = base64.urlsafe_b64decode(encoded_salt.encode())
+    expected = base64.urlsafe_b64decode(encoded_digest.encode())
+    actual = pbkdf2_hmac("sha256", password.encode(), salt, int(iterations))
+    return hmac.compare_digest(actual, expected)
 
 
 def create_access_token(subject: str) -> str:
