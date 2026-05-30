@@ -1,0 +1,20 @@
+{
+  "name": "helixflow-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Express orchestration API and DAG runner for HelixFlow.",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}

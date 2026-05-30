@@ -27,3 +27,11 @@ npm run site:dev
 The tool lives in [tools/usinga-api-nexus](tools/usinga-api-nexus).
 
 Phase 1 supports OpenAI, Groq, and Hugging Face. Anthropic and Twilio are prepared in the provider framework and marked as coming soon until their live adapters are completed.
+
+### HelixFlow
+
+`HelixFlow` is a visual API orchestration platform for designing, executing, monitoring, and optimizing DAG-based API workflows. It is built from the API Orchestrator architecture as the second deployable Manya tool alongside uSINGA.
+
+The tool lives in [tools/helixflow](tools/helixflow).
+
+Phase 1 includes a React workflow console, an Express orchestration API, workflow CRUD endpoints, DAG validation, workflow execution, execution logs, and Docker Compose deployment.

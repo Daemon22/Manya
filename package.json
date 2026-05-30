@@ -4,11 +4,17 @@
   "private": true,
   "description": "Manya parent repository for sites, tools, packages, and models.",
   "workspaces": [
-    "site/manya"
+    "site/manya",
+    "tools/helixflow/frontend",
+    "tools/helixflow/backend"
   ],
   "scripts": {
     "site:dev": "npm --workspace site/manya run dev",
     "site:build": "npm --workspace site/manya run build",
-    "site:typecheck": "npm --workspace site/manya run typecheck"
+    "site:typecheck": "npm --workspace site/manya run typecheck",
+    "helixflow:dev": "npm --workspace tools/helixflow/frontend run dev",
+    "helixflow:api": "npm --workspace tools/helixflow/backend run dev",
+    "helixflow:build": "npm --workspace tools/helixflow/frontend run build",
+    "helixflow:test": "npm --workspace tools/helixflow/backend test"
   }
 }
