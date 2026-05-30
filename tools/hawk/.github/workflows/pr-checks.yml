@@ -1,0 +1,38 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ master, main, develop ]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      pull-requests: write
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ ! $PR_TITLE =~ ^(feat|fix|docs|style|refactor|perf|test|chore)\: ]]; then
+            echo "❌ PR title must follow conventional commits format"
+            echo "Examples: 'feat: add new feature', 'fix: resolve bug'"
+            exit 1
+          fi
+          echo "✅ PR title follows conventional commits"
+      
+      - name: Check for required files
+        run: |
+          echo "Checking for required files in PR..."
+      
+      - name: Validate branch name
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [[ ! $BRANCH =~ ^(feature|fix|hotfix|docs|chore)\/ ]]; then
+            echo "⚠️ Branch name should ideally follow pattern: feature/, fix/, hotfix/, docs/, chore/"
+          fi

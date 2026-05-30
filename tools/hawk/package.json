@@ -1,0 +1,105 @@
+{
+  "name": "hawk-device-detection",
+  "version": "1.0.0",
+  "description": "A cross-platform, zero-dependency JavaScript library for comprehensive device, OS, architecture, and runtime environment detection.",
+  "main": "src/hawk.js",
+  "types": "src/hawk.d.ts",
+  "scripts": {
+    "test": "node test/hawk.test.js",
+    "test:e2e": "playwright test",
+    "benchmark": "node benchmark/performance.js",
+    "lint": "eslint src/ test/ benchmark/",
+    "format": "prettier --write src/ test/ benchmark/ *.md",
+    "prepublishOnly": "npm run test && npm run benchmark",
+    "build": "mkdir -p public && echo 'Build complete'",
+    "hawk-install": "node tools/hawk-install.js install",
+    "hawk-uninstall": "node tools/hawk-install.js uninstall"
+  },
+  "keywords": [
+    "device-detection",
+    "environment-monitoring",
+    "device-intelligence",
+    "user-agent",
+    "browser-detection",
+    "os-detection",
+    "device-type",
+    "capabilities",
+    "fingerprinting",
+    "iot",
+    "nodejs",
+    "javascript",
+    "cross-platform"
+  ],
+  "author": {
+    "name": "Uviwe Menyiwe (Azura)",
+    "email": "contact@haelfoundation.org",
+    "url": "https://haelfoundation.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/hawk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Daemon22/hawk/issues",
+    "email": "contact@haelfoundation.org"
+  },
+  "homepage": "https://github.com/Daemon22/hawk#readme",
+  "files": [
+    "src/",
+    "test/",
+    "benchmark/",
+    "tools/",
+    "netlify/",
+    "public/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "netlify.toml"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "bin": {
+    "hawk-install": "tools/hawk-install.js"
+  },
+  "exports": {
+    ".": {
+      "require": "./src/hawk.js",
+      "import": "./src/hawk.js"
+    },
+    "./agent": {
+      "require": "./src/hawk-agent.js",
+      "import": "./src/hawk-agent.js"
+    }
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "@playwright/test": "^1.40.0",
+    "http-server": "^14.1.1",
+    "netlify-cli": "^18.0.0"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/haelfoundation"
+  },
+  "keywords": [
+    "hawk",
+    "monitoring",
+    "device-monitoring",
+    "autonomous",
+    "agent",
+    "serverless",
+    "netlify",
+    "real-time"
+  ]
+}

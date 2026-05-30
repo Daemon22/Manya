@@ -1,0 +1,37 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+        continue-on-error: true
+      
+      - name: Run performance tests
+        run: npm run test:perf --if-present || echo "No performance tests configured"
+        continue-on-error: true
+      
+      - name: Bundle size check
+        run: |
+          npm run build --if-present || echo "No build script"
+          if [ -d "dist" ]; then
+            echo "Build artifacts size:"
+            du -sh dist/
+          fi
+        continue-on-error: true

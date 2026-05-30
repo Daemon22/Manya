@@ -1,0 +1,48 @@
+# Netlify Configuration for Hawk Backend
+
+[build]
+  command = "npm run build"
+  functions = "netlify/functions"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "20.12.2"
+
+# API routes
+[[redirects]]
+  from = "/api/v1/monitor"
+  to = "/.netlify/functions/monitor"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/v1/data"
+  to = "/.netlify/functions/data"
+  status = 200
+  force = true
+
+# Health check endpoint
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
+# Catch-all for SPA (if dashboard is added)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, X-API-Key, X-Signature"
+    Content-Type = "application/json"
+
+# Environment variables (set in Netlify UI)
+# HAWK_API_KEY - Master API key for validation
+# HAWK_DATABASE_URL - Database connection string (for production)
