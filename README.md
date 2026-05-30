@@ -35,3 +35,9 @@ Phase 1 supports OpenAI, Groq, and Hugging Face. Anthropic and Twilio are prepar
 The tool lives in [tools/helixflow](tools/helixflow).
 
 Phase 1 includes a React workflow console, an Express orchestration API, workflow CRUD endpoints, DAG validation, workflow execution, execution logs, and Docker Compose deployment.
+
+### Hawk
+
+`Hawk` is a production-grade device detection and environment monitoring engine.
+
+The tool lives in [tools/hawk](tools/hawk).
