@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import ReactFlow, { Background, Controls, MiniMap } from "@xyflow/react";
+import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
   Activity,
@@ -74,7 +74,7 @@ function App() {
           {[
             ["Builder", Workflow],
             ["Executions", Activity],
-            ["Integrations", Cable],
+            ["Handoffs", Cable],
             ["Branches", GitBranch],
             ["Operations", Boxes]
           ].map(([label, Icon]) => (
@@ -99,7 +99,7 @@ function App() {
       <section className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">API Orchestrator Platform</p>
+            <p className="eyebrow">Workflow Orchestration Engine</p>
             <h2>{workflow?.name ?? "Workflow console"}</h2>
           </div>
           <div className="topbar-actions">
@@ -140,7 +140,7 @@ function App() {
 
           <aside className="inspector">
             <section>
-              <p className="eyebrow">Node configuration</p>
+              <p className="eyebrow">Workflow node configuration</p>
               <h3>{selectedNode?.label}</h3>
               <dl>
                 <div><dt>Type</dt><dd>{selectedNode?.type}</dd></div>

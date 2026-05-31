@@ -13,8 +13,8 @@ export function seedWorkflows() {
     retry: { attempts: 3, backoff: "exponential" },
     nodes: [
       { id: "trigger", type: "trigger", label: "Manual Trigger", config: { mode: "manual" } },
-      { id: "crm", type: "api", label: "Create CRM Record", config: { method: "POST", url: "https://api.example.com/crm" } },
-      { id: "billing", type: "api", label: "Create Billing Profile", config: { method: "POST", url: "https://api.example.com/billing" } },
+      { id: "crm", type: "api", label: "Create CRM Record", config: { method: "POST", connectionRef: "usinga:crm-approved" } },
+      { id: "billing", type: "api", label: "Create Billing Profile", config: { method: "POST", connectionRef: "usinga:billing-approved" } },
       { id: "transform", type: "transform", label: "Normalize Payload", config: { strategy: "map_and_filter" } },
       { id: "condition", type: "condition", label: "Enterprise Plan?", config: { operator: "==", value: "enterprise" } },
       { id: "output", type: "output", label: "Notify Team", config: { channel: "webhook" } }

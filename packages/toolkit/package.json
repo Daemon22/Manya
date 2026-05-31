@@ -1,0 +1,22 @@
+{
+  "name": "@manya/toolkit",
+  "version": "0.1.0",
+  "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "toolkit",
+    "manifest",
+    "orchestration"
+  ],
+  "license": "UNLICENSED"
+}

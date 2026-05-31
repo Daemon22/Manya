@@ -5,6 +5,7 @@
   "description": "Manya parent repository for sites, tools, packages, and models.",
   "workspaces": [
     "site/manya",
+    "packages/*",
     "tools/helixflow/frontend",
     "tools/helixflow/backend"
   ],
@@ -15,6 +16,7 @@
     "helixflow:dev": "npm --workspace tools/helixflow/frontend run dev",
     "helixflow:api": "npm --workspace tools/helixflow/backend run dev",
     "helixflow:build": "npm --workspace tools/helixflow/frontend run build",
-    "helixflow:test": "npm --workspace tools/helixflow/backend test"
+    "helixflow:test": "npm --workspace tools/helixflow/backend test",
+    "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test"
   }
 }
