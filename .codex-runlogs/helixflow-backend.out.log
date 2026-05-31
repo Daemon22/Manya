@@ -1,0 +1,13 @@
+
+> helixflow-backend@0.1.0 dev
+> node --watch src/server.js
+
+HelixFlow orchestration API listening on 8100
+Restarting 'src/server.js'
+HelixFlow orchestration API listening on 8100
+Restarting 'src/server.js'
+HelixFlow orchestration API listening on 8100
+Restarting 'src/server.js'
+HelixFlow orchestration API listening on 8100
+Restarting 'src/server.js'
+HelixFlow orchestration API listening on 8100
