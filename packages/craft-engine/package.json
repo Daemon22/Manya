@@ -1,0 +1,57 @@
+{
+  "name": "@manya/craft-engine",
+  "version": "2.0.0",
+  "description": "7-Fold Adaptive Compression & AES-256-GCM Encryption Engine. Nano (compress+encrypt) and Macro (decrypt+decompress) with SHA-256 integrity verification.",
+  "author": "",
+  "license": "MIT",
+  "keywords": [
+    "compression",
+    "encryption",
+    "aes-256-gcm",
+    "brotli",
+    "craft",
+    "nano",
+    "macro",
+    "7fold",
+    "pbkdf2",
+    "sha256",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "main": "./dist/cjs/lib/index.js",
+  "module": "./dist/esm/lib/index.js",
+  "types": "./dist/types/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/lib/index.js",
+      "require": "./dist/cjs/lib/index.js",
+      "types": "./dist/types/lib/index.d.ts"
+    }
+  },
+  "bin": {
+    "craft": "./dist/cjs/cli/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs && npm run build:types",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:types": "tsc -p tsconfig.types.json",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  }
+}

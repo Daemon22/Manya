@@ -17,6 +17,6 @@
     "helixflow:api": "npm --workspace tools/helixflow/backend run dev",
     "helixflow:build": "npm --workspace tools/helixflow/frontend run build",
     "helixflow:test": "npm --workspace tools/helixflow/backend test",
-    "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test"
+    "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test && npm --workspace @manya/craft-engine test"
   }
 }
