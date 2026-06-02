@@ -140,7 +140,7 @@ async function runWorkflow(workflow, input) {
 function executeNode(node, input) {
   const base = { received: Boolean(input), node: node.id };
   if (node.type === "api") {
-    return { ...base, method: node.config?.method ?? "GET", statusCode: 200 };
+    return { ...base, method: node.config?.method ?? "GET", connectionRef: node.config?.connectionRef, statusCode: 200 };
   }
   if (node.type === "condition") {
     return { ...base, branch: "primary", matched: true };

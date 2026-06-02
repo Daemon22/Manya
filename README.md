@@ -1,43 +1,63 @@
 # Manya
+Manya is a monorepo containing the site, tools, and shared packages for the Manya ecosystem. It provides API management, workflow orchestration, device detection, and data compression under one roof.
 
-Manya is the parent repository and public face for the HAEL and OMNIMIND ecosystem. It is structured to publish sites, tools, packages, models, and future system modules under one clear home.
+## Repository Structure
+| Directory | Description |
+|-----------|-------------|
+| `site/manya` | Main website and visual identity |
+| `tools/` | Deployable tools and product workspaces |
+| `packages/` | Publishable shared libraries and SDKs |
+| `models/` | Reserved for model assets, adapters, and release notes |
 
-## Repository structure
+## Tools
+| Tool | Description |
+|------|-------------|
+| uSINGA - API NEXUS | API provider wallet and smart routing |
+| HelixFlow | Visual workflow DAG orchestration |
+| Hawk | Device detection and environment monitoring |
+| Craft Engine | 7-fold compression and encryption engine |
 
-- [site/manya](site/manya): the main Manya website and visual identity.
-- [tools](tools): deployable tools and product workspaces.
-- `packages`: reserved for shared libraries and SDKs.
-- `models`: reserved for model assets, adapters, and release notes.
+## Packages
+| Package | Description |
+|---------|-------------|
+| `@manya/toolkit` | Shared manifests and synchronization contracts |
+| `@manya/helixflow-sdk` | HelixFlow client and workflow helpers |
+| `@manya/craft-engine` | 7-fold compression and encryption engine |
 
-## Main site
+## Quick Start
+To get started with Manya, follow these steps:
 
-The Manya site presents the repository's visual language: unity, synchronization, connected systems, and the bridge between people and technology.
+1.  **Install Dependencies**:
+    ```sh
+    npm install
+    ```
 
-```powershell
-npm install
-npm run site:dev
+2.  **Run the Main Site (Manya)**:
+    ```sh
+    npm run site:dev
+    ```
+    This will start the development server for the main Manya website.
+
+3.  **Run HelixFlow (Frontend & Backend)**:
+    To run the HelixFlow visual workflow orchestration tool, you'll need to start both its frontend and backend services:
+    ```sh
+    npm run helixflow:api
+    npm run helixflow:dev
+    ```
+
+4.  **Run uSINGA - API NEXUS (Docker)**:
+    For uSINGA - API NEXUS, use Docker Compose:
+    ```sh
+    cd tools/usinga-api-nexus
+    docker compose up --build
+    ```
+
+## Running Tests
+To run tests for various components:
+
+```sh
+npm run packages:test
+npm run helixflow:test
+npm run hawk:test
+npm run test:7x7
 ```
-
-## Published tools
-
-### uSINGA - API NEXUS
-
-`uSINGA - API NEXUS` is a universal API wallet and intelligence platform for managing API providers from one dashboard. It centralizes API key storage, provider health checks, usage tracking, cost visibility, analytics, alerts, and smart routing.
-
-The tool lives in [tools/usinga-api-nexus](tools/usinga-api-nexus).
-
-Phase 1 supports OpenAI, Groq, and Hugging Face. Anthropic and Twilio are prepared in the provider framework and marked as coming soon until their live adapters are completed.
-
-### HelixFlow
-
-`HelixFlow` is a visual API orchestration platform for designing, executing, monitoring, and optimizing DAG-based API workflows. It is built from the API Orchestrator architecture as the second deployable Manya tool alongside uSINGA.
-
-The tool lives in [tools/helixflow](tools/helixflow).
-
-Phase 1 includes a React workflow console, an Express orchestration API, workflow CRUD endpoints, DAG validation, workflow execution, execution logs, and Docker Compose deployment.
-
-### Hawk
-
-`Hawk` is a production-grade device detection and environment monitoring engine.
-
-The tool lives in [tools/hawk](tools/hawk).

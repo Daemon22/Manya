@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/helixflow/"
+title = "HelixFlow"
+version = "1.0.0"
+id = "artifacts/helixflow"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/helixflow/" ]
+localPort = 19687
+
+[services.development]
+run = "pnpm --filter @workspace/helixflow run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/helixflow", "run", "build" ]
+publicDir = "artifacts/helixflow/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19687"
+BASE_PATH = "/helixflow/"

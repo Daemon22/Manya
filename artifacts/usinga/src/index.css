@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap");
+@import "tailwindcss";
+
+@theme inline {
+  --color-ink: #ebe6e0;
+  --color-panel: #1f1b19;
+  --color-surface: #28221f;
+  --color-line: #352e27;
+  --color-signal: #d6a771;
+  --color-pulse: #7dc99a;
+  --color-muted: #988c81;
+}
+
+:root {
+  color-scheme: dark;
+  background: #161412;
+}
+
+body {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  color: #ebe6e0;
+  background: #161412;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}

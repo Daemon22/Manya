@@ -1,34 +1,39 @@
 # uSINGA - API NEXUS
 
-One dashboard. Every API. Total control.
+uSINGA - API NEXUS is a comprehensive API wallet and intelligence platform within the Manya ecosystem. It provides developers and teams with tools to securely manage API keys, monitor provider health, track usage, estimate costs, and make smart routing decisions across various API providers.
 
-uSINGA - API NEXUS is a working API wallet and intelligence platform. It lets developers and teams store provider keys securely, monitor provider health, track usage, estimate credit and cost burn, configure alerts, and test smart routing decisions across API providers.
+## Features
 
-## What works in v1
+- **API Key Vault**: Securely store and manage API keys with encrypted storage.
+- **Provider Registry**: Supports major API providers like OpenAI, Groq, Hugging Face, Anthropic, and Twilio.
+- **Live Health Checks**: Monitor the real-time health status of configured API providers.
+- **Usage Tracking & Cost Estimation**: Track API usage and estimate credit/cost burn based on configurable pricing tables.
+- **Smart Routing**: Make intelligent routing decisions based on provider status, priority, cost, latency, and budget.
+- **Audit Log**: Maintain a detailed audit log for security and operational events.
+- **Next.js Dashboard**: A user-friendly dashboard for managing wallets, health, analytics, routing, and alerts.
 
-- API key vault with encrypted storage.
-- Local-first JWT authentication.
-- Provider registry for OpenAI, Groq, Hugging Face, Anthropic, and Twilio.
-- Live health checks for OpenAI, Groq, and Hugging Face when valid keys are configured.
-- Manual usage recording and routed-call usage tracking.
-- Budget and cost estimation from configurable pricing tables.
-- Smart routing decisions based on provider status, priority, cost, latency, and budget.
-- Audit log for security and operational events.
-- Next.js dashboard for wallet, health, analytics, routing, alerts, and roadmap status.
+## Installation
 
-## Local development
+This tool is part of the Manya monorepo. To install all dependencies, navigate to the root of the Manya repository and run:
 
-```powershell
+```sh
+npm install
+```
+
+## Local Development
+
+To run uSINGA - API NEXUS locally, use Docker Compose:
+
+```sh
 docker compose up --build
 ```
 
-Frontend: <http://localhost:3000>
-
-Backend: <http://localhost:8000/docs>
+- **Frontend**: `http://localhost:3000`
+- **Backend**: `http://localhost:8000/docs`
 
 For backend-only development:
 
-```powershell
+```sh
 cd tools/usinga-api-nexus/backend
 python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
@@ -38,13 +43,12 @@ uvicorn app.main:app --reload
 
 For frontend-only development:
 
-```powershell
+```sh
 cd tools/usinga-api-nexus/frontend
 npm install
 npm run dev
 ```
 
-## Important truth about credits
+## Important Note on Credits
 
-The dashboard only shows live provider balances when an adapter supports an official billing or credit API. Otherwise, remaining credit is estimated from the configured budget and tracked usage. This keeps the product honest while still being useful.
-
+The dashboard displays live provider balances only when an adapter supports an official billing or credit API. Otherwise, remaining credit is estimated from the configured budget and tracked usage. This approach ensures transparency while providing valuable insights.

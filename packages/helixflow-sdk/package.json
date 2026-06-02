@@ -1,0 +1,23 @@
+{
+  "name": "@manya/helixflow-sdk",
+  "version": "0.2.0",
+  "description": "Client and workflow helpers for HelixFlow.",
+  "author": "Manya",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "helixflow",
+    "workflow",
+    "dag"
+  ]
+}

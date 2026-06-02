@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/usinga/"
+title = "uSINGA"
+version = "1.0.0"
+id = "artifacts/usinga"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/usinga/" ]
+localPort = 19726
+
+[services.development]
+run = "pnpm --filter @workspace/usinga run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/usinga", "run", "build" ]
+publicDir = "artifacts/usinga/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19726"
+BASE_PATH = "/usinga/"
