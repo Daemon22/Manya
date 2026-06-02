@@ -10,7 +10,10 @@
     "packages/*",
     "tools/helixflow/frontend",
     "tools/helixflow/backend",
-    "tools/hawk"
+    "tools/hawk",
+    "lib/*",
+    "artifacts/*",
+    "scripts"
   ],
   "scripts": {
     "site:dev": "npm --workspace site/manya run dev",
@@ -22,6 +25,12 @@
     "helixflow:test": "npm --workspace tools/helixflow/backend test",
     "hawk:test": "npm --workspace @manya/hawk test",
     "test:7x7": "node --test tests/performance-7x7.test.js",
-    "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test && npm --workspace @manya/craft-engine test"
+    "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test && npm --workspace @manya/craft-engine test",
+    "pnpm:build": "pnpm -r --if-present run build",
+    "pnpm:typecheck": "tsc --build && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
   }
 }
