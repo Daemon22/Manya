@@ -1,18 +1,11 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  CRAFT — Nano/Macro Encryption & Compression Engine
- *  Type Definitions & Constants — The Living Canvas Edition
- * ═══════════════════════════════════════════════════════════════
+ * CRAFT — Type Definitions & Constants
  *
- *  The CRAFT package format (v2 — 7-Fold Compression):
- *  ┌──────────┬─────────┬──────────┬──────┬──────┬────┬──────────┬───────────────┐
- *  │ MAGIC(6) │ VER(2)  │ ML(4)    │ META │ SALT │ IV │ AUTHTAG  │ ENCRYPTED     │
- *  │ "CRAFT1" │ 0x02    │ uint32BE │ JSON │ 16B  │12B │ 16B      │ variable      │
- *  └──────────┴─────────┴──────────┴──────┴──────┴────┴──────────┴───────────────┘
+ * Package format (v2):
+ *   MAGIC(6) | VER(1) | ML(4) | META(JSON) | SALT(16) | IV(12) | AUTHTAG(16) | ENCRYPTED(var)
  *
- *  The ENCRYPTED payload contains: [strategy_id(1), ...compressed_data]
- *  where compressed_data = Brotli(pre_processed(original_data))
- *  The strategy_id tells decompression which inverse transforms to apply.
+ * The ENCRYPTED payload contains: [strategy_id(1), ...compressed_data]
+ * where compressed_data = Brotli(pre_processed(original_data))
  */
 
 /** Magic bytes identifying a CRAFT package — "CRAFT1" */
@@ -24,13 +17,13 @@ export const CRAFT_VERSION = 2;
 /** Salt length for PBKDF2 key derivation (16 bytes) */
 export const SALT_LENGTH = 16;
 
-/** IV length for AES-256-GCM (12 bytes — NIST recommendation) */
+/** IV length for AES-256-GCM (12 bytes) */
 export const IV_LENGTH = 12;
 
 /** Auth tag length for AES-256-GCM (16 bytes = 128-bit tag) */
 export const AUTH_TAG_LENGTH = 16;
 
-/** PBKDF2 iterations — 600,000 provides strong resistance against brute-force */
+/** PBKDF2 iterations (600,000 for strong brute-force resistance) */
 export const PBKDF2_ITERATIONS = 600_000;
 
 /** AES key length in bytes (32 bytes = 256-bit) */
@@ -68,7 +61,7 @@ export interface CraftMetadata {
 
 /** Result of a Nano (compress + encrypt) operation */
 export interface NanoResult {
-  /** The crafted .craft package buffer */
+  /** The .craft package buffer */
   buffer: Buffer;
   /** Metadata about the operation */
   metadata: CraftMetadata;

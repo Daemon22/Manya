@@ -21,18 +21,18 @@
     "node": ">=18.0.0"
   },
   "type": "module",
-  "main": "./dist/cjs/lib/index.js",
+  "main": "./dist/cjs/lib/index.cjs",
   "module": "./dist/esm/lib/index.js",
   "types": "./dist/types/lib/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/esm/lib/index.js",
-      "require": "./dist/cjs/lib/index.js",
+      "require": "./dist/cjs/lib/index.cjs",
       "types": "./dist/types/lib/index.d.ts"
     }
   },
   "bin": {
-    "craft": "./dist/cjs/cli/index.js"
+    "craft": "./dist/cjs/cli/index.cjs"
   },
   "files": [
     "dist/",

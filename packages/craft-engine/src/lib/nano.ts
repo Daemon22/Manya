@@ -1,17 +1,12 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  @craft/nano — Compress + Encrypt Pipeline
- *  The Living Canvas Edition — 7-Fold Compression
- * ═══════════════════════════════════════════════════════════════
+ * @craft/nano — Compress + Encrypt Pipeline
  *
- *  Pipeline (7-Fold):
- *    Raw Data ──► 7-Fold Compress ──► AES-256-GCM Encrypt ──► .craft Package
- *    (fullness)    (weightless ×7)     (inviolate)             (crafted)
+ * Pipeline:
+ *   Raw Data → 7-Fold Compress → AES-256-GCM Encrypt → .craft Package
  *
- *  The 7-fold engine tries all compression strategies in parallel
- *  and selects the one that produces the smallest output. The
- *  winning strategy ID is embedded in the compressed stream so
- *  decompression knows exactly how to reverse it.
+ * The 7-fold engine tries all compression strategies and selects
+ * the smallest output. The strategy ID is embedded in the
+ * compressed stream for correct decompression.
  */
 
 import { compress, compress7, encryptAsync } from './codec';
@@ -25,12 +20,12 @@ import {
 } from './types';
 
 /**
- * Execute the Nano pipeline with 7-fold adaptive compression.
+ * Execute the Nano pipeline: checksum → compress → encrypt → package.
  *
- * @param data — The raw input data to craft
+ * @param data — The raw input data
  * @param originalName — Original filename for metadata
  * @param originalMime — Original MIME type for metadata
- * @param passphrase — Encryption passphrase
+ * @param passphrase — Encryption passphrase (min 4 characters)
  * @param options — Optional compression/encryption settings
  * @returns NanoResult with the .craft buffer and operation stats
  */
@@ -52,10 +47,10 @@ export async function nano(
     throw new Error('Original filename is required for package metadata.');
   }
 
-  // Fold 1: Compute integrity checksum
+  // Step 1: Compute integrity checksum
   const originalChecksum = checksum(data);
 
-  // Fold 2-7: Compress with the selected mode
+  // Step 2: Compress with the selected mode
   const mode = options?.compressionMode ?? '7fold';
   let compressed: Buffer;
   let compressionStrategyName: string | undefined;
@@ -70,10 +65,9 @@ export async function nano(
     compressed = compress(data);
   }
 
-  // Build metadata first so we can pass it as AAD to GCM.
-  // AAD (Additional Authenticated Data) means the metadata is authenticated
-  // but not encrypted — any tampering with the unencrypted header is detected
-  // during decryption even though the header bytes themselves are plaintext.
+  // Build metadata to pass as AAD (Additional Authenticated Data) to GCM.
+  // AAD is authenticated but not encrypted — any tampering with the
+  // unencrypted header is detected during decryption.
   const metadata: CraftMetadata = {
     originalName,
     originalSize: data.length,
@@ -92,10 +86,9 @@ export async function nano(
   const metadataLength = Buffer.alloc(4);
   metadataLength.writeUInt32BE(metadataJson.length, 0);
 
-  // Fold 3: AES-256-GCM encrypt the compressed data.
-  // Pass the metadata JSON as AAD so any header tampering is detected.
-  // Use the async variant to avoid blocking the Node.js event loop
-  // during the ~300-500ms PBKDF2 key derivation.
+  // Step 3: AES-256-GCM encrypt the compressed data.
+  // Metadata JSON is passed as AAD for header tamper detection.
+  // Async variant avoids blocking the event loop during PBKDF2 derivation.
   const { encrypted, iv, authTag, salt } = await encryptAsync(compressed, passphrase, metadataJson);
 
   // Assemble the .craft package

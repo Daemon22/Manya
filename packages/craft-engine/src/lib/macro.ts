@@ -1,16 +1,12 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  @craft/macro — Decrypt + Decompress Pipeline
- *  The Living Canvas Edition — 7-Fold Compression
- * ═══════════════════════════════════════════════════════════════
+ * @craft/macro — Decrypt + Decompress Pipeline
  *
- *  Pipeline:
- *    .craft Package ──► AES-256-GCM Decrypt ──► 7-Fold Decompress ──► Raw Data
- *    (crafted)          (unveiled)               (re-inflated ×7)      (living)
+ * Pipeline:
+ *   .craft Package → AES-256-GCM Decrypt → 7-Fold Decompress → Raw Data
  *
- *  Supports both v1 (legacy Brotli) and v2 (7-fold) packages.
- *  The version byte in the package header determines the
- *  decompression strategy.
+ * Supports both v1 (legacy Brotli) and v2 (7-fold) packages.
+ * The version byte in the package header determines the
+ * decompression strategy.
  */
 
 import { decryptAsync, decompress, decompress7 } from './codec';
@@ -119,17 +115,14 @@ export async function macro(
   const { version, metadata, salt, iv, authTag, encrypted } = parsePackage(craftBuffer);
 
   // Step 2: Decrypt the compressed data.
-  // Pass the metadata JSON as AAD to verify the header was not tampered with.
-  // Use the async variant to avoid blocking the event loop during PBKDF2.
+  // Metadata JSON is passed as AAD to verify header integrity.
+  // Async variant avoids blocking the event loop during PBKDF2.
   const metadataJson = Buffer.from(JSON.stringify(metadata), 'utf-8');
   const compressed = await decryptAsync(encrypted, passphrase, iv, authTag, salt, metadataJson);
 
-  // Step 3: Decompress based on compression mode from metadata
-  // The compressionMode in metadata tells us exactly how to decompress:
-  //   'brotli' = raw Brotli (no strategy byte prefix)
-  //   '7fold'  = 7-fold adaptive (strategy byte prefix)
-  // This is more reliable than using version alone, since v2 packages
-  // can use either mode.
+  // Step 3: Decompress based on compression mode from metadata.
+  // The compressionMode field is more reliable than version alone,
+  // since v2 packages can use either mode.
   let restored: Buffer;
   if (metadata.compressionMode === '7fold') {
     // 7-fold adaptive compression (strategy byte prefix)
@@ -140,10 +133,9 @@ export async function macro(
   }
 
   // Step 4: Verify integrity via SHA-256 checksum.
-  // We return integrityVerified: false rather than throwing so callers
-  // (e.g. the web UI) can show a warning and still offer the restored
-  // data for download. Fatal errors (wrong passphrase, corrupt header)
-  // are already thrown earlier by decrypt() / parsePackage().
+  // Returns false rather than throwing so callers (e.g. web UI) can
+  // show a warning and still offer the data for download. Fatal errors
+  // (wrong passphrase, corrupt header) are thrown earlier.
   const integrityVerified = verify(restored, metadata.originalChecksum);
 
   return {

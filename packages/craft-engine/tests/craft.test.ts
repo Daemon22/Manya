@@ -6,7 +6,7 @@ import { checksum, verify } from '../src/lib/integrity.js';
 const PASS = 'correct-horse-battery';
 const SHORT_PASS = 'short'; // < 8 chars
 
-// ─── Helpers ──────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────
 
 function makeBuffer(pattern: 'repeat' | 'sequential' | 'random' | 'zeros', size: number): Buffer {
   const buf = Buffer.allocUnsafe(size);
@@ -17,7 +17,7 @@ function makeBuffer(pattern: 'repeat' | 'sequential' | 'random' | 'zeros', size:
   return buf;
 }
 
-// ─── Integrity ────────────────────────────────────────────────
+// ── Integrity ──────────────────────────────────────────────────
 
 describe('integrity', () => {
   test('checksum produces 64-char hex', () => {
@@ -38,7 +38,7 @@ describe('integrity', () => {
   });
 });
 
-// ─── Codec: compress/decompress (Brotli) ──────────────────────
+// ── Codec: compress/decompress (Brotli) ────────────────────────
 
 describe('codec: brotli', () => {
   test('roundtrip small text', () => {
@@ -52,7 +52,7 @@ describe('codec: brotli', () => {
   });
 });
 
-// ─── Codec: encrypt/decrypt ───────────────────────────────────
+// ── Codec: encrypt/decrypt ─────────────────────────────────────
 
 describe('codec: encrypt/decrypt (sync)', () => {
   test('roundtrip', () => {
@@ -105,7 +105,7 @@ describe('codec: encrypt/decrypt (async)', () => {
   });
 });
 
-// ─── compress7 / decompress7 ──────────────────────────────────
+// ── compress7 / decompress7 ────────────────────────────────────
 
 describe('compress7: all strategies', () => {
   const cases: Array<['repeat' | 'sequential' | 'random' | 'zeros', number]> = [
@@ -141,7 +141,7 @@ describe('compress7: all strategies', () => {
   });
 });
 
-// ─── nano / macro roundtrips ──────────────────────────────────
+// ── nano / macro roundtrips ────────────────────────────────────
 
 describe('nano → macro roundtrip', () => {
   const fixtures = [
@@ -166,7 +166,7 @@ describe('nano → macro roundtrip', () => {
   }
 });
 
-// ─── nano input validation ────────────────────────────────────
+// ── nano input validation ──────────────────────────────────────
 
 describe('nano: input validation', () => {
   test('rejects empty data', async () => {
@@ -182,7 +182,7 @@ describe('nano: input validation', () => {
   });
 });
 
-// ─── macro: wrong passphrase ──────────────────────────────────
+// ── macro: wrong passphrase ────────────────────────────────────
 
 describe('macro: error handling', () => {
   test('wrong passphrase throws', async () => {
@@ -204,7 +204,7 @@ describe('macro: error handling', () => {
   });
 });
 
-// ─── peekMetadata ─────────────────────────────────────────────
+// ── peekMetadata ───────────────────────────────────────────────
 
 describe('peekMetadata', () => {
   test('reads metadata without passphrase', async () => {
@@ -222,7 +222,7 @@ describe('peekMetadata', () => {
   });
 });
 
-// ─── cross-passphrase isolation ───────────────────────────────
+// ── passphrase isolation ───────────────────────────────────────
 
 describe('passphrase isolation', () => {
   test('different passphrases produce different outputs', async () => {
@@ -232,7 +232,7 @@ describe('passphrase isolation', () => {
     expect(a.buffer).not.toEqual(b.buffer);
   });
 
-  test('package crafted with A cannot be opened with B', async () => {
+  test('package created with A cannot be opened with B', async () => {
     const data = Buffer.from('isolation test');
     const pkg = await nano(data, 'f.bin', 'application/octet-stream', 'passphrase-alpha');
     await expect(macro(pkg.buffer, 'passphrase-bravo')).rejects.toThrow();

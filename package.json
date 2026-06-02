@@ -1,13 +1,16 @@
 {
   "name": "manya",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
+  "type": "module",
+  "author": "Manya",
   "description": "Manya parent repository for sites, tools, packages, and models.",
   "workspaces": [
     "site/manya",
     "packages/*",
     "tools/helixflow/frontend",
-    "tools/helixflow/backend"
+    "tools/helixflow/backend",
+    "tools/hawk"
   ],
   "scripts": {
     "site:dev": "npm --workspace site/manya run dev",
@@ -17,6 +20,8 @@
     "helixflow:api": "npm --workspace tools/helixflow/backend run dev",
     "helixflow:build": "npm --workspace tools/helixflow/frontend run build",
     "helixflow:test": "npm --workspace tools/helixflow/backend test",
+    "hawk:test": "npm --workspace @manya/hawk test",
+    "test:7x7": "node --test tests/performance-7x7.test.js",
     "packages:test": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test && npm --workspace @manya/craft-engine test"
   }
 }

@@ -1,7 +1,9 @@
 {
   "name": "@manya/toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
+  "author": "Manya",
+  "license": "MIT",
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -17,6 +19,5 @@
     "toolkit",
     "manifest",
     "orchestration"
-  ],
-  "license": "UNLICENSED"
+  ]
 }

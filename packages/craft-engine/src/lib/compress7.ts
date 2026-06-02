@@ -1,40 +1,24 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  @craft/compress7 — 7-Fold Adaptive Compression Engine
- *  The Living Canvas Edition
- * ═══════════════════════════════════════════════════════════════
+ * @craft/compress7 — 7-Fold Adaptive Compression Engine
  *
- *  Seven folds of compression, each a different alchemy:
+ * Seven compression strategies, each combining different pre-processing
+ * transforms with Brotli Q11. The engine tries all strategies and
+ * selects the smallest output.
  *
- *  Fold 1: Analyze & Classify   — detect data patterns
- *  Fold 2: Delta Encode         — store differences between bytes
- *  Fold 3: Move-to-Front (MTF)  — make recurring symbols compress better
- *  Fold 4: Run-Length Encode    — collapse repeated byte sequences
- *  Fold 5: Byte-Pair Encode     — replace frequent byte pairs
- *  Fold 6: Brotli Q11           — primary compression on pre-processed data
- *  Fold 7: Adaptive Selection   — try all strategies, pick the smallest
- *
- *  The engine tries MULTIPLE strategy combinations and selects
- *  the one that produces the smallest output. This adaptive approach
- *  means Craft always finds the optimal compression path regardless
- *  of data type — text, JSON, binary, images, anything.
- *
- *  Strategy IDs (stored in compressed stream for decompression):
- *    0 = Raw Brotli Q11 (no pre-processing)
- *    1 = Delta + Brotli
- *    2 = MTF + Brotli
- *    3 = RLE + Brotli
- *    4 = BPE + Brotli
- *    5 = Delta + MTF + Brotli
- *    6 = Delta + RLE + Brotli
- *    7 = Double-pass Brotli (compress pre-compressed output)
+ * Strategy IDs (stored in compressed stream for decompression):
+ *   0 = Raw Brotli Q11 (no pre-processing)
+ *   1 = Delta + Brotli
+ *   2 = MTF + Brotli
+ *   3 = RLE + Brotli
+ *   4 = BPE + Brotli
+ *   5 = Delta + MTF + Brotli
+ *   6 = Delta + RLE + Brotli
+ *   7 = Double-pass Brotli
  */
 
-import { brotliCompressSync, brotliDecompressSync, deflateSync, inflateSync, constants as zlibConstants } from 'zlib';
+import { brotliCompressSync, brotliDecompressSync, constants as zlibConstants } from 'zlib';
 
-// ─────────────────────────────────────────────────────────────
-// Strategy Types
-// ─────────────────────────────────────────────────────────────
+// ── Strategy Types ──────────────────────────────────────────────
 
 /** The 7 compression strategies */
 export type CompressionStrategy = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -43,7 +27,7 @@ export type CompressionStrategy = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export interface Compress7Result {
   /** The compressed data (includes strategy prefix byte) */
   data: Buffer;
-  /** Which strategy won */
+  /** Which strategy produced the smallest output */
   strategy: CompressionStrategy;
   /** Strategy name for display */
   strategyName: string;
@@ -59,14 +43,12 @@ export interface Compress7Result {
   }>;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 2: Delta Encoding
-// ─────────────────────────────────────────────────────────────
+// ── Delta Encoding ──────────────────────────────────────────────
 
 /**
  * Delta encoding: store the difference between consecutive bytes.
- * Transforms [100, 102, 104, 106] → [100, 2, 2, 2]
- * This makes sequential/structured data extremely compressible.
+ * Transforms [100, 102, 104, 106] → [100, 2, 2, 2].
+ * Effective for sequential/structured data.
  */
 function deltaEncode(data: Buffer): Buffer {
   const out = Buffer.alloc(data.length);
@@ -87,22 +69,17 @@ function deltaDecode(data: Buffer): Buffer {
   return out;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 3: Move-to-Front Transform
-// ─────────────────────────────────────────────────────────────
+// ── Move-to-Front Transform ────────────────────────────────────
 
 /**
  * Move-to-Front transform (O(n) optimized with index map).
  * Replaces each byte with its position in a moving list.
- * Frequently occurring bytes get small indices, which compress
- * much better with entropy coders.
- *
- * Uses a direct index map (byte → position) for O(1) lookup
- * instead of the naive O(256) linear scan per byte.
+ * Frequently occurring bytes get small indices, improving
+ * entropy coding efficiency.
  */
 function mtfEncode(data: Buffer): Buffer {
   const alphabet = new Uint8Array(256);
-  const indexMap = new Uint8Array(256); // byte -> position (inverse index)
+  const indexMap = new Uint8Array(256); // byte → position (inverse index)
   for (let i = 0; i < 256; i++) {
     alphabet[i] = i;
     indexMap[i] = i;
@@ -113,9 +90,7 @@ function mtfEncode(data: Buffer): Buffer {
     const byte = data[i];
     const pos = indexMap[byte];
     out[i] = pos;
-    // Move to front: shift everything between 0..pos-1 right by 1
     if (pos > 0) {
-      // Update index map for shifted bytes
       for (let j = pos; j > 0; j--) {
         const shiftedByte = alphabet[j - 1];
         alphabet[j] = shiftedByte;
@@ -128,7 +103,7 @@ function mtfEncode(data: Buffer): Buffer {
   return out;
 }
 
-/** Inverse of Move-to-Front transform (O(n) optimized) */
+/** Inverse of Move-to-Front transform */
 function mtfDecode(data: Buffer): Buffer {
   const alphabet = new Uint8Array(256);
   for (let i = 0; i < 256; i++) alphabet[i] = i;
@@ -138,9 +113,7 @@ function mtfDecode(data: Buffer): Buffer {
     const pos = data[i];
     const byte = alphabet[pos];
     out[i] = byte;
-    // Move to front
     if (pos > 0) {
-      // Shift elements right by 1 from index 0 to pos-1
       for (let j = pos; j > 0; j--) {
         alphabet[j] = alphabet[j - 1];
       }
@@ -150,14 +123,12 @@ function mtfDecode(data: Buffer): Buffer {
   return out;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 4: Run-Length Encoding
-// ─────────────────────────────────────────────────────────────
+// ── Run-Length Encoding ─────────────────────────────────────────
 
 /**
  * Run-Length Encoding: collapse repeated byte sequences.
  * [A, A, A, A, B, B] → [A, 4, B, 2]
- * Uses escape byte 0xFF for runs > 2. Single/double bytes pass through.
+ * Uses escape byte 0xFF for runs ≥ 3. Shorter runs pass through.
  */
 function rleEncode(data: Buffer): Buffer {
   const chunks: Buffer[] = [];
@@ -175,8 +146,7 @@ function rleEncode(data: Buffer): Buffer {
       chunks.push(Buffer.from([0xff, byte, run]));
       i += run;
     } else if (byte === 0xff) {
-      // Escape each 0xFF byte individually to avoid misinterpretation.
-      // Emit [0xFF, 0xFF, 1] for every occurrence (handles runs of 1 or 2).
+      // Escape each 0xFF byte individually to avoid misinterpretation
       for (let r = 0; r < run; r++) {
         chunks.push(Buffer.from([0xff, 0xff, 1]));
       }
@@ -210,19 +180,17 @@ function rleDecode(data: Buffer): Buffer {
   return Buffer.concat(chunks);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 5: Byte-Pair Encoding
-// ─────────────────────────────────────────────────────────────
+// ── Byte-Pair Encoding ─────────────────────────────────────────
 
 /**
  * Byte-Pair Encoding: find the most frequent byte pair in the data
- * and replace it with an unused byte. Repeat for multiple pairs.
- * This is similar to how Brotli's dictionary works but generalized.
+ * and replace it with an unused byte. Only applied when it reduces
+ * the total size (minimum 4 occurrences to offset the 3-byte header).
  */
 function bpeEncode(data: Buffer): Buffer {
   if (data.length < 4) return data;
 
-  // Find unused bytes (0x00-0xFF not present in data)
+  // Find unused bytes
   const used = new Set<number>();
   for (let i = 0; i < data.length; i++) used.add(data[i]);
 
@@ -249,16 +217,14 @@ function bpeEncode(data: Buffer): Buffer {
     }
   }
 
-  // Only apply BPE if it actually reduces size
-  // Each replacement saves 1 byte, but we need 3 bytes for the pair definition
+  // Only apply BPE if it reduces size (3-byte header per pair definition)
   if (bestCount < 4) return data;
 
   const replacement = unused[0];
   const hi = (bestPair >> 8) & 0xff;
   const lo = bestPair & 0xff;
 
-  // Encode: [replacement_byte, hi_byte, lo_byte, num_unused_info, ...data...]
-  // Header: 1 byte (how many BPE pairs defined) + for each: 3 bytes (replace, hi, lo)
+  // Header: [num_pairs(1), replacement(1), hi(1), lo(1)]
   const header = Buffer.from([1, replacement, hi, lo]);
 
   // Replace all occurrences of the pair
@@ -281,18 +247,15 @@ function bpeEncode(data: Buffer): Buffer {
 function bpeDecode(data: Buffer): Buffer {
   if (data.length < 5) return data;
 
-  // Read header: number of BPE pairs defined
   const numPairs = data[0];
   if (numPairs === 0) return data.subarray(1);
 
-  // Validate we have enough header bytes: 1 (count) + 3 per pair
   if (data.length < 1 + numPairs * 3) return data;
 
-  // Build O(1) lookup: replacement byte → [hi, lo].
-  // Using typed arrays avoids per-byte object allocation and linear scan.
+  // O(1) lookup: replacement byte → [hi, lo]
   const hiMap = new Uint8Array(256);
   const loMap = new Uint8Array(256);
-  const isReplacement = new Uint8Array(256); // boolean flag
+  const isReplacement = new Uint8Array(256);
 
   let offset = 1;
   for (let p = 0; p < numPairs; p++) {
@@ -303,7 +266,6 @@ function bpeDecode(data: Buffer): Buffer {
     offset += 3;
   }
 
-  // Decode: replace each replacement byte with the original pair — O(n)
   const result: number[] = [];
   while (offset < data.length) {
     const byte = data[offset];
@@ -318,9 +280,7 @@ function bpeDecode(data: Buffer): Buffer {
   return Buffer.from(result);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 6: Brotli Q11
-// ─────────────────────────────────────────────────────────────
+// ── Brotli Q11 ─────────────────────────────────────────────────
 
 function brotliCompress(data: Buffer): Buffer {
   return brotliCompressSync(data, {
@@ -331,9 +291,7 @@ function brotliCompress(data: Buffer): Buffer {
   });
 }
 
-// ─────────────────────────────────────────────────────────────
-// Fold 7: Adaptive Strategy Selection
-// ─────────────────────────────────────────────────────────────
+// ── Adaptive Strategy Selection ────────────────────────────────
 
 interface StrategyAttempt {
   strategy: CompressionStrategy;
@@ -343,7 +301,7 @@ interface StrategyAttempt {
 }
 
 /**
- * Try all 7 compression strategies and return all results.
+ * Try all compression strategies and return all results.
  * The caller selects the smallest.
  */
 function tryAllStrategies(data: Buffer): StrategyAttempt[] {
@@ -393,7 +351,7 @@ function tryAllStrategies(data: Buffer): StrategyAttempt[] {
     results.push({ strategy: 4, name: 'BPE + Brotli', data: bpe, compressed: c4 });
   } catch { /* skip */ }
 
-  // Strategy 5: Delta + MTF + Brotli (double pre-processing)
+  // Strategy 5: Delta + MTF + Brotli
   try {
     const delta = deltaEncode(data);
     const mtf = mtfEncode(delta);
@@ -401,7 +359,7 @@ function tryAllStrategies(data: Buffer): StrategyAttempt[] {
     results.push({ strategy: 5, name: 'Delta + MTF + Brotli', data: mtf, compressed: c5 });
   } catch { /* skip */ }
 
-  // Strategy 6: Delta + RLE + Brotli (double pre-processing)
+  // Strategy 6: Delta + RLE + Brotli
   try {
     const delta = deltaEncode(data);
     const rle = rleEncode(delta);
@@ -414,7 +372,6 @@ function tryAllStrategies(data: Buffer): StrategyAttempt[] {
     const first = brotliCompress(data);
     if (first.length > 64) { // Only try on non-trivial outputs
       const c7 = brotliCompress(first);
-      // Double-pass is only useful if the second pass is smaller
       if (c7.length < first.length) {
         results.push({ strategy: 7, name: 'Double-pass Brotli', data: first, compressed: c7 });
       }
@@ -424,20 +381,14 @@ function tryAllStrategies(data: Buffer): StrategyAttempt[] {
   return results;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Public API
-// ─────────────────────────────────────────────────────────────
+// ── Public API ──────────────────────────────────────────────────
 
 /**
  * 7-Fold Adaptive Compression: try all strategies, pick the best.
  *
- * This is the heart of Craft's compression power. Rather than
- * relying on a single algorithm, the engine applies multiple
- * pre-processing transforms and compression strategies, then
- * selects the one that produces the smallest output.
- *
- * The strategy ID is prepended to the compressed stream so
- * decompression knows exactly which inverse transforms to apply.
+ * Applies multiple pre-processing transforms and compression strategies,
+ * then selects the smallest output. The strategy ID is prepended to
+ * the compressed stream for correct decompression.
  *
  * @param data — The raw data to compress
  * @returns Compress7Result with the best strategy's output and benchmarks
@@ -449,14 +400,13 @@ export function compress7(data: Buffer): Compress7Result {
 
   const attempts = tryAllStrategies(data);
 
-  // Safety: if all strategies failed, fall back to raw Brotli
+  // Fallback: if all strategies failed, use raw Brotli
   if (attempts.length === 0) {
     const fallback = brotliCompress(data);
     attempts.push({ strategy: 0, name: 'Brotli Q11 (fallback)', data, compressed: fallback });
   }
 
-  // Select the strategy with the smallest compressed output
-  // Add 1 byte overhead for the strategy ID prefix
+  // Select the strategy with the smallest compressed output (+1 byte for strategy ID)
   let best = attempts[0];
   for (const attempt of attempts) {
     if (attempt.compressed.length < best.compressed.length) {
@@ -468,7 +418,6 @@ export function compress7(data: Buffer): Compress7Result {
   const strategyByte = Buffer.from([best.strategy]);
   const finalData = Buffer.concat([strategyByte, best.compressed]);
 
-  // Build benchmark table
   const allResults = attempts.map(a => ({
     strategy: a.strategy,
     name: a.name,
@@ -489,14 +438,13 @@ export function compress7(data: Buffer): Compress7Result {
  * 7-Fold Adaptive Decompression: reverse the winning strategy.
  *
  * Reads the strategy ID from the first byte, then applies the
- * correct inverse transforms in the correct order to restore
- * the original data.
+ * correct inverse transforms in the correct order.
  *
  * @param compressed — The compressed data (with strategy prefix)
- * @returns Decompressed buffer (bit-identical to original)
+ * @returns Decompressed buffer (identical to original)
  */
 export function decompress7(compressed: Buffer): Buffer {
-  const strategy: CompressionStrategy = compressed[0];
+  const strategy = compressed[0] as CompressionStrategy;
   const payload = compressed.subarray(1);
 
   // Step 1: Brotli decompress
@@ -504,33 +452,30 @@ export function decompress7(compressed: Buffer): Buffer {
 
   // Step 2: Apply inverse pre-processing based on strategy
   switch (strategy) {
-    case 0: // Raw Brotli — no pre-processing was applied
+    case 0: // Raw Brotli
       return data;
 
-    case 1: // Delta + Brotli → inverse: Brotli decode, then delta decode
+    case 1: // Delta + Brotli
       return deltaDecode(data);
 
-    case 2: // MTF + Brotli → inverse: Brotli decode, then MTF decode
+    case 2: // MTF + Brotli
       return mtfDecode(data);
 
-    case 3: // RLE + Brotli → inverse: Brotli decode, then RLE decode
+    case 3: // RLE + Brotli
       return rleDecode(data);
 
-    case 4: // BPE + Brotli → inverse: Brotli decode, then BPE decode
+    case 4: // BPE + Brotli
       return bpeDecode(data);
 
-    case 5: // Delta + MTF + Brotli → inverse: Brotli decode, then MTF decode, then delta decode
+    case 5: // Delta + MTF + Brotli
       const mtfResult = mtfDecode(data);
       return deltaDecode(mtfResult);
 
-    case 6: // Delta + RLE + Brotli → inverse: Brotli decode, then RLE decode, then delta decode
+    case 6: // Delta + RLE + Brotli
       const rleResult = rleDecode(data);
       return deltaDecode(rleResult);
 
-    case 7: // Double-pass Brotli → inverse: decompress twice
-      // At this point `data` = brotliDecompress(payload) = brotli(original).
-      // The second call below decompresses that intermediate result to recover
-      // the original data. This is correct — do not collapse into one call.
+    case 7: // Double-pass Brotli — decompress twice
       return brotliDecompressSync(data);
 
     default:

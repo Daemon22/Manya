@@ -1,17 +1,14 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  CRAFT — Nano/Macro Encryption & Compression Engine
- *  Package Index — The Living Canvas Edition
- * ═══════════════════════════════════════════════════════════════
+ * CRAFT — Nano/Macro Encryption & Compression Engine
  *
- *  7-Fold Encryption Tool:
- *    1. Brotli Compression — maximum quality (Q11)
- *    2. Delta Encoding — sequential data optimization
- *    3. Move-to-Front — recurring symbol optimization
- *    4. Run-Length Encoding — repeated byte collapse
- *    5. Byte-Pair Encoding — frequent pair replacement
- *    6. AES-256-GCM Encryption — authenticated encryption
- *    7. SHA-256 Integrity — lossless verification
+ * 7-Fold Encryption Pipeline:
+ *   1. Brotli Compression (Q11)
+ *   2. Delta Encoding
+ *   3. Move-to-Front
+ *   4. Run-Length Encoding
+ *   5. Byte-Pair Encoding
+ *   6. AES-256-GCM Encryption
+ *   7. SHA-256 Integrity
  */
 
 // Primary Operations

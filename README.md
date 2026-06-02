@@ -1,57 +1,44 @@
 # Manya
 
-Manya is the parent repository and public face for the HAEL and OMNIMIND ecosystem. It is structured to publish sites, tools, packages, models, and future system modules under one clear home.
+Manya is a monorepo containing the site, tools, and shared packages for the Manya ecosystem. It provides API management, workflow orchestration, device detection, and data compression under one roof.
 
-## Repository structure
+## Repository Structure
 
-- [site/manya](site/manya): the main Manya website and visual identity.
-- [tools](tools): deployable tools and product workspaces.
-- [packages](packages): publishable shared libraries and SDKs.
-- `models`: reserved for model assets, adapters, and release notes.
+| Directory | Description |
+|-----------|-------------|
+| `site/manya` | Main website and visual identity |
+| `tools/` | Deployable tools and product workspaces |
+| `packages/` | Publishable shared libraries and SDKs |
+| `models/` | Reserved for model assets, adapters, and release notes |
 
-## Main site
+## Tools
 
-The Manya site presents the repository's visual language: unity, synchronization, connected systems, and the bridge between people and technology.
+| Tool | Description |
+|------|-------------|
+| uSINGA - API NEXUS | API provider wallet and smart routing |
+| HelixFlow | Visual workflow DAG orchestration |
+| Hawk | Device detection and environment monitoring |
+| Craft Engine | 7-fold compression and encryption engine |
 
-```powershell
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| `@manya/toolkit` | Shared manifests and synchronization contracts |
+| `@manya/helixflow-sdk` | HelixFlow client and workflow helpers |
+| `@manya/craft-engine` | 7-fold compression and encryption engine |
+
+## Quick Start
+
+```sh
 npm install
 npm run site:dev
 ```
 
-## Published tools
+Running tests:
 
-These tools share the Manya foundation and can synchronize through shared identity, audit events, and system handoffs. They should not collapse into the same product.
-
-### uSINGA - API NEXUS
-
-`uSINGA - API NEXUS` is a universal API wallet and intelligence platform for managing API providers from one dashboard. It centralizes API key storage, provider health checks, usage tracking, cost visibility, analytics, alerts, and smart routing.
-
-The tool lives in [tools/usinga-api-nexus](tools/usinga-api-nexus).
-
-Phase 1 supports OpenAI, Groq, and Hugging Face. Anthropic and Twilio are prepared in the provider framework and marked as coming soon until their live adapters are completed.
-
-### HelixFlow
-
-`HelixFlow` is a visual workflow orchestration platform for designing, executing, monitoring, and optimizing DAG-based automation flows. It is built from the API Orchestrator architecture as the second deployable Manya tool alongside uSINGA.
-
-The tool lives in [tools/helixflow](tools/helixflow).
-
-Phase 1 includes a React workflow console, an Express orchestration API, workflow CRUD endpoints, DAG validation, workflow execution, execution logs, and Docker Compose deployment.
-
-HelixFlow may execute API request nodes, but it must not become an API key wallet, provider credit dashboard, provider health registry, or smart-provider router. Those responsibilities stay with uSINGA - API NEXUS. HelixFlow should consume approved connection references from uSINGA when the two tools are synchronized.
-
-### Hawk
-
-`Hawk` is a production-grade device detection and environment monitoring engine.
-
-The tool lives in [tools/hawk](tools/hawk).
-
-## Publishable packages
-
-### `@manya/toolkit`
-
-Shared product manifests, capability boundaries, and synchronization contracts for Manya tools. This package helps every tool declare what it owns and what it must hand off.
-
-### `@manya/helixflow-sdk`
-
-A small client and workflow helper package for HelixFlow. It creates workflow definitions, validates basic DAG shape, runs workflows through the HelixFlow API, and preserves uSINGA connection references without managing raw credentials.
+```sh
+npm run packages:test
+npm run helixflow:test
+npm run hawk:test
+```
