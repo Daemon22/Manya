@@ -1,62 +1,50 @@
 # HelixFlow
 
-Visual workflow orchestration for building, running, and monitoring DAG-based automation flows.
+HelixFlow is a visual workflow orchestration tool for building, running, and monitoring DAG-based automation flows within the Manya ecosystem.
 
-HelixFlow is the second deployable Manya tool beside `uSINGA - API NEXUS`. It turns the API Orchestrator architecture into a product workspace with a React workflow console, an Express orchestration API, DAG validation, execution simulation, run logs, and Docker deployment.
+## Features
 
-## Product boundary
+- **Visual DAG Builder**: Create and manage workflows with an intuitive graphical interface.
+- **Workflow Execution**: Orchestrate and execute complex automation flows.
+- **Monitoring and Logging**: Track workflow status, view run logs, and analyze performance.
+- **API Integration**: Seamlessly integrate with various APIs for data exchange and process automation.
 
-HelixFlow owns workflow structure and execution:
+## Installation
 
-- Visual DAG building.
-- Trigger, API request, transform, condition, and output nodes.
-- Dependency resolution and scheduling.
-- Run state, node logs, retry policy, and failure policy.
-- Workflow-level monitoring and optimization.
+This tool is part of the Manya monorepo. To install all dependencies, navigate to the root of the Manya repository and run:
 
-HelixFlow does not own API provider management:
-
-- No API key vault.
-- No provider credit balance dashboard.
-- No provider health registry.
-- No cost-based provider switching.
-- No smart provider routing.
-
-Those responsibilities stay with `uSINGA - API NEXUS`. When the tools synchronize, HelixFlow should reference approved connections from uSINGA instead of storing or deciding provider credentials itself.
-
-## What works in v1
-
-- Workflow CRUD API.
-- Directed acyclic graph validation.
-- Workflow run endpoint at `POST /api/workflows/:id/run`.
-- Node execution lifecycle logs.
-- Retry and failure-policy fields in workflow definitions.
-- React console with graph view, node configuration, run timeline, and architecture panels.
-- Docker Compose deployment with backend and frontend services.
-
-## Local development
-
-```powershell
+```sh
 npm install
+```
+
+## Local Development
+
+To run HelixFlow locally, you need to start both the frontend and backend services:
+
+```sh
 npm run helixflow:api
 npm run helixflow:dev
 ```
 
-Frontend: <http://localhost:5174>
+- **Frontend**: `http://localhost:5174`
+- **Backend**: `http://localhost:8100/health`
 
-Backend: <http://localhost:8100/health>
+## Docker Deployment
 
-## Docker deployment
+For Docker deployment, navigate to the `tools/helixflow` directory and run:
 
-```powershell
+```sh
 cd tools/helixflow
 docker compose up --build
 ```
 
-Frontend: <http://localhost:5174>
+- **Frontend**: `http://localhost:5174`
+- **Backend**: `http://localhost:8100/api/workflows`
 
-Backend: <http://localhost:8100/api/workflows>
+## Testing
 
-## Product direction
+To run tests for HelixFlow, navigate to the root of the Manya repository and execute:
 
-Phase 1 is a single-server deployment. Phase 2 should move run scheduling into Redis-backed workers. Phase 3 should add distributed execution, WebSocket streaming, team workspaces, uSINGA connection handoffs, and AI workflow assistance.
+```sh
+npm run helixflow:test
+```

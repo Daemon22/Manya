@@ -1,124 +1,29 @@
-# @manya/toolkit
+# Toolkit
 
-Shared manifests, capability boundaries, and sync contracts for Manya tools.
+The Manya Toolkit provides shared manifests and synchronization contracts used across the Manya monorepo. It ensures consistency and facilitates integration between different components of the Manya ecosystem.
 
-## What It Does
+## Features
 
-This package provides the shared contract layer for the Manya tool ecosystem. Each tool in Manya declares a **manifest** that specifies:
+- **Shared Manifests**: Centralized definitions for common configurations and data structures.
+- **Synchronization Contracts**: Establishes clear interfaces for inter-component communication.
+- **Monorepo Utility**: Essential utilities for maintaining a cohesive monorepo structure.
 
-- **Identity** -- who the tool is (`id`, `name`, `purpose`)
-- **Owned capabilities** -- what the tool is responsible for (`owns`)
-- **Off-limits capabilities** -- what the tool must not touch (`handsOff`)
-- **Sync channels** -- how the tool communicates with other tools (`syncChannels`)
+## Installation
 
-The core rule: no two tools may own the same capability. This package provides the types and helpers to declare and enforce that rule.
+This package is part of the Manya monorepo. To install all dependencies, navigate to the root of the Manya repository and run:
 
-## API Reference
-
-### `MANYA_FOUNDATION`
-
-```js
-{ name: "Manya", principle: "synchronized tools with distinct product ownership" }
+```sh
+npm install
 ```
-
-Foundation identity referenced by all tool manifests.
-
-### `capabilityOwners`
-
-```js
-{ apiKeyVault: "usinga-api-nexus", providerHealth: "usinga-api-nexus", ... }
-```
-
-Maps every known capability to the tool that owns it.
-
-### `createToolManifest(input)`
-
-Creates a frozen, immutable tool manifest.
-
-| Parameter      | Type       | Required | Description                        |
-|---------------|------------|----------|------------------------------------|
-| `id`          | `string`   | Yes      | Unique tool identifier             |
-| `name`        | `string`   | Yes      | Human-readable tool name           |
-| `purpose`     | `string`   | Yes      | What the tool does                 |
-| `owns`        | `string[]` | No       | Capabilities this tool owns        |
-| `handsOff`    | `string[]` | No       | Capabilities this tool must avoid  |
-| `syncChannels`| `string[]` | No       | Cross-tool sync channel names      |
-
-Returns a `Readonly<ToolManifest>`. Throws if `id`, `name`, or `purpose` is missing.
-
-### `assertDistinctCapabilities(manifests)`
-
-Checks whether a set of manifests have non-overlapping capability ownership.
-
-| Parameter   | Type              | Description                    |
-|------------|-------------------|--------------------------------|
-| `manifests`| `ToolManifest[]`  | Manifests to validate          |
-
-Returns `{ distinct: boolean, overlaps: CapabilityOverlap[] }`. If `distinct` is `false`, `overlaps` lists each capability claimed by more than one tool.
-
-### `usingaManifest`
-
-Pre-built manifest for **uSINGA - API NEXUS**. Owns `apiKeyVault`, `providerHealth`, `providerCredits`, and `smartProviderRouting`.
-
-### `helixFlowManifest`
-
-Pre-built manifest for **HelixFlow**. Owns `workflowDagBuilder`, `dependencyScheduler`, `workflowExecutionLogs`, and `workflowFailurePolicies`.
 
 ## Usage
 
-```js
-import {
-  createToolManifest,
-  assertDistinctCapabilities,
-  usingaManifest,
-  helixFlowManifest
-} from "@manya/toolkit";
+This package is primarily for internal use within the Manya monorepo. Developers working on Manya components should refer to the source code and relevant documentation for specific usage patterns.
 
-// Create a custom tool manifest
-const myTool = createToolManifest({
-  id: "my-tool",
-  name: "My Tool",
-  purpose: "Handles custom reporting.",
-  owns: ["customReports"],
-  handsOff: ["apiKeyVault", "workflowDagBuilder"],
-  syncChannels: ["report-generated"]
-});
+## Testing
 
-// Validate that no two tools own the same capability
-const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, myTool]);
+To run tests for the Toolkit, navigate to the root of the Manya repository and execute:
 
-if (!result.distinct) {
-  for (const overlap of result.overlaps) {
-    console.error(`Conflict: "${overlap.capability}" claimed by ${overlap.owners.join(" and ")}`);
-  }
-}
+```sh
+npm run packages:test
 ```
-
-## Types
-
-### `ToolManifest`
-
-```ts
-Readonly<{
-  foundation: string;
-  id: string;
-  name: string;
-  purpose: string;
-  owns: string[];
-  handsOff: string[];
-  syncChannels: string[];
-}>
-```
-
-### `CapabilityOverlap`
-
-```ts
-{
-  capability: string;
-  owners: string[];
-}
-```
-
-## License
-
-MIT
