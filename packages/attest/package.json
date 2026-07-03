@@ -1,0 +1,32 @@
+{
+  "name": "@manya/attest",
+  "version": "0.1.0",
+  "description": "Device-bound authentication: challenge a device, verify it's still the same device, gate access accordingly — composed from hawk, signal, and shield.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "attest",
+    "device-binding",
+    "authentication",
+    "fingerprint"
+  ],
+  "dependencies": {
+    "@manya/hawk": "^1.0.0",
+    "@manya/signal": "^1.0.0",
+    "@manya/shield": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

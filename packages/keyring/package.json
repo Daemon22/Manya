@@ -1,0 +1,34 @@
+{
+  "name": "@manya/keyring",
+  "version": "0.1.0",
+  "description": "Sovereign identity wallet: derive, store, sign, and gate access to your own keys — composed from vault, forge, signal, and shield.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "keyring",
+    "identity",
+    "wallet",
+    "sovereign",
+    "cryptography"
+  ],
+  "dependencies": {
+    "@manya/vault": "^1.0.0",
+    "@manya/forge": "^1.0.0",
+    "@manya/signal": "^1.0.0",
+    "@manya/shield": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
