@@ -1,0 +1,10 @@
+# Local runtime/data artifacts - never publish
+db/
+*.db
+*.sqlite3
+upload/
+download/
+*.log
+.env*
+.zscripts/
+agent-ctx/

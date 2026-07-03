@@ -1,7 +1,12 @@
 {
-  "name": "nextjs_tailwind_shadcn_ts",
+  "name": "@manya/craft-engine",
   "version": "0.2.0",
-  "private": true,
+  "description": "Craft engine: full application (CLI + lib/craft module + Next.js app).",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "craft": "./bin/craft"
   },

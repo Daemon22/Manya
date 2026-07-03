@@ -2,8 +2,11 @@
   "name": "@manya/helixflow-sdk",
   "version": "0.2.0",
   "description": "Client and workflow helpers for HelixFlow.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",

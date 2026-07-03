@@ -2,8 +2,11 @@
   "name": "@manya/toolkit",
   "version": "0.2.0",
   "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
