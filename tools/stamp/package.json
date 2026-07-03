@@ -1,0 +1,13 @@
+{
+  "name": "@manya/stamp",
+  "version": "1.0.0",
+  "description": "Tamper-proof timestamping, audit trails, and provenance chains for the Manya ecosystem.",
+  "author": "Manya",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "keywords": ["timestamp", "audit", "provenance", "chain-of-custody", "manya", "stamp"],
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  }
+}

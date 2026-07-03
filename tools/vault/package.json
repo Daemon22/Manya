@@ -1,0 +1,13 @@
+{
+  "name": "@manya/vault",
+  "version": "1.0.0",
+  "description": "Encrypted key-value store for secrets, configuration, and credential management in the Manya ecosystem.",
+  "author": "Manya",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "keywords": ["vault", "secrets", "encrypted-storage", "key-value", "manya"],
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  }
+}

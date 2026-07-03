@@ -1,0 +1,13 @@
+{
+  "name": "@manya/primary-sector",
+  "version": "1.0.0",
+  "description": "Manya Primary Sector — Data tools for Agriculture, Mining, Forestry, and Fishing industries with sector-specific compliance, validation, redaction, and audit capabilities.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/types.d.ts",
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  },
+  "author": "Manya",
+  "license": "MIT"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@manya/research-academic",
+  "version": "1.0.0",
+  "description": "Manya Research & Academic — Citation parsing and validation (DOI, ORCID, arXiv, PubMed), reproducibility manifests, peer-review provenance, research-data management with DMP templates, and FAIR-compliance checks for the academic and research domains.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/types.d.ts",
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  },
+  "author": "Manya",
+  "license": "MIT"
+}

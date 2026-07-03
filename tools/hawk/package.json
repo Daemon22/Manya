@@ -1,0 +1,14 @@
+{
+  "name": "@manya/hawk",
+  "version": "1.0.0",
+  "description": "Device detection and environment monitoring engine for the Manya ecosystem.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/types.d.ts",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["manya", "hawk", "device-detection", "fingerprint", "monitoring"],
+  "license": "MIT",
+  "author": "Manya"
+}

@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Device {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("android") // "android" or "pc"
+  fingerprint String   @unique // unique device identifier
+  status      String   @default("offline") // "online", "offline", "busy"
+  lastSeen    DateTime @default(now())
+  ipAddress   String?
+  platform    String?  // e.g. "Windows 11", "Android 14"
+  avatar      String?  // emoji or icon identifier
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Engagement relations
+  engagementsAsA Engagement[] @relation("DeviceA_Engagements")
+  engagementsAsB Engagement[] @relation("DeviceB_Engagements")
+
+  // Marriage relations
+  marriagesAsA Marriage[] @relation("DeviceA_Marriages")
+  marriagesAsB Marriage[] @relation("DeviceB_Marriages")
+
+  // Activity log
+  activities Activity[]
+}
+
+model Engagement {
+  id        String   @id @default(cuid())
+  deviceAId String
+  deviceBId String
+  pin       String   @unique // 6-digit pairing PIN
+  status    String   @default("pending") // "pending", "active", "expired", "broken"
+  createdAt DateTime @default(now())
+  expiresAt DateTime // engagement expires after some time
+
+  deviceA    Device  @relation("DeviceA_Engagements", fields: [deviceAId], references: [id])
+  deviceB    Device  @relation("DeviceB_Engagements", fields: [deviceBId], references: [id])
+  activities Activity[]
+
+  @@index([pin])
+  @@index([status])
+}
+
+model Marriage {
+  id         String    @id @default(cuid())
+  deviceAId  String
+  deviceBId  String
+  status     String    @default("active") // "active", "divorced"
+  vows       String?   // JSON config for the marriage (permissions, sync settings, etc.)
+  marriedAt  DateTime  @default(now())
+  divorcedAt DateTime?
+
+  deviceA    Device  @relation("DeviceA_Marriages", fields: [deviceAId], references: [id])
+  deviceB    Device  @relation("DeviceB_Marriages", fields: [deviceBId], references: [id])
+  activities Activity[]
+
+  @@index([status])
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  deviceId    String
+  type        String   // "engagement", "marriage", "command", "transfer", "heartbeat", "divorce"
+  title       String
+  description String?
+  metadata    String?  // JSON for additional data
+  createdAt   DateTime @default(now())
+
+  device     Device     @relation(fields: [deviceId], references: [id])
+  engagement Engagement? @relation(fields: [engagementId], references: [id])
+  marriage   Marriage?   @relation(fields: [marriageId], references: [id])
+
+  engagementId String?
+  marriageId   String?
+
+  @@index([deviceId])
+  @@index([type])
+}

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manya Live — Event Bus Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #1a1410;
+    --panel: rgba(26, 20, 16, 0.92);
+    --border: rgba(212, 165, 116, 0.25);
+    --border-hover: rgba(212, 165, 116, 0.6);
+    --text: #f5ede0;
+    --text-dim: #a89a85;
+    --text-muted: #6b5f50;
+    --accent: #d4a574;
+    --accent-bright: #f4c430;
+    --accent-2: #38aaa0;
+    --success: #4caf50;
+    --warning: #f59e0b;
+    --danger: #e07856;
+  }
+  html, body {
+    height: 100%; background: var(--bg); color: var(--text);
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px; line-height: 1.5;
+  }
+  body { padding: 24px; overflow: auto; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .header h1 {
+    font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .header .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+  .header .pill {
+    background: rgba(76, 175, 80, 0.15); color: var(--success);
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .header .pill .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--success);
+    box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 16px;
+    grid-template-areas:
+      "stats stats stats"
+      "feed feed publisher"
+      "feed feed publisher"
+      "mesh identities publisher";
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; backdrop-filter: blur(12px);
+  }
+  .card h2 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .badge {
+    background: rgba(99, 102, 241, 0.15); color: var(--accent);
+    padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+
+  /* Stats row */
+  .stats { grid-area: stats; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; backdrop-filter: blur(12px);
+  }
+  .stat .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat .value { font-size: 28px; font-weight: 700; margin-top: 4px;
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* Event feed */
+  .feed { grid-area: feed; min-height: 400px; max-height: 600px; overflow: hidden; display: flex; flex-direction: column; }
+  .feed-list { flex: 1; overflow-y: auto; padding-right: 8px; }
+  .feed-list::-webkit-scrollbar { width: 6px; }
+  .feed-list::-webkit-scrollbar-track { background: transparent; }
+  .feed-list::-webkit-scrollbar-thumb { background: rgba(212, 165, 116, 0.3); border-radius: 3px; }
+  .event {
+    padding: 10px 12px; margin-bottom: 8px; border-radius: 8px;
+    background: rgba(212, 165, 116, 0.05); border-left: 3px solid var(--accent);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px;
+    animation: slideIn 0.3s ease-out;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+  .event .header-line { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .event .topic { color: var(--accent-bright); font-weight: 600; }
+  .event .time { color: var(--text-muted); font-size: 11px; }
+  .event .source { color: var(--accent-2); font-size: 11px; margin-top: 2px; }
+  .event .payload { color: var(--text-dim); margin-top: 4px; word-break: break-all; }
+  .event.empty { text-align: center; color: var(--text-muted); border-left-color: var(--text-muted); padding: 24px; }
+
+  /* Publisher */
+  .publisher { grid-area: publisher; display: flex; flex-direction: column; gap: 12px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 13px;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--border-hover);
+  }
+  .form-group textarea { font-family: 'JetBrains Mono', monospace; font-size: 12px; min-height: 70px; resize: vertical; }
+  .btn {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    color: var(--bg); border: none; padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    width: 100%;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4); }
+  .btn:active { transform: translateY(0); }
+  .btn-secondary {
+    background: rgba(212, 165, 116, 0.12); color: var(--accent); border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: rgba(212, 165, 116, 0.22); }
+  .button-row { display: flex; gap: 8px; }
+  .button-row .btn { flex: 1; }
+
+  /* Mesh panel */
+  .mesh { grid-area: mesh; }
+  .tool-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; padding-right: 8px; }
+  .tool-list::-webkit-scrollbar { width: 6px; }
+  .tool-list::-webkit-scrollbar-thumb { background: rgba(212, 165, 116, 0.3); border-radius: 3px; }
+  .tool-item {
+    padding: 8px 10px; border-radius: 6px; background: rgba(212, 165, 116, 0.05);
+    border-left: 2px solid var(--accent); font-size: 12px;
+  }
+  .tool-item .name { font-weight: 600; color: var(--text); }
+  .tool-item .meta { color: var(--text-dim); font-size: 11px; margin-top: 2px; }
+  .tool-item .caps { color: var(--accent-bright); font-size: 10px; margin-top: 2px; font-family: monospace; }
+
+  /* Identities panel */
+  .identities { grid-area: identities; }
+  .identity-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; padding-right: 8px; }
+  .identity-list::-webkit-scrollbar { width: 6px; }
+  .identity-list::-webkit-scrollbar-thumb { background: rgba(56, 170, 160, 0.3); border-radius: 3px; }
+  .identity-item {
+    padding: 8px 10px; border-radius: 6px; background: rgba(56, 170, 160, 0.05);
+    border-left: 2px solid var(--accent-2); font-size: 12px;
+  }
+  .identity-item .id { font-family: monospace; color: var(--accent-2); font-size: 11px; }
+  .identity-item .primary { color: var(--text); margin-top: 2px; }
+  .identity-item .linked { color: var(--text-dim); font-size: 11px; margin-top: 2px; }
+  .identity-item .linked .tag {
+    display: inline-block; padding: 1px 6px; margin-right: 4px;
+    background: rgba(56, 170, 160, 0.15); color: var(--accent-2); border-radius: 3px;
+    font-family: monospace; font-size: 10px;
+  }
+
+  .footer-note {
+    margin-top: 16px; text-align: center; font-size: 11px; color: var(--text-muted);
+  }
+  .footer-note .gradient-text {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    .grid { grid-template-columns: 1fr 1fr; grid-template-areas: "stats stats" "feed feed" "mesh identities" "publisher publisher"; }
+    .stats { grid-template-columns: repeat(5, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; grid-template-areas: "stats" "feed" "publisher" "mesh" "identities"; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>Manya Live</h1>
+    <div class="subtitle">Real-time event bus, mesh registry, and federated identity store — running entirely in your browser.</div>
+  </div>
+  <div class="pill"><span class="dot"></span> LIVE</div>
+</div>
+
+<div class="grid">
+  <!-- Stats row -->
+  <div class="stats">
+    <div class="stat"><div class="label">Events published</div><div class="value" id="stat-events">0</div></div>
+    <div class="stat"><div class="label">Active topics</div><div class="value" id="stat-topics">0</div></div>
+    <div class="stat"><div class="label">Subscribers</div><div class="value" id="stat-subs">0</div></div>
+    <div class="stat"><div class="label">Tools registered</div><div class="value" id="stat-tools">0</div></div>
+    <div class="stat"><div class="label">Federated identities</div><div class="value" id="stat-identities">0</div></div>
+  </div>
+
+  <!-- Event feed -->
+  <div class="card feed">
+    <h2>Event Feed <span class="badge" id="feed-count">0 events</span></h2>
+    <div class="feed-list" id="feed-list">
+      <div class="event empty">No events yet. Publish one to the right, or click "Auto-demo" to see the event bus in action.</div>
+    </div>
+  </div>
+
+  <!-- Publisher -->
+  <div class="card publisher">
+    <h2>Publish Event</h2>
+    <div class="form-group">
+      <label>Topic (sync channel)</label>
+      <select id="pub-topic">
+        <option value="citation-verified">citation-verified</option>
+        <option value="manifest-verified">manifest-verified</option>
+        <option value="review-event-recorded">review-event-recorded</option>
+        <option value="key-rotation-event">key-rotation-event</option>
+        <option value="shipment-event-recorded">shipment-event-recorded</option>
+        <option value="threat-classified">threat-classified</option>
+        <option value="identity-linked">identity-linked</option>
+        <option value="custom">— custom —</option>
+      </select>
+    </div>
+    <div class="form-group" id="custom-topic-group" style="display:none">
+      <label>Custom topic</label>
+      <input id="pub-custom-topic" type="text" placeholder="e.g. my-custom-channel" />
+    </div>
+    <div class="form-group">
+      <label>Source tool</label>
+      <select id="pub-source">
+        <option value="research-academic">research-academic</option>
+        <option value="transport-logistics">transport-logistics</option>
+        <option value="forge">forge</option>
+        <option value="cybersecurity">cybersecurity</option>
+        <option value="unify">unify</option>
+        <option value="">— none —</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Event type</label>
+      <input id="pub-type" type="text" value="demo-event" />
+    </div>
+    <div class="form-group">
+      <label>Payload (JSON)</label>
+      <textarea id="pub-payload">{ "message": "Hello from Manya Live!" }</textarea>
+    </div>
+    <div class="button-row">
+      <button class="btn" id="btn-publish">Publish</button>
+      <button class="btn btn-secondary" id="btn-auto">Auto-demo</button>
+    </div>
+    <div class="button-row" style="margin-top: 8px;">
+      <button class="btn btn-secondary" id="btn-clear">Clear feed</button>
+    </div>
+  </div>
+
+  <!-- Mesh -->
+  <div class="card mesh">
+    <h2>Mesh Registry <span class="badge" id="mesh-count">0 tools</span></h2>
+    <div class="tool-list" id="tool-list">
+      <div style="text-align:center;color:var(--text-muted);padding:24px;">No tools registered</div>
+    </div>
+  </div>
+
+  <!-- Identities -->
+  <div class="card identities">
+    <h2>Federated Identities <span class="badge" id="identity-count">0</span></h2>
+    <div class="identity-list" id="identity-list">
+      <div style="text-align:center;color:var(--text-muted);padding:24px;">No identities yet</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  <span class="gradient-text">Manya</span> Live v0.5.0 — Everything Connected. Everyone Unified.
+</div>
+
+<script>
+// =====================================================================
+// In-browser implementation of the Manya Unify event bus, mesh, and
+// federation (mirrors @manya/unify's API surface so this page is fully
+// self-contained and works offline).
+// =====================================================================
+
+const STATE = {
+  bus: { subscribers: new Map(), history: [], eventCount: 0 },
+  mesh: new Map(),  // toolId -> { manifest, api, registeredAt }
+  identities: new Map(),  // identityId -> identity
+  valueIndex: new Map(),  // type:normalized -> identityId
+};
+
+// -- Event Bus --
+function busSubscribe(topic, handler) {
+  if (!STATE.bus.subscribers.has(topic)) STATE.bus.subscribers.set(topic, new Set());
+  const sub = { handler, id: 'sub-' + Math.random().toString(36).slice(2, 8) };
+  STATE.bus.subscribers.get(topic).add(sub);
+  return () => {
+    const subs = STATE.bus.subscribers.get(topic);
+    if (subs) { subs.delete(sub); if (subs.size === 0) STATE.bus.subscribers.delete(topic); }
+  };
+}
+
+function busPublish(topic, event) {
+  const enriched = {
+    eventId: 'evt-' + Math.random().toString(36).slice(2, 14),
+    topic,
+    type: event.type || 'generic',
+    sourceToolId: event.sourceToolId || null,
+    payload: event.payload || event,
+    publishedAt: new Date().toISOString(),
+  };
+  let delivered = 0;
+  const subs = STATE.bus.subscribers.get(topic);
+  if (subs) {
+    for (const sub of subs) {
+      try { sub.handler(enriched); delivered++; } catch (e) { /* swallow */ }
+    }
+  }
+  STATE.bus.history.unshift(enriched);
+  if (STATE.bus.history.length > 100) STATE.bus.history.pop();
+  STATE.bus.eventCount++;
+  return { delivered, eventId: enriched.eventId, publishedAt: enriched.publishedAt };
+}
+
+// -- Mesh --
+function meshRegister(manifest, api) {
+  if (STATE.mesh.has(manifest.id)) throw new Error(`Tool ${manifest.id} already registered`);
+  STATE.mesh.set(manifest.id, { manifest, api: api || {}, registeredAt: new Date().toISOString() });
+}
+
+function meshList() {
+  return Array.from(STATE.mesh.values()).map(({ manifest, registeredAt }) => ({
+    toolId: manifest.id, name: manifest.name, purpose: manifest.purpose,
+    owns: manifest.owns || [], syncChannels: manifest.syncChannels || [], registeredAt,
+  }));
+}
+
+// -- Federation --
+function fedCreate(type, value, metadata) {
+  const normalized = normalizeValue(type, value);
+  const key = type + ':' + normalized;
+  if (STATE.valueIndex.has(key)) return STATE.identities.get(STATE.valueIndex.get(key));
+  const id = 'id-' + Math.random().toString(36).slice(2, 14);
+  const now = new Date().toISOString();
+  const identity = {
+    id, primary: { type, value: normalized, addedAt: now },
+    linked: [], metadata: metadata || {}, createdAt: now, updatedAt: now,
+  };
+  STATE.identities.set(id, identity);
+  STATE.valueIndex.set(key, id);
+  return identity;
+}
+
+function fedLink(identityId, { type, value, source, confidence = 1 }) {
+  const identity = STATE.identities.get(identityId);
+  if (!identity) throw new Error('Identity not found');
+  const normalized = normalizeValue(type, value);
+  const key = type + ':' + normalized;
+  const existingOwner = STATE.valueIndex.get(key);
+  if (existingOwner && existingOwner !== identityId) throw new Error(`Identifier ${type}:${normalized} already linked to ${existingOwner}`);
+  if (identity.linked.some(l => l.type === type && l.value === normalized)) return identity;
+  identity.linked.push({ type, value: normalized, confidence, source: source || null, linkedAt: new Date().toISOString() });
+  identity.updatedAt = new Date().toISOString();
+  if (!existingOwner) STATE.valueIndex.set(key, identityId);
+  return identity;
+}
+
+function normalizeValue(type, value) {
+  const s = String(value).trim();
+  switch (type) {
+    case 'orcid': case 'doi': case 'ror': case 'nct': case 'isbn':
+      return s.toUpperCase().replace(/^HTTPS?:\/\/(DOI|ORCID|ROR)\.ORG\//i, '').replace(/-/g, '');
+    case 'email': return s.toLowerCase();
+    case 'hs_code': return s.replace(/\D/g, '');
+    case 'imo': case 'awb': case 'container': case 'wagon':
+      return s.replace(/[\s-]/g, '').toUpperCase();
+    default: return s;
+  }
+}
+
+// =====================================================================
+// Tool manifests (subset of @manya/toolkit for the demo)
+// =====================================================================
+
+const TOOLS = [
+  { id: 'forge', name: 'Forge', purpose: 'Key derivation, passphrase strength, and hashing', owns: ['keyDerivation', 'passphraseStrength', 'keyRotation', 'multiAlgorithmHash'], syncChannels: ['key-rotation-event', 'strength-audit', 'hash-verification'] },
+  { id: 'pulse', name: 'Pulse', purpose: 'Industry presets composing Lens, Shield, Stamp, Vault, and Signal', owns: ['industryPresets', 'complianceTemplates', 'industryPolicyTemplates', 'industrySignalTypes'], syncChannels: ['industry-preset-loaded', 'compliance-check', 'policy-template-applied'] },
+  { id: 'primary-sector', name: 'Primary Sector', purpose: 'Agriculture, Mining, Forestry, Fishing validation', owns: ['sectorValidation', 'sectorCompliance', 'sectorPresets', 'coordinateValidation', 'productionReporting'], syncChannels: ['sector-data-validated', 'compliance-check-sector', 'production-report-filed'] },
+  { id: 'cybersecurity', name: 'Cybersecurity', purpose: 'Threat intel, vulnerability, forensics, incident response', owns: ['threatIntelligence', 'vulnerabilityAssessment', 'securityCompliance', 'digitalForensics', 'incidentResponse'], syncChannels: ['threat-classified', 'vulnerability-scored', 'incident-escalated', 'evidence-collected'] },
+  { id: 'transport-logistics', name: 'Transport & Logistics', purpose: 'Waybill, IMO, container, shipment tracking, customs, DG, sanctions', owns: ['transportModePresets', 'transportIdentifierValidation', 'shipmentTracking', 'customsCompliance', 'dangerousGoodsClassification', 'sanctionsScreening'], syncChannels: ['shipment-event-recorded', 'geofence-triggered', 'customs-declaration-issued', 'dg-declaration-signed', 'sanctions-screened'] },
+  { id: 'research-academic', name: 'Research & Academic', purpose: 'Citations, reproducibility, peer review, DMP', owns: ['researchDomainPresets', 'citationValidation', 'reproducibilityManifests', 'peerReviewProvenance', 'researchDataManagement'], syncChannels: ['citation-verified', 'manifest-verified', 'review-event-recorded', 'dmp-issued', 'fair-assessed'] },
+  { id: 'unify', name: 'Manya Unify', purpose: 'Connective tissue: mesh, federation, event bus, vocabularies', owns: ['toolFederation', 'identityLinking', 'syncChannelRouting', 'vocabularyBridging', 'capabilityDispatch'], syncChannels: ['identity-linked', 'event-routed', 'capability-dispatched', 'vocabulary-translated'] },
+];
+
+// =====================================================================
+// Bootstrap: register all tools and seed a few identities + subscribers
+// =====================================================================
+
+for (const tool of TOOLS) {
+  meshRegister(tool, {});
+}
+
+// Seed: Josiah Carberry — ORCID + DOI + email
+const jc = fedCreate('orcid', '0000-0002-1825-0097', { name: 'Josiah Carberry' });
+fedLink(jc.id, { type: 'doi', value: '10.1000/182', source: 'research-academic' });
+fedLink(jc.id, { type: 'email', value: 'j.carberry@brown.edu', source: 'pulse' });
+
+// Seed: a research lab
+const lab = fedCreate('ror', '0454n3r47', { name: 'Massachusetts Institute of Technology' });
+fedLink(lab.id, { type: 'doi', value: '10.1038/nature12373', source: 'research-academic' });
+
+// Seed: a vessel
+const vessel = fedCreate('imo', '9074729', { name: 'MV Ever Given' });
+fedLink(vessel.id, { type: 'container', value: 'MSCU6639870', source: 'transport-logistics' });
+
+// Subscribe to all sync channels so events show up in the feed
+const ALL_CHANNELS = new Set();
+TOOLS.forEach(t => t.syncChannels.forEach(c => ALL_CHANNELS.add(c)));
+for (const channel of ALL_CHANNELS) {
+  busSubscribe(channel, (evt) => {
+    renderEvent(evt);
+    updateStats();
+  });
+}
+
+// =====================================================================
+// UI Rendering
+// =====================================================================
+
+function renderEvent(evt) {
+  const list = document.getElementById('feed-list');
+  // Remove empty placeholder
+  const empty = list.querySelector('.event.empty');
+  if (empty) empty.remove();
+  const el = document.createElement('div');
+  el.className = 'event';
+  const time = new Date(evt.publishedAt).toLocaleTimeString();
+  const payloadStr = typeof evt.payload === 'object' ? JSON.stringify(evt.payload) : String(evt.payload);
+  el.innerHTML = `
+    <div class="header-line">
+      <span class="topic">${escapeHtml(evt.topic)}</span>
+      <span class="time">${time}</span>
+    </div>
+    ${evt.sourceToolId ? `<div class="source">↳ source: ${escapeHtml(evt.sourceToolId)}</div>` : ''}
+    <div class="payload">${escapeHtml(payloadStr)}</div>
+  `;
+  list.insertBefore(el, list.firstChild);
+  // Cap at 50 events in the DOM
+  while (list.children.length > 50) list.removeChild(list.lastChild);
+  document.getElementById('feed-count').textContent = STATE.bus.eventCount + ' events';
+}
+
+function updateStats() {
+  document.getElementById('stat-events').textContent = STATE.bus.eventCount;
+  document.getElementById('stat-topics').textContent = STATE.bus.subscribers.size;
+  let subCount = 0;
+  for (const subs of STATE.bus.subscribers.values()) subCount += subs.size;
+  document.getElementById('stat-subs').textContent = subCount;
+  document.getElementById('stat-tools').textContent = STATE.mesh.size;
+  document.getElementById('stat-identities').textContent = STATE.identities.size;
+}
+
+function renderMesh() {
+  const list = document.getElementById('tool-list');
+  const tools = meshList();
+  if (tools.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No tools registered</div>';
+    return;
+  }
+  list.innerHTML = tools.map(t => `
+    <div class="tool-item">
+      <div class="name">${escapeHtml(t.name)}</div>
+      <div class="meta">${escapeHtml(t.toolId)} · ${t.owns.length} capabilities · ${t.syncChannels.length} channels</div>
+      <div class="caps">${t.owns.slice(0, 4).join(', ')}${t.owns.length > 4 ? '...' : ''}</div>
+    </div>
+  `).join('');
+  document.getElementById('mesh-count').textContent = tools.length + ' tools';
+}
+
+function renderIdentities() {
+  const list = document.getElementById('identity-list');
+  if (STATE.identities.size === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No identities yet</div>';
+    return;
+  }
+  const items = Array.from(STATE.identities.values());
+  list.innerHTML = items.map(id => {
+    const linkedTags = id.linked.map(l => `<span class="tag">${escapeHtml(l.type)}:${escapeHtml(l.value.slice(0, 16))}</span>`).join('');
+    return `
+      <div class="identity-item">
+        <div class="id">${escapeHtml(id.id)}</div>
+        <div class="primary"><strong>${escapeHtml(id.metadata?.name || 'Unknown')}</strong> · primary: ${escapeHtml(id.primary.type)}:${escapeHtml(id.primary.value.slice(0, 20))}</div>
+        ${linkedTags ? `<div class="linked">linked: ${linkedTags}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('identity-count').textContent = items.length;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// =====================================================================
+// Event handlers
+// =====================================================================
+
+document.getElementById('pub-topic').addEventListener('change', (e) => {
+  const custom = document.getElementById('custom-topic-group');
+  custom.style.display = e.target.value === 'custom' ? 'block' : 'none';
+});
+
+document.getElementById('btn-publish').addEventListener('click', () => {
+  const topicSelect = document.getElementById('pub-topic').value;
+  const topic = topicSelect === 'custom' ? document.getElementById('pub-custom-topic').value.trim() : topicSelect;
+  if (!topic) { alert('Please enter a topic'); return; }
+  const source = document.getElementById('pub-source').value || undefined;
+  const type = document.getElementById('pub-type').value || 'event';
+  const payloadStr = document.getElementById('pub-payload').value;
+  let payload;
+  try { payload = JSON.parse(payloadStr); } catch { payload = payloadStr; }
+  const result = busPublish(topic, { type, sourceToolId: source, payload });
+  // The bus subscriber will render the event; we just confirm
+  console.log('Published:', result);
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  STATE.bus.history = [];
+  const list = document.getElementById('feed-list');
+  list.innerHTML = '<div class="event empty">Feed cleared. Publish a new event to see it here.</div>';
+  document.getElementById('feed-count').textContent = '0 events';
+});
+
+// Auto-demo: simulates events flowing through the bus
+let autoTimer = null;
+const AUTO_EVENTS = [
+  { topic: 'citation-verified', source: 'research-academic', type: 'doi-verified', payload: { doi: '10.1000/182', valid: true } },
+  { topic: 'shipment-event-recorded', source: 'transport-logistics', type: 'container-loaded', payload: { container: 'MSCU6639870', port: 'ZACPT' } },
+  { topic: 'threat-classified', source: 'cybersecurity', type: 'ioc-detected', payload: { ioc: '192.0.2.1', severity: 'high' } },
+  { topic: 'key-rotation-event', source: 'forge', type: 'rotation-complete', payload: { keyId: 'k-abc123', algorithm: 'AES-256' } },
+  { topic: 'identity-linked', source: 'unify', type: 'federated-link', payload: { identityId: 'id-xyz', type: 'doi', value: '10.1038/nature12373' } },
+  { topic: 'manifest-verified', source: 'research-academic', type: 'reproducibility-pass', payload: { experimentId: 'exp-001', manifestHash: 'a1b2c3...' } },
+  { topic: 'sanctions-screened', source: 'transport-logistics', type: 'screening-clear', payload: { counterparty: 'Acme Logistics', clear: true } },
+  { topic: 'review-event-recorded', source: 'research-academic', type: 'review-submitted', payload: { manuscriptId: 'ms-001', recommendation: 'minor-revision' } },
+];
+let autoIndex = 0;
+document.getElementById('btn-auto').addEventListener('click', (e) => {
+  if (autoTimer) {
+    clearInterval(autoTimer); autoTimer = null;
+    e.target.textContent = 'Auto-demo';
+    e.target.classList.remove('btn');
+    e.target.classList.add('btn', 'btn-secondary');
+  } else {
+    e.target.textContent = 'Stop demo';
+    e.target.classList.remove('btn-secondary');
+    autoTimer = setInterval(() => {
+      const evt = AUTO_EVENTS[autoIndex % AUTO_EVENTS.length];
+      autoIndex++;
+      busPublish(evt.topic, { type: evt.type, sourceToolId: evt.source, payload: evt.payload });
+    }, 1500);
+    // Publish one immediately
+    const evt = AUTO_EVENTS[autoIndex % AUTO_EVENTS.length];
+    autoIndex++;
+    busPublish(evt.topic, { type: evt.type, sourceToolId: evt.source, payload: evt.payload });
+  }
+});
+
+// Initial render
+renderMesh();
+renderIdentities();
+updateStats();
+
+// Publish a welcome event after a short delay
+setTimeout(() => {
+  busPublish('identity-linked', {
+    type: 'system-welcome',
+    sourceToolId: 'unify',
+    payload: { message: 'Manya Live is ready. Click "Auto-demo" to see events flow.' },
+  });
+}, 500);
+</script>
+</body>
+</html>

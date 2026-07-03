@@ -1,0 +1,3 @@
+#!/bin/bash
+# Craft CLI entry point
+exec npx tsx src/lib/craft/cli/index.ts "$@"

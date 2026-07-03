@@ -1,0 +1,16 @@
+{
+  "name": "@manya/unify",
+  "version": "1.0.0",
+  "description": "Manya Unify — Connective tissue for the Manya ecosystem. Federates identities across tools (ORCID, DOI, ROR, IMO, container, AWB, HS code), routes events through declared sync channels, bridges vocabularies (HS↔industry, UN/LOCODE↔country, industry↔sector/domain), and dispatches capability-based calls to the tool that owns each capability. Makes 'Everything Connected. Everyone Unified.' true at runtime.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/types.d.ts",
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  },
+  "dependencies": {
+    "@manya/toolkit": "*"
+  },
+  "author": "Manya",
+  "license": "MIT"
+}

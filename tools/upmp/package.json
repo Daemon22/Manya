@@ -1,0 +1,19 @@
+{
+  "name": "@manya/upmp",
+  "version": "1.0.0",
+  "description": "Manya UPMP — Universal Progress Monitoring with Active Device Tracker. Sessions, stuck points, discoveries, intelligence engagement (Gardner's 9), and 15-layer progress monitoring wired into the Manya event bus.",
+  "type": "module",
+  "main": "manya/index.js",
+  "types": "manya/types.d.ts",
+  "scripts": {
+    "test": "node --test manya/test/index.test.js",
+    "start": "python upmp_adt.py",
+    "watch": "python upmp_adt.py watch"
+  },
+  "dependencies": {
+    "@manya/toolkit": "*",
+    "@manya/unify": "*"
+  },
+  "author": "Manya + UPMP Project",
+  "license": "MIT"
+}

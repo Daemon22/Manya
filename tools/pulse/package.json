@@ -1,0 +1,13 @@
+{
+  "name": "@manya/pulse",
+  "version": "1.0.0",
+  "description": "Manya Pulse — Industry presets engine that composes Lens, Shield, Stamp, Vault, Signal into industry-specific configurations for Healthcare, Finance, Legal, IoT, Government, Education, Retail, Energy, Telecom, and Gaming.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/types.d.ts",
+  "scripts": {
+    "test": "node --test test/index.test.js"
+  },
+  "author": "Manya",
+  "license": "MIT"
+}
