@@ -2,12 +2,23 @@
   "name": "@manya/lens",
   "version": "1.0.0",
   "description": "Data inspection, PII/PHI redaction, and sensitivity classification for the Manya ecosystem.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
   "type": "module",
   "main": "src/index.js",
-  "keywords": ["data-inspection", "redaction", "pii", "phi", "classification", "manya", "lens"],
+  "keywords": [
+    "data-inspection",
+    "redaction",
+    "pii",
+    "phi",
+    "classification",
+    "manya",
+    "lens"
+  ],
   "scripts": {
     "test": "node --test test/index.test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

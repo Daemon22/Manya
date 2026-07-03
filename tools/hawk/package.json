@@ -8,7 +8,16 @@
   "scripts": {
     "test": "node --test"
   },
-  "keywords": ["manya", "hawk", "device-detection", "fingerprint", "monitoring"],
+  "keywords": [
+    "manya",
+    "hawk",
+    "device-detection",
+    "fingerprint",
+    "monitoring"
+  ],
   "license": "MIT",
-  "author": "Manya"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "publishConfig": {
+    "access": "public"
+  }
 }

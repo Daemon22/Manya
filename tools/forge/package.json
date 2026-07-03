@@ -2,12 +2,22 @@
   "name": "@manya/forge",
   "version": "1.0.0",
   "description": "Key derivation, passphrase strength analysis, and cryptographic key management for the Manya ecosystem.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
   "type": "module",
   "main": "src/index.js",
-  "keywords": ["key-derivation", "passphrase", "pbkdf2", "crypto", "manya", "forge"],
+  "keywords": [
+    "key-derivation",
+    "passphrase",
+    "pbkdf2",
+    "crypto",
+    "manya",
+    "forge"
+  ],
   "scripts": {
     "test": "node --test test/index.test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

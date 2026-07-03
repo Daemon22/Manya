@@ -1,13 +1,16 @@
 {
   "name": "@manya/transport-logistics",
   "version": "1.0.0",
-  "description": "Manya Transport & Logistics — Waybill, container, IMO/flight number validation, shipment tracking with geofencing, customs declarations (HS codes, country of origin), dangerous goods classification, and sanctions screening for Aviation, Maritime, Road, Rail, and Multimodal freight.",
+  "description": "Manya Transport & Logistics \u2014 Waybill, container, IMO/flight number validation, shipment tracking with geofencing, customs declarations (HS codes, country of origin), dangerous goods classification, and sanctions screening for Aviation, Maritime, Road, Rail, and Multimodal freight.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/types.d.ts",
   "scripts": {
     "test": "node --test test/index.test.js"
   },
-  "author": "Manya",
-  "license": "MIT"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

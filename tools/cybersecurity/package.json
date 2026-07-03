@@ -1,13 +1,16 @@
 {
   "name": "@manya/cybersecurity",
   "version": "1.0.0",
-  "description": "Manya Cybersecurity — Threat intelligence, vulnerability assessment, compliance checking, digital forensics, and incident response for the Manya ecosystem.",
+  "description": "Manya Cybersecurity \u2014 Threat intelligence, vulnerability assessment, compliance checking, digital forensics, and incident response for the Manya ecosystem.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/types.d.ts",
   "scripts": {
     "test": "node --test test/index.test.js"
   },
-  "author": "Manya",
-  "license": "MIT"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

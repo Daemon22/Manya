@@ -1,7 +1,7 @@
 {
   "name": "@manya/unify",
   "version": "1.0.0",
-  "description": "Manya Unify — Connective tissue for the Manya ecosystem. Federates identities across tools (ORCID, DOI, ROR, IMO, container, AWB, HS code), routes events through declared sync channels, bridges vocabularies (HS↔industry, UN/LOCODE↔country, industry↔sector/domain), and dispatches capability-based calls to the tool that owns each capability. Makes 'Everything Connected. Everyone Unified.' true at runtime.",
+  "description": "Manya Unify \u2014 Connective tissue for the Manya ecosystem. Federates identities across tools (ORCID, DOI, ROR, IMO, container, AWB, HS code), routes events through declared sync channels, bridges vocabularies (HS\u2194industry, UN/LOCODE\u2194country, industry\u2194sector/domain), and dispatches capability-based calls to the tool that owns each capability. Makes 'Everything Connected. Everyone Unified.' true at runtime.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/types.d.ts",
@@ -11,6 +11,9 @@
   "dependencies": {
     "@manya/toolkit": "*"
   },
-  "author": "Manya",
-  "license": "MIT"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

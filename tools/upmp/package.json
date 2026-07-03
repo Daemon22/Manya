@@ -1,7 +1,7 @@
 {
   "name": "@manya/upmp",
   "version": "1.0.0",
-  "description": "Manya UPMP — Universal Progress Monitoring with Active Device Tracker. Sessions, stuck points, discoveries, intelligence engagement (Gardner's 9), and 15-layer progress monitoring wired into the Manya event bus.",
+  "description": "Manya UPMP \u2014 Universal Progress Monitoring with Active Device Tracker. Sessions, stuck points, discoveries, intelligence engagement (Gardner's 9), and 15-layer progress monitoring wired into the Manya event bus.",
   "type": "module",
   "main": "manya/index.js",
   "types": "manya/types.d.ts",
@@ -14,6 +14,9 @@
     "@manya/toolkit": "*",
     "@manya/unify": "*"
   },
-  "author": "Manya + UPMP Project",
-  "license": "MIT"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation (incorporating UPMP Project)",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

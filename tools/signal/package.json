@@ -2,12 +2,22 @@
   "name": "@manya/signal",
   "version": "1.0.0",
   "description": "Secure encrypted message envelopes with cryptographic signatures for the Manya ecosystem.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
   "type": "module",
   "main": "src/index.js",
-  "keywords": ["messaging", "encryption", "signatures", "envelope", "manya", "signal"],
+  "keywords": [
+    "messaging",
+    "encryption",
+    "signatures",
+    "envelope",
+    "manya",
+    "signal"
+  ],
   "scripts": {
     "test": "node --test test/index.test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

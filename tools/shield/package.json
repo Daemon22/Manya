@@ -2,12 +2,23 @@
   "name": "@manya/shield",
   "version": "1.0.0",
   "description": "Role-based and attribute-based access control engine with audit logging for the Manya ecosystem.",
-  "author": "Manya",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
   "type": "module",
   "main": "src/index.js",
-  "keywords": ["rbac", "abac", "access-control", "authorization", "audit", "manya", "shield"],
+  "keywords": [
+    "rbac",
+    "abac",
+    "access-control",
+    "authorization",
+    "audit",
+    "manya",
+    "shield"
+  ],
   "scripts": {
     "test": "node --test test/index.test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

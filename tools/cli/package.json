@@ -1,7 +1,7 @@
 {
   "name": "@manya/cli",
   "version": "1.0.0",
-  "description": "Manya CLI — command-line interface to the Manya ecosystem. Bootstraps a unify mesh, registers tools, federates identities, routes events, translates vocabularies, and opens the Manya Weave visualization.",
+  "description": "Manya CLI \u2014 command-line interface to the Manya ecosystem. Bootstraps a unify mesh, registers tools, federates identities, routes events, translates vocabularies, and opens the Manya Weave visualization.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
@@ -15,6 +15,9 @@
     "@manya/toolkit": "*",
     "@manya/unify": "*"
   },
-  "author": "Manya",
-  "license": "MIT"
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }
