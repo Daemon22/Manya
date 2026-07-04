@@ -1,0 +1,47 @@
+{
+  "name": "@manya/customs-shield",
+  "version": "1.0.0",
+  "description": "Compliance and supply-chain intelligence — customs validation, HS code verification, sanctions screening, import/export compliance, cargo risk assessment, and shipment risk scoring for the MANYA Intelligence OS.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js customs-shield",
+    "test": "jest",
+    "bench": "node benchmarks/shield.bench.js",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js customs-shield",
+    "build:bundle": "node ../../scripts/build-package.js customs-shield --no-types && node ../../scripts/build-types.js customs-shield"
+  },
+  "keywords": [
+    "manya",
+    "customs",
+    "compliance",
+    "hs-code",
+    "sanctions",
+    "supply-chain",
+    "trade",
+    "risk",
+    "import-export"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

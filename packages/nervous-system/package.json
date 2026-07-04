@@ -1,0 +1,46 @@
+{
+  "name": "@manya/nervous-system",
+  "version": "1.0.0",
+  "description": "Universal event infrastructure — publish/subscribe event fabric, filtering, priority routing, ring-buffer recording, bounded/unbounded queues, performance metrics, and pluggable event sources for the MANYA Intelligence OS.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js nervous-system",
+    "test": "jest",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js nervous-system",
+    "build:bundle": "node ../../scripts/build-package.js nervous-system --no-types && node ../../scripts/build-types.js nervous-system"
+  },
+  "keywords": [
+    "manya",
+    "events",
+    "event-fabric",
+    "pubsub",
+    "router",
+    "realtime",
+    "observability",
+    "sources",
+    "nervous-system"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

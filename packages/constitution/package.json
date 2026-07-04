@@ -1,0 +1,50 @@
+{
+  "name": "@manya/constitution",
+  "version": "1.0.0",
+  "description": "Governance substrate for the MANYA Intelligence OS — ethical rules, operational policies, permission models, decision hierarchies, emergency procedures, safety rules, conflict resolution, runtime enforcement, and versioned governance documents.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js constitution",
+    "test": "jest",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js constitution",
+    "build:bundle": "node ../../scripts/build-package.js constitution --no-types && node ../../scripts/build-types.js constitution"
+  },
+  "keywords": [
+    "manya",
+    "constitution",
+    "governance",
+    "ethics",
+    "policy",
+    "permissions",
+    "rbac",
+    "hierarchy",
+    "emergency",
+    "safety",
+    "conflict-resolution",
+    "enforcement",
+    "rules-engine"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

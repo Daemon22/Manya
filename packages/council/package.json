@@ -1,0 +1,48 @@
+{
+  "name": "@manya/council",
+  "version": "1.0.0",
+  "description": "Multi-agent consensus engine for the MANYA Intelligence OS — specialist routing, independent analyses, weighted confidence scoring, conflict detection, structured debate, minority opinions, consensus building, review reports, and final decision synthesis.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js council",
+    "test": "jest",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js council",
+    "build:bundle": "node ../../scripts/build-package.js council --no-types && node ../../scripts/build-types.js council"
+  },
+  "keywords": [
+    "manya",
+    "council",
+    "multi-agent",
+    "consensus",
+    "debate",
+    "specialist",
+    "routing",
+    "conflict-detection",
+    "minority-opinion",
+    "decision-synthesis",
+    "agent-council"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

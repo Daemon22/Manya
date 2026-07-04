@@ -1,0 +1,47 @@
+{
+  "name": "@manya/contracts",
+  "version": "1.0.0",
+  "description": "Universal contract and schema validation for the MANYA Intelligence OS — interface schemas, manifests, semver compatibility, API contracts, schema sync, boundary enforcement, and validation reports.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js contracts",
+    "test": "jest",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js contracts",
+    "build:bundle": "node ../../scripts/build-package.js contracts --no-types && node ../../scripts/build-types.js contracts"
+  },
+  "keywords": [
+    "manya",
+    "contracts",
+    "schema",
+    "validation",
+    "manifest",
+    "semver",
+    "compatibility",
+    "api",
+    "boundaries",
+    "interface"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

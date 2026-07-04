@@ -1,0 +1,30 @@
+{
+  "name": "@manya/reflection",
+  "version": "0.1.0",
+  "description": "Evaluates outputs, critiques plans, and turns failures into lessons that force a revised plan — composed from memory and cortex.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "reflection",
+    "critique",
+    "self-evaluation"
+  ],
+  "dependencies": {
+    "@manya/memory": "^0.1.0",
+    "@manya/cortex": "^0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

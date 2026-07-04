@@ -1,0 +1,31 @@
+{
+  "name": "@manya/perception",
+  "version": "0.1.0",
+  "description": "Ingests text, structured data, and environment signals into working memory — redacting sensitive content before it lands — composed from memory, lens, and hawk.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "perception",
+    "ingestion",
+    "working-memory"
+  ],
+  "dependencies": {
+    "@manya/memory": "^0.1.0",
+    "@manya/lens": "^1.0.0",
+    "@manya/hawk": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

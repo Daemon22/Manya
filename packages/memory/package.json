@@ -1,0 +1,33 @@
+{
+  "name": "@manya/memory",
+  "version": "0.1.0",
+  "description": "A true memory engine — working, episodic, semantic, procedural, and archival memory, with selective sharing — composed from vault, stamp, and unify.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "memory",
+    "episodic",
+    "semantic",
+    "procedural",
+    "working-memory"
+  ],
+  "dependencies": {
+    "@manya/vault": "^1.0.0",
+    "@manya/stamp": "^1.0.0",
+    "@manya/unify": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

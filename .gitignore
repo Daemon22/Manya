@@ -12,6 +12,20 @@ node_modules/
 .next/
 out/
 dist/
+# The following 6 packages are compiled TypeScript with no build step required
+# to consume them (no network needed to build after a fresh clone) — ship dist/.
+!packages/nervous-system/dist/
+!packages/nervous-system/dist/**
+!packages/constitution/dist/
+!packages/constitution/dist/**
+!packages/customs-shield/dist/
+!packages/customs-shield/dist/**
+!packages/contracts/dist/
+!packages/contracts/dist/**
+!packages/council/dist/
+!packages/council/dist/**
+!packages/weave/dist/
+!packages/weave/dist/**
 coverage/
 *.sqlite3
 *.db

@@ -1,0 +1,49 @@
+{
+  "name": "@manya/weave",
+  "version": "1.0.0",
+  "description": "Interactive visualization substrate for the MANYA Intelligence OS — dependency graphs, knowledge graphs, event flows, layouts, filtering, search, export, live topology tracking, and pan/zoom exploration.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js weave",
+    "test": "jest",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js weave",
+    "build:bundle": "node ../../scripts/build-package.js weave --no-types && node ../../scripts/build-types.js weave"
+  },
+  "keywords": [
+    "manya",
+    "weave",
+    "graph",
+    "visualization",
+    "layout",
+    "force-directed",
+    "topology",
+    "dependency-graph",
+    "knowledge-graph",
+    "svg",
+    "graphviz",
+    "mermaid"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}
