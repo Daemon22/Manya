@@ -7,7 +7,7 @@ Manya means *unite* or *connect*. This monorepo lives up to that name: it provid
 
 ## Ecosystem
 
-Manya is one branch of the HAEL Foundation ecosystem — segregated repositories, each independent and independently maintained, that reference and reinforce each other rather than share a single codebase:
+Manya is one branch of the HAEL Foundation ecosystem — segregated repositories, that reference and reinforce each other rather than share a single codebase:
 
 - **[Manya](https://github.com/Daemon22/Manya)** (this repo) — the public face and connective hub: tools, packages, and Lycon Browser.
 - **[MANYA Intelligence OS](https://github.com/manya-hael/intelligence-os)** — a sibling platform sharing the Manya name, with its own standalone identity/memory/reasoning packages (not merged here — see [NOTICE](NOTICE) for the 6 packages that were).
