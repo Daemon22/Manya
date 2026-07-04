@@ -1,6 +1,6 @@
 {
   "name": "@manya/economy",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Tracks and enforces a shared resource budget with a tamper-evident usage ledger — composed from vault, ledger, and memory.",
   "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",
@@ -22,8 +22,8 @@
   ],
   "dependencies": {
     "@manya/vault": "^1.0.0",
-    "@manya/ledger": "^0.1.0",
-    "@manya/memory": "^0.1.0"
+    "@manya/ledger": "^1.0.0",
+    "@manya/memory": "^1.0.0"
   },
   "publishConfig": {
     "access": "public"

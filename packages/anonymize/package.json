@@ -1,6 +1,6 @@
 {
   "name": "@manya/anonymize",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Dataset redaction and FAIR-compliance certification for publishing research data — composed from lens and research-academic.",
   "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",

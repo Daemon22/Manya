@@ -5,6 +5,18 @@ Manya means *unite* or *connect*. This monorepo lives up to that name: it provid
 
 > Everything Connected. Everyone Unified. Browse wild. Browse free.
 
+## Ecosystem
+
+Manya is one branch of the HAEL Foundation ecosystem — segregated repositories, each independent and independently maintained, that reference and reinforce each other rather than share a single codebase:
+
+- **[Manya](https://github.com/Daemon22/Manya)** (this repo) — the public face and connective hub: tools, packages, and Lycon Browser.
+- **[MANYA Intelligence OS](https://github.com/manya-hael/intelligence-os)** — a sibling platform sharing the Manya name, with its own standalone identity/memory/reasoning packages (not merged here — see [NOTICE](NOTICE) for the 6 packages that were).
+- **[Gqobonco](https://github.com/Daemon22/Gqobonco)** — the Supreme Prince of Research, Intelligence & Information: research initiatives, the Xhosa NLP Database, and ancestral-knowledge preservation.
+- **[OMNIMIND](https://github.com/Daemon22/OMNIMIND)** — the Supreme Intelligence Core.
+- **[Orren](https://github.com/Daemon22/Orren)** — the Universal Mediator Language.
+
+Each repo stays independently buildable and testable; none depend on another at the code level today.
+
 ## Repository Structure
 
 | Directory | Description |
@@ -39,14 +51,35 @@ Manya means *unite* or *connect*. This monorepo lives up to that name: it provid
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@manya/toolkit` | Shared manifests, capability boundaries, and synchronization contracts for all 16 tools |
-| `@manya/helixflow-sdk` | HelixFlow client and workflow helpers |
-| `@manya/craft-engine` | 7-fold compression, encryption, archiving, and CLI |
-| `@manya/unify` | Connective tissue: mesh, federation, event bus, vocabularies |
-| `@manya/cli` | Command-line interface, HTTP server, and interactive REPL |
-| `@manya/lycon` | Lycon browser Manya integration layer (adapter, event factories, manifest) |
+All packages are MIT licensed unless noted otherwise. See [NOTICE](NOTICE) for details on the Apache-2.0 packages.
+
+| Package | Description | License |
+|---------|-------------|---------|
+| `@manya/toolkit` | Shared manifests, capability boundaries, and synchronization contracts for all 16 tools | MIT |
+| `@manya/helixflow-sdk` | HelixFlow client and workflow helpers | MIT |
+| `@manya/craft-engine` | 7-fold compression, encryption, archiving, and CLI | MIT |
+| `@manya/unify` | Connective tissue: mesh, federation, event bus, vocabularies | MIT |
+| `@manya/cli` | Command-line interface, HTTP server, and interactive REPL | MIT |
+| `@manya/lycon` | Lycon browser Manya integration layer (adapter, event factories, manifest) | MIT |
+| `@manya/keyring` | Sovereign identity wallet — composed from vault, forge, signal, shield | MIT |
+| `@manya/attest` | Device/session attestation — composed from hawk, signal, shield | MIT |
+| `@manya/ledger` | Tamper-evident audit ledger — composed from stamp, unify | MIT |
+| `@manya/anonymize` | Redaction + reproducibility pipeline — composed from lens, research-academic | MIT |
+| `@manya/memory` | Working/episodic/semantic/procedural/archival memory engine — composed from vault, stamp, unify | MIT |
+| `@manya/cortex` | Capability-based task routing and decision auditing — composed from memory, unify, shield, stamp | MIT |
+| `@manya/perception` | Redacted ingestion of text/structured/environment signals into working memory — composed from memory, lens, hawk | MIT |
+| `@manya/telepathy` | Signed inter-agent messaging — composed from keyring, memory, unify | MIT |
+| `@manya/reflection` | Plan critique and failure-driven replanning — composed from memory, cortex | MIT |
+| `@manya/economy` | Budget tracking and enforcement with an audit ledger — composed from vault, ledger, memory | MIT |
+| `@manya/guardian` | Standing-rules storage and enforcement with an audit trail — composed from vault, shield, ledger | MIT |
+| `@manya/constitution` | Rules, policies, permissions, hierarchy, and emergency-protocol engine | Apache-2.0 |
+| `@manya/council` | Multi-specialist analysis, conflict detection, and consensus synthesis | Apache-2.0 |
+| `@manya/contracts` | Schema/manifest validation, API contract checking, compatibility diffing | Apache-2.0 |
+| `@manya/customs-shield` | Sanctions screening, HS code validation, supply-chain risk scoring | Apache-2.0 |
+| `@manya/nervous-system` | Cross-source event fabric (filesystem, network, OS, devices) with routing and filtering | Apache-2.0 |
+| `@manya/weave` | Graph data structure, layout algorithms, search, and export (DOT/JSON) | Apache-2.0 |
+
+The 6 Apache-2.0 packages were merged in from the [MANYA Intelligence OS](https://github.com/manya-hael/intelligence-os) project, a sibling platform under the same ecosystem. That project also ships its own standalone `keyring`/`attest`/`ledger`/`anonymize`/`memory`/`cortex` — intentionally not merged here, since this repo's versions above are the canonical ones for this workspace.
 
 ## CLI (manya)
 

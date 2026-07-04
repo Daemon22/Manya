@@ -1,6 +1,6 @@
 {
   "name": "@manya/memory",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A true memory engine — working, episodic, semantic, procedural, and archival memory, with selective sharing — composed from vault, stamp, and unify.",
   "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",

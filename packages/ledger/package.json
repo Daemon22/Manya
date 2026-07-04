@@ -1,6 +1,6 @@
 {
   "name": "@manya/ledger",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Federated audit ledger: every event that crosses the bus gets tamper-evidently chained — composed from stamp and unify.",
   "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",

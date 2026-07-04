@@ -6,7 +6,7 @@
   "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "node ../../scripts/build-package.js contracts",
-    "test": "jest",
+    "test": "node --test test/smoke.test.js",
     "clean": "rm -rf dist build node_modules",
     "build:types": "node ../../scripts/build-types.js contracts",
     "build:bundle": "node ../../scripts/build-package.js contracts --no-types && node ../../scripts/build-types.js contracts"
