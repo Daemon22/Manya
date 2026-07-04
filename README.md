@@ -1,5 +1,5 @@
-# <img src="https://raw.githubusercontent.com/Daemon22/Manya/main/site/manya/public/opengraph.jpg" width="100" align="right" />
-# 🤝 Manya
+# <img src="https://raw.githubusercontent.com/Daemon22/Manya/main/assets/logo.png" width="40" /> Manya
+# Manya
 
 Manya means *unite* or *connect*. This monorepo lives up to that name: it provides data encoding, encryption, compression, access control, secure messaging, compliance tooling, sector-specific validation, transport-logistics identifier validation, research-academic citation and reproducibility tooling, cybersecurity threat intelligence, **Manya Unify** (the connective tissue), the **Manya CLI** for shell access, **Manya Serve** for HTTP/REST/SSE access, **Manya Repl** for interactive exploration, and now **Lycon Browser** — a privacy-first web browser wired into the ecosystem.
 
