@@ -1,6 +1,6 @@
 {
   "name": "@manya/attest",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Device-bound authentication: challenge a device, verify it's still the same device, gate access accordingly — composed from hawk, signal, and shield.",
   "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
   "license": "MIT",

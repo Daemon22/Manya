@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test-tools-and-packages:
+    name: Test tools/ and packages/ (node --test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install workspace dependencies
+        run: npm install
+
+      - name: Run tools/ test suite
+        run: npm run tools:test
+
+      - name: Run packages/ test suite (core + composed + merged)
+        run: npm run packages:test
+
+  lycon-browser-behavioral-suite:
+    name: Lycon Browser behavioral tests (Electron + Xvfb)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Lycon Browser dependencies
+        working-directory: tools/lycon-browser
+        run: npm install
+
+      - name: Install Xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Run behavioral test suite under Xvfb
+        working-directory: tools/lycon-browser
+        run: xvfb-run --auto-servernum ./tests/run-all-tests.sh
