@@ -91,8 +91,8 @@ Higher-level packages in `packages/` combine core tools into useful compositions
 - `@manya/cortex` = memory + unify + shield + stamp (task routing + decision auditing)
 
 ### The 7×7 Integration Tests
-Manya has a cross-tool integration test suite: 27 test files × 7 tools each = 190 tests.
-These verify that tools work correctly when composed through Unify. Point to `npm run test:7x7`
+Manya has a cross-tool integration test suite: 190 tests that verify tools work correctly
+when composed through Unify. Point to `npm run test:7x7`
 for integration tests and `npm run tools:test` for individual tool tests.
 
 ### Manifests and Capability Boundaries
