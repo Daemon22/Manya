@@ -1,15 +1,17 @@
 {
   "name": "@manya/ledger",
   "version": "1.0.0",
-  "description": "Federated audit ledger: every event that crosses the bus gets tamper-evidently chained — composed from stamp and unify.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "description": "Federated audit ledger: every event that crosses the bus gets tamper-evidently chained \u2014 composed from stamp and unify.",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -26,6 +28,20 @@
     "@manya/unify": "^1.0.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/ledger"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

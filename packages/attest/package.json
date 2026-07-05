@@ -1,15 +1,17 @@
 {
   "name": "@manya/attest",
   "version": "1.0.0",
-  "description": "Device-bound authentication: challenge a device, verify it's still the same device, gate access accordingly — composed from hawk, signal, and shield.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "description": "Device-bound authentication: challenge a device, verify it's still the same device, gate access accordingly \u2014 composed from hawk, signal, and shield.",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -28,5 +30,19 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/attest"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

@@ -1,15 +1,17 @@
 {
   "name": "@manya/anonymize",
   "version": "1.0.0",
-  "description": "Dataset redaction and FAIR-compliance certification for publishing research data — composed from lens and research-academic.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "description": "Dataset redaction and FAIR-compliance certification for publishing research data \u2014 composed from lens and research-academic.",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -27,6 +29,20 @@
     "@manya/research-academic": "^1.0.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/anonymize"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

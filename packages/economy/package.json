@@ -1,15 +1,17 @@
 {
   "name": "@manya/economy",
   "version": "1.0.0",
-  "description": "Tracks and enforces a shared resource budget with a tamper-evident usage ledger — composed from vault, ledger, and memory.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "description": "Tracks and enforces a shared resource budget with a tamper-evident usage ledger \u2014 composed from vault, ledger, and memory.",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -26,6 +28,20 @@
     "@manya/memory": "^1.0.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/economy"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

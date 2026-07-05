@@ -2,7 +2,7 @@
   "name": "@manya/craft-engine",
   "version": "0.2.0",
   "description": "Craft engine: full application (CLI + lib/craft module + Next.js app).",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -11,7 +11,14 @@
     "craft": "./bin/craft"
   },
   "exports": {
-    "./lib/craft": "./src/lib/craft/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./src/lib/index.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./lib/craft": "./src/lib/craft/index.ts",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "test": "vitest run",
@@ -102,5 +109,16 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/craft-engine"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }

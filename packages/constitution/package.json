@@ -1,9 +1,9 @@
 {
   "name": "@manya/constitution",
   "version": "1.0.0",
-  "description": "Governance substrate for the MANYA Intelligence OS — ethical rules, operational policies, permission models, decision hierarchies, emergency procedures, safety rules, conflict resolution, runtime enforcement, and versioned governance documents.",
-  "main": "dist/cjs/index.js",
-  "types": "dist/types/index.d.ts",
+  "description": "Governance substrate for the MANYA Intelligence OS \u2014 ethical rules, operational policies, permission models, decision hierarchies, emergency procedures, safety rules, conflict resolution, runtime enforcement, and versioned governance documents.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "node ../../scripts/build-package.js constitution",
     "test": "node --test test/smoke.test.js",
@@ -26,25 +26,33 @@
     "enforcement",
     "rules-engine"
   ],
-  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {},
-  "module": "dist/esm/index.mjs",
+  "module": "dist/index.mjs",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.mjs",
-      "default": "./dist/cjs/index.js"
+      "types": "dist/index.d.ts",
+      "import": "dist/index.mjs",
+      "require": "dist/index.js",
+      "default": "dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "dist",
+    "src",
     "README.md",
-    "CHANGELOG.md",
     "LICENSE"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/constitution"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

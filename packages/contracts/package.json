@@ -1,9 +1,9 @@
 {
   "name": "@manya/contracts",
   "version": "1.0.0",
-  "description": "Universal contract and schema validation for the MANYA Intelligence OS — interface schemas, manifests, semver compatibility, API contracts, schema sync, boundary enforcement, and validation reports.",
-  "main": "dist/cjs/index.js",
-  "types": "dist/types/index.d.ts",
+  "description": "Universal contract and schema validation for the MANYA Intelligence OS \u2014 interface schemas, manifests, semver compatibility, API contracts, schema sync, boundary enforcement, and validation reports.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "node ../../scripts/build-package.js contracts",
     "test": "node --test test/smoke.test.js",
@@ -23,25 +23,33 @@
     "boundaries",
     "interface"
   ],
-  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {},
-  "module": "dist/esm/index.mjs",
+  "module": "dist/index.mjs",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.mjs",
-      "default": "./dist/cjs/index.js"
+      "types": "dist/index.d.ts",
+      "import": "dist/index.mjs",
+      "require": "dist/index.js",
+      "default": "dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "dist",
+    "src",
     "README.md",
-    "CHANGELOG.md",
     "LICENSE"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/contracts"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

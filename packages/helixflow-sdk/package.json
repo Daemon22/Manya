@@ -2,17 +2,19 @@
   "name": "@manya/helixflow-sdk",
   "version": "0.2.0",
   "description": "Client and workflow helpers for HelixFlow.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -22,5 +24,19 @@
     "helixflow",
     "workflow",
     "dag"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/helixflow-sdk"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

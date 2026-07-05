@@ -2,17 +2,19 @@
   "name": "@manya/toolkit",
   "version": "0.2.0",
   "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
-  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
   "types": "./src/index.d.ts",
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test"
@@ -22,5 +24,19 @@
     "toolkit",
     "manifest",
     "orchestration"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya.git",
+    "directory": "packages/toolkit"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "src/index.js",
+      "default": "src/index.js"
+    },
+    "./package.json": "./package.json"
+  }
 }
