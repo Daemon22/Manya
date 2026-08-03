@@ -5,7 +5,7 @@
 # Idempotent: re-running on already-fixed files is a no-op.
 set -euo pipefail
 
-DIST_DIR="/home/z/my-project/manya/manya/packages/craft-engine/dist/esm/lib"
+DIST_DIR="/home/ubuntu/Manya/tools/craft/dist/esm/lib"
 
 if [ ! -d "$DIST_DIR" ]; then
   echo "fix-esm-extensions: dist directory not found, skipping"

@@ -22,15 +22,15 @@ import { Readable } from 'node:stream';
 
 const require = createRequire(import.meta.url);
 
-// -- Craft Engine imports (compiled ESM output) --
-import { compress7, decompress7 } from '../packages/craft-engine/dist/esm/lib/compress7.js';
-import { compress, decompress, encrypt, decrypt, encryptAsync, decryptAsync, deriveKey, deriveKeyAsync } from '../packages/craft-engine/dist/esm/lib/codec.js';
-import { checksum, verify } from '../packages/craft-engine/dist/esm/lib/integrity.js';
-import { nano } from '../packages/craft-engine/dist/esm/lib/nano.js';
-import { macro, peekMetadata } from '../packages/craft-engine/dist/esm/lib/macro.js';
-import { archive, extract, peekArchiveMetadata } from '../packages/craft-engine/dist/esm/lib/archive.js';
-import { nanoStream, macroStream } from '../packages/craft-engine/dist/esm/lib/stream.js';
-import { CompressionAnalytics } from '../packages/craft-engine/dist/esm/lib/analytics.js';
+// -- Craft imports (compiled ESM output) --
+import { compress7, decompress7 } from '../tools/craft/dist/esm/lib/compress7.js';
+import { compress, decompress, encrypt, decrypt, encryptAsync, decryptAsync, deriveKey, deriveKeyAsync } from '../tools/craft/dist/esm/lib/codec.js';
+import { checksum, verify } from '../tools/craft/dist/esm/lib/integrity.js';
+import { nano } from '../tools/craft/dist/esm/lib/nano.js';
+import { macro, peekMetadata } from '../tools/craft/dist/esm/lib/macro.js';
+import { archive, extract, peekArchiveMetadata } from '../tools/craft/dist/esm/lib/archive.js';
+import { nanoStream, macroStream } from '../tools/craft/dist/esm/lib/stream.js';
+import { CompressionAnalytics } from '../tools/craft/dist/esm/lib/analytics.js';
 
 // -- Toolkit imports --
 import {
@@ -41,7 +41,7 @@ import {
   usingaManifest,
   helixFlowManifest,
   forgeManifest,
-  craftEngineManifest,
+  craftManifest,
   stampManifest,
   vaultManifest,
   lensManifest,
@@ -496,7 +496,7 @@ test('D5c: createToolManifest - result is frozen', () => {
 });
 
 test('D5d: assertDistinctCapabilities - all manifests are distinct', () => {
-  const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest]);
+  const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, forgeManifest, craftManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest]);
   assert.equal(result.distinct, true);
   assert.deepEqual(result.overlaps, []);
 });
@@ -516,7 +516,7 @@ test('D5f: capabilityOwners - maps all capabilities to tool IDs', () => {
   assert.equal(capabilityOwners.keyDerivation, 'forge');
   assert.equal(capabilityOwners.passphraseStrength, 'forge');
   assert.equal(capabilityOwners.multiAlgorithmHash, 'forge');
-  assert.equal(capabilityOwners.compressionAnalytics, 'craft-engine');
+  assert.equal(capabilityOwners.compressionAnalytics, 'craft');
   assert.equal(capabilityOwners.timestampProof, 'stamp');
   assert.equal(capabilityOwners.provenanceChain, 'stamp');
   assert.equal(capabilityOwners.auditTrail, 'stamp');
@@ -535,7 +535,7 @@ test('D5f: capabilityOwners - maps all capabilities to tool IDs', () => {
 });
 
 test('D5g: manifests - own and handOff are consistent across all tools', () => {
-  const allManifests = [usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest];
+  const allManifests = [usingaManifest, helixFlowManifest, forgeManifest, craftManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest];
   const allOwns = new Set();
   for (const m of allManifests) {
     for (const cap of m.owns) allOwns.add(cap);
@@ -1466,7 +1466,7 @@ test('D18b: pulseManifest - has correct id and purpose', () => {
 
 test('D18c: assertDistinctCapabilities - all 17 manifests are distinct (including pulse, primary-sector, cybersecurity, transport-logistics, research-academic, unify, lycon-browser, upmp)', () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest,
+    usingaManifest, helixFlowManifest, forgeManifest, craftManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest,
     pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,
@@ -1497,7 +1497,7 @@ test('D18f: pulseManifest - handsOff does not overlap with owns', () => {
 
 test('D18g: manifests - all manifests have consistent foundation name', () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest,
+    usingaManifest, helixFlowManifest, forgeManifest, craftManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest,
     pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,

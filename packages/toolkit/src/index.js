@@ -24,7 +24,7 @@ export const capabilityOwners = {
   passphraseStrength: "forge",
   keyRotation: "forge",
   multiAlgorithmHash: "forge",
-  compressionAnalytics: "craft-engine",
+  compressionAnalytics: "craft",
   timestampProof: "stamp",
   provenanceChain: "stamp",
   auditTrail: "stamp",
@@ -185,12 +185,12 @@ export const forgeManifest = createToolManifest({
 });
 
 /**
- * Pre-built manifest for Craft Engine.
+ * Pre-built manifest for Craft.
  * Owns compression, encryption, integrity, and compression analytics.
  */
-export const craftEngineManifest = createToolManifest({
-  id: "craft-engine",
-  name: "Craft Engine",
+export const craftManifest = createToolManifest({
+  id: "craft",
+  name: "Craft",
   purpose: "7-Fold adaptive compression, AES-256-GCM encryption, integrity verification, multi-file archiving, and compression analytics.",
   owns: ["compressionAnalytics"],
   handsOff: ["keyDerivation", "passphraseStrength", "apiKeyVault"],

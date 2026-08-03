@@ -23,7 +23,8 @@
     "tools/unify",
     "tools/cli",
     "tools/lycon-browser",
-    "tools/upmp"
+    "tools/upmp",
+    "tools/craft"
   ],
   "scripts": {
     "site:dev": "npm --workspace site/manya run dev",
@@ -45,7 +46,8 @@
     "cli:test": "npm --workspace @manya/cli test",
     "lycon:test": "npm --workspace @manya/lycon test",
     "upmp:test": "npm --workspace @manya/upmp test",
-    "tools:test": "npm run hawk:test && npm run forge:test && npm run stamp:test && npm run vault:test && npm run lens:test && npm run shield:test && npm run signal:test && npm run pulse:test && npm run primary-sector:test && npm run cybersecurity:test && npm run transport-logistics:test && npm run research-academic:test && npm run unify:test && npm run cli:test && npm run lycon:test && npm run upmp:test",
+    "craft:test": "npm --workspace @manya/craft test",
+    "tools:test": "npm run hawk:test && npm run forge:test && npm run stamp:test && npm run vault:test && npm run lens:test && npm run shield:test && npm run signal:test && npm run pulse:test && npm run primary-sector:test && npm run cybersecurity:test && npm run transport-logistics:test && npm run research-academic:test && npm run unify:test && npm run cli:test && npm run lycon:test && npm run upmp:test && npm run craft:test",
     "manya": "node tools/cli/src/index.js",
     "manya:browse": "node tools/cli/src/index.js browse",
     "test:7x7": "node --test tests/performance-7x7.test.js",
@@ -67,7 +69,7 @@
     "nervous-system:test": "npm --workspace @manya/nervous-system test",
     "weave:test": "npm --workspace @manya/weave test",
     "packages:test": "npm run packages:test:core && npm run packages:test:composed && npm run packages:test:merged",
-    "packages:test:core": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test && npm --workspace @manya/craft-engine test",
+    "packages:test:core": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test",
     "packages:test:composed": "npm run keyring:test && npm run attest:test && npm run ledger:test && npm run anonymize:test && npm run memory:test && npm run cortex:test && npm run perception:test && npm run telepathy:test && npm run reflection:test && npm run economy:test && npm run guardian:test",
     "packages:test:merged": "npm run constitution:test && npm run contracts:test && npm run council:test && npm run customs-shield:test && npm run nervous-system:test && npm run weave:test",
     "test:all": "npm run packages:test && npm run tools:test && npm run test:7x7"
