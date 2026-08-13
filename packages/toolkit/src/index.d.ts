@@ -69,9 +69,6 @@ export declare const helixFlowManifest: ToolManifest;
 /** Pre-built manifest for Forge. */
 export declare const forgeManifest: ToolManifest;
 
-/** Pre-built manifest for Craft Engine. */
-export declare const craftEngineManifest: ToolManifest;
-
 /** Pre-built manifest for Stamp. */
 export declare const stampManifest: ToolManifest;
 

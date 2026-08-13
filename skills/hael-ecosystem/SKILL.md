@@ -91,7 +91,7 @@ Higher-level packages in `packages/` combine core tools into useful compositions
 - `@manya/cortex` = memory + unify + shield + stamp (task routing + decision auditing)
 
 ### The 7×7 Integration Tests
-Manya has a cross-tool integration test suite: 190 tests that verify tools work correctly
+Manya has a cross-tool integration test suite: 162 tests that verify tools work correctly
 when composed through Unify. Point to `npm run test:7x7`
 for integration tests and `npm run tools:test` for individual tool tests.
 
@@ -111,10 +111,10 @@ identity types, and vocabularies. This is how the mesh knows where to route call
 ### Running the Full Test Suite
 ```bash
 npm install
-npm run test:all        # Everything (987 tests)
+npm run test:all        # Everything (924 tests)
 npm run tools:test      # All 16 tools + Lycon
 npm run packages:test   # All packages
-npm run test:7x7        # 190 cross-tool integration tests
+npm run test:7x7        # 162 cross-tool integration tests
 ```
 
 ---
@@ -151,7 +151,7 @@ Manya is the public-facing monorepo: 16 tools, 20+ packages, CLI, HTTP server, a
 
 ## The 16 Tools (Summary)
 - **Security**: Vault, Forge, Signal, Shield, Cybersecurity.
-- **Operations**: uSINGA, HelixFlow, Hawk, Craft Engine, Stamp.
+- **Operations**: uSINGA, HelixFlow, Hawk, Stamp.
 - **Intelligence**: Lens, Pulse, Manya Unify.
 - **Sectors**: Primary Sector, Transport & Logistics, Research & Academic.
 

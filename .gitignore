@@ -12,6 +12,12 @@ node_modules/
 .next/
 out/
 dist/
+# IDE files
+.idea/
+.vscode/
+# Android build artifacts
+tools/lycon-browser/android/build/
+tools/lycon-browser/android/.gradle/
 # The following 6 packages are compiled TypeScript with no build step required
 # to consume them (no network needed to build after a fresh clone) — ship dist/.
 !packages/nervous-system/dist/

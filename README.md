@@ -33,7 +33,6 @@ Each repo stays independently buildable and testable; none depend on another at 
 | **uSINGA - API NEXUS** | API provider wallet and smart routing | All |
 | **HelixFlow** | Visual workflow DAG orchestration | All |
 | **Hawk** | Device detection and environment monitoring | All |
-| **Craft Engine** | 7-fold compression and encryption engine | All |
 | **Forge** | Key derivation, passphrase strength, and hashing | All |
 | **Stamp** | Tamper-proof timestamping, provenance chains, and audit trails | Legal, Finance, Healthcare, Government, Supply Chain |
 | **Vault** | Encrypted key-value store for secrets, config, and credentials | DevOps, Finance, Healthcare, IoT |
@@ -57,7 +56,6 @@ All packages are MIT licensed unless noted otherwise. See [NOTICE](NOTICE) for d
 |---------|-------------|---------|
 | `@manya/toolkit` | Shared manifests, capability boundaries, and synchronization contracts for all 16 tools | MIT |
 | `@manya/helixflow-sdk` | HelixFlow client and workflow helpers | MIT |
-| `@manya/craft-engine` | 7-fold compression, encryption, archiving, and CLI | MIT |
 | `@manya/unify` | Connective tissue: mesh, federation, event bus, vocabularies | MIT |
 | `@manya/cli` | Command-line interface, HTTP server, and interactive REPL | MIT |
 | `@manya/lycon` | Lycon browser Manya integration layer (adapter, event factories, manifest) | MIT |
@@ -139,14 +137,13 @@ Running tests:
 npm run test:all              # Run everything
 npm run tools:test            # All tool tests (including Lycon)
 npm run packages:test         # Package tests
-npm run test:7x7              # 27×7 = 190 cross-tool integration tests
+npm run test:7x7              # 23×7 = 162 cross-tool integration tests
 ```
 
 ## Test Results
 
 | Suite | Tests | Status |
 |-------|-------|--------|
-| Craft Engine (Jest) | 35 | ✅ |
 | Toolkit | 21 | ✅ |
 | HelixFlow SDK | 3 | ✅ |
 | Hawk | 18 | ✅ |
@@ -163,9 +160,9 @@ npm run test:7x7              # 27×7 = 190 cross-tool integration tests
 | Research & Academic | 73 | ✅ |
 | Manya Unify | 75 | ✅ |
 | Manya CLI (index + serve + repl) | 91 | ✅ |
-| **Manya Lycon** | **59|Manya Lycon** | **59** | ✅ |
-| **7×7 Performance v11** | **190** | ✅ |
-| **Total** | **987** | ✅ |
+| **Manya Lycon** | **59** | ✅ |
+| **7×7 Performance v12** | **162** | ✅ |
+| **Total** | **924** | ✅ |
 
 ## The "Unite or Connect" Layer
 

@@ -6,7 +6,6 @@ import {
   helixFlowManifest,
   usingaManifest,
   forgeManifest,
-  craftEngineManifest,
   stampManifest,
   vaultManifest,
   lensManifest,
@@ -41,13 +40,6 @@ test("detects accidental capability overlap", () => {
   assert.equal(result.overlaps[0].capability, "apiKeyVault");
 });
 
-// New: All four manifests are distinct
-test("all four tool manifests have distinct capabilities", () => {
-  const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest]);
-  assert.equal(result.distinct, true);
-  assert.deepEqual(result.overlaps, []);
-});
-
 // New: Forge manifest has correct structure
 test("Forge manifest has correct identity and capabilities", () => {
   assert.equal(forgeManifest.id, "forge");
@@ -59,19 +51,10 @@ test("Forge manifest has correct identity and capabilities", () => {
   assert.ok(forgeManifest.owns.includes("multiAlgorithmHash"));
 });
 
-// New: Craft Engine manifest has correct structure
-test("Craft Engine manifest has correct identity and capabilities", () => {
-  assert.equal(craftEngineManifest.id, "craft-engine");
-  assert.equal(craftEngineManifest.name, "Craft Engine");
-  assert.equal(craftEngineManifest.foundation, "Manya");
-  assert.ok(craftEngineManifest.owns.includes("compressionAnalytics"));
-});
-
-// New: capabilityOwners includes Forge and Craft Engine
-test("capabilityOwners includes Forge and Craft Engine entries", () => {
+// capabilityOwners includes Forge entries
+test("capabilityOwners includes Forge entries", () => {
   assert.equal(capabilityOwners.keyDerivation, "forge");
   assert.equal(capabilityOwners.passphraseStrength, "forge");
-  assert.equal(capabilityOwners.compressionAnalytics, "craft-engine");
 });
 
 // Primary Sector manifest
@@ -98,10 +81,10 @@ test("Cybersecurity manifest has correct identity and capabilities", () => {
   assert.ok(cybersecurityManifest.owns.includes("incidentResponse"));
 });
 
-// All 12 manifests are distinct
-test("all 12 tool manifests have distinct capabilities", () => {
+// All 11 manifests are distinct
+test("all 11 tool manifests have distinct capabilities", () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest,
+    usingaManifest, helixFlowManifest, forgeManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest,
     signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest,
   ];
@@ -173,10 +156,10 @@ test("UPMP manifest has correct identity and capabilities", () => {
   assert.ok(upmpManifest.owns.includes("discussionExport"));
 });
 
-// All 17 manifests are distinct
-test("all 17 tool manifests have distinct capabilities", () => {
+// All 16 manifests are distinct
+test("all 16 tool manifests have distinct capabilities", () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest,
+    usingaManifest, helixFlowManifest, forgeManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest,
     signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,
@@ -245,7 +228,7 @@ test("capabilityOwners includes UPMP entries", () => {
   assert.equal(capabilityOwners.discussionExport, "upmp");
 });
 
-// Total capability count check (64+ capabilities across 17 tools)
+// Total capability count check (64+ capabilities across 16 tools)
 test("capabilityOwners has at least 64 capabilities", () => {
   assert.ok(Object.keys(capabilityOwners).length >= 64, `Expected at least 64 capabilities, got ${Object.keys(capabilityOwners).length}`);
 });
@@ -253,7 +236,7 @@ test("capabilityOwners has at least 64 capabilities", () => {
 // Hands-off consistency across all manifests
 test("all manifests hands-off are owned by some other manifest", () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftEngineManifest,
+    usingaManifest, helixFlowManifest, forgeManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest,
     signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,

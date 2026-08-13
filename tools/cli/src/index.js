@@ -156,10 +156,13 @@ Everything Connected. Everyone Unified.`;
 export { HELP_TEXT };
 
 // Auto-execute when run as a script (not when imported as a module).
-// Uses URL comparison to support both `node index.js` and `./index.js` invocations.
-if (process.argv[1] && process.argv[1].endsWith('tools/cli/src/index.js')) {
+// Uses URL/path comparison to support `node index.js` from various invocations.
+// Normalise backslashes to forward slashes so the check works cross-platform (Windows uses \).
+const _isCliScript = process.argv[1] && process.argv[1].replace(/\\/g, '/').endsWith('tools/cli/src/index.js');
+if (_isCliScript) {
   const args = process.argv.slice(2);
   main(args).then((exitCode) => {
-    process.exit(exitCode);
+    // Use exitCode (not process.exit) so stdout/stderr flush before the process ends.
+    process.exitCode = exitCode;
   });
 }

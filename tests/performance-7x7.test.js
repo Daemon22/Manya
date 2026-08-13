@@ -1,18 +1,18 @@
 /**
  * Manya 7x7 Performance Test Suite — v12
  *
- * 29 dimensions x 7 test scenarios = 203 comprehensive tests
+ * 23 dimensions x 7 test scenarios = 162 comprehensive tests
  * Covering all core functions across the entire Manya ecosystem
  *
  * Dimensions:
- *   1-22. (existing tools)
- *  23. Unify - Federation, Event Bus, Mesh & Vocabularies
- *  24. CLI - Argument Parsing, Command Dispatch & Weave Generation
- *  25. Serve & Repl - HTTP Server + SSE Stream + Interactive Shell
- *  26. Lycon Browser - Privacy Browser Integration
- *  27. Lycon Deep Integration - Shield Intel, Identity Panel, Private Sessions
- *  28. Weaver Rules - Connection Rules Engine (canConnect, findPotentialConnections)
- *  29. UPMP - Activity Tracking, Stuck Points, Discoveries, Intelligence Engagement
+ *   1-16. (existing tools)
+ *  17. Unify - Federation, Event Bus, Mesh & Vocabularies
+ *  18. CLI - Argument Parsing, Command Dispatch & Weave Generation
+ *  19. Serve & Repl - HTTP Server + SSE Stream + Interactive Shell
+ *  20. Lycon Browser - Privacy Browser Integration
+ *  21. Lycon Deep Integration - Shield Intel, Identity Panel, Private Sessions
+ *  22. Weaver Rules - Connection Rules Engine (canConnect, findPotentialConnections)
+ *  23. UPMP - Activity Tracking, Stuck Points, Discoveries, Intelligence Engagement
  */
 
 import assert from 'node:assert/strict';
@@ -21,16 +21,6 @@ import { createRequire } from 'node:module';
 import { Readable } from 'node:stream';
 
 const require = createRequire(import.meta.url);
-
-// -- Craft imports (compiled ESM output) --
-import { compress7, decompress7 } from '../tools/craft/dist/esm/lib/compress7.js';
-import { compress, decompress, encrypt, decrypt, encryptAsync, decryptAsync, deriveKey, deriveKeyAsync } from '../tools/craft/dist/esm/lib/codec.js';
-import { checksum, verify } from '../tools/craft/dist/esm/lib/integrity.js';
-import { nano } from '../tools/craft/dist/esm/lib/nano.js';
-import { macro, peekMetadata } from '../tools/craft/dist/esm/lib/macro.js';
-import { archive, extract, peekArchiveMetadata } from '../tools/craft/dist/esm/lib/archive.js';
-import { nanoStream, macroStream } from '../tools/craft/dist/esm/lib/stream.js';
-import { CompressionAnalytics } from '../tools/craft/dist/esm/lib/analytics.js';
 
 // -- Toolkit imports --
 import {
@@ -41,7 +31,6 @@ import {
   usingaManifest,
   helixFlowManifest,
   forgeManifest,
-  craftManifest,
   stampManifest,
   vaultManifest,
   lensManifest,
@@ -264,225 +253,15 @@ async function timedAsync(fn) {
 
 
 // ===================================================================
-// DIMENSION 1: Craft Engine - Compression
+// DIMENSION 1: Toolkit - Manifests & Boundaries
 // ===================================================================
 
-test('D1a: compress7 - basic roundtrip with repeated data', () => {
-  const data = makeBuffer('repeat', 4096);
-  const result = compress7(data);
-  assert.ok(result.data.length > 0);
-  assert.ok(result.strategy >= 0 && result.strategy <= 7);
-  assert.ok(result.strategyName.length > 0);
-  assert.deepEqual(decompress7(result.data), data);
-});
-
-test('D1b: compress7 - edge case: minimal input (16 bytes)', () => {
-  const data = makeBuffer('sequential', 16);
-  const result = compress7(data);
-  assert.ok(decompress7(result.data).equals(data));
-});
-
-test('D1c: compress7 - roundtrip consistency (compress twice = same result)', () => {
-  const data = makeBuffer('text', 2048);
-  const r1 = compress7(data);
-  const r2 = compress7(data);
-  assert.equal(r1.strategy, r2.strategy);
-  assert.equal(r1.compressedSize, r2.compressedSize);
-});
-
-test('D1d: compress7 - error on empty input', () => {
-  assert.throws(() => compress7(Buffer.alloc(0)), /empty/i);
-});
-
-test('D1e: compress7 - performance: 256KB compression under 2s', () => {
-  const data = makeBuffer('random', 256 * 1024);
-  const { elapsed } = timed(() => compress7(data));
-  assert.ok(elapsed < 2000, `7-fold compression took ${elapsed.toFixed(0)}ms, expected < 2000ms`);
-});
-
-test('D1f: compress7 - all 7 strategies produce valid decompression', () => {
-  const patterns = ['repeat', 'sequential', 'random', 'zeros', 'text', 'json', 'repeat'];
-  for (const pattern of patterns) {
-    const data = makeBuffer(pattern, 4096);
-    const result = compress7(data);
-    const restored = decompress7(result.data);
-    assert.ok(restored.equals(data), `Strategy ${result.strategy} (${result.strategyName}) failed for ${pattern}`);
-  }
-});
-
-test('D1g: compress/decompress - legacy Brotli roundtrip', () => {
-  const data = makeBuffer('text', 1024);
-  assert.deepEqual(decompress(compress(data)), data);
-});
-
-
-// ===================================================================
-// DIMENSION 2: Craft Engine - Encryption
-// ===================================================================
-
-test('D2a: encrypt/decrypt - basic roundtrip', () => {
-  const data = Buffer.from('secret payload for testing');
-  const { encrypted, iv, authTag, salt } = encrypt(data, PASS);
-  assert.deepEqual(decrypt(encrypted, PASS, iv, authTag, salt), data);
-});
-
-test('D2b: encrypt/decrypt - edge case: single byte', () => {
-  const data = Buffer.from([0x42]);
-  const { encrypted, iv, authTag, salt } = encrypt(data, PASS);
-  assert.deepEqual(decrypt(encrypted, PASS, iv, authTag, salt), data);
-});
-
-test('D2c: encrypt/decrypt - unique salt per call', () => {
-  const data = Buffer.from('same input data');
-  const r1 = encrypt(data, PASS);
-  const r2 = encrypt(data, PASS);
-  assert.notDeepEqual(r1.salt, r2.salt);
-  assert.notDeepEqual(r1.encrypted, r2.encrypted);
-});
-
-test('D2d: encrypt/decrypt - wrong passphrase throws', () => {
-  const data = Buffer.from('secret');
-  const { encrypted, iv, authTag, salt } = encrypt(data, PASS);
-  assert.throws(() => decrypt(encrypted, 'wrong-passphrase', iv, authTag, salt));
-});
-
-test('D2e: encrypt/decrypt - async roundtrip under load', async () => {
-  const data = makeBuffer('random', 64 * 1024);
-  const { result, elapsed } = await timedAsync(async () => {
-    const { encrypted, iv, authTag, salt } = await encryptAsync(data, PASS);
-    const decrypted = await decryptAsync(encrypted, PASS, iv, authTag, salt);
-    return decrypted;
-  });
-  assert.deepEqual(result, data);
-  assert.ok(elapsed < 3000, `Async encrypt/decrypt took ${elapsed.toFixed(0)}ms`);
-});
-
-test('D2f: encrypt/decrypt - AAD mismatch detection', () => {
-  const data = Buffer.from('secret with AAD');
-  const aad = Buffer.from('{"original":"metadata"}');
-  const { encrypted, iv, authTag, salt } = encrypt(data, PASS, aad);
-  assert.throws(() => decrypt(encrypted, PASS, iv, authTag, salt, Buffer.from('tampered')));
-});
-
-test('D2g: deriveKey - sync and async produce valid keys', async () => {
-  const salt = Buffer.alloc(16, 0xab);
-  const sync = deriveKey(PASS, salt);
-  const asyncResult = await deriveKeyAsync(PASS, salt);
-  assert.equal(sync.key.length, 32);
-  assert.equal(asyncResult.key.length, 32);
-  assert.deepEqual(sync.key, asyncResult.key);
-});
-
-
-// ===================================================================
-// DIMENSION 3: Craft Engine - Integrity
-// ===================================================================
-
-test('D3a: checksum - produces 64-char hex string', () => {
-  const h = checksum(Buffer.from('hello'));
-  assert.match(h, /^[0-9a-f]{64}$/);
-});
-
-test('D3b: checksum - empty buffer produces valid hash', () => {
-  const h = checksum(Buffer.alloc(0));
-  assert.match(h, /^[0-9a-f]{64}$/);
-});
-
-test('D3c: checksum - deterministic (same input = same output)', () => {
-  const data = Buffer.from('deterministic test');
-  assert.equal(checksum(data), checksum(data));
-});
-
-test('D3d: checksum - different inputs produce different hashes', () => {
-  assert.notEqual(checksum(Buffer.from('a')), checksum(Buffer.from('b')));
-});
-
-test('D3e: verify - passes for matching data', () => {
-  const data = Buffer.from('craft engine integrity');
-  assert.equal(verify(data, checksum(data)), true);
-});
-
-test('D3f: verify - detects single-bit tampering', () => {
-  const data = Buffer.from('craft engine integrity');
-  const h = checksum(data);
-  data[0] ^= 0x01;
-  assert.equal(verify(data, h), false);
-});
-
-test('D3g: checksum - performance: 1MB under 100ms', () => {
-  const data = makeBuffer('random', 1024 * 1024);
-  const { elapsed } = timed(() => checksum(data));
-  assert.ok(elapsed < 100, `SHA-256 of 1MB took ${elapsed.toFixed(0)}ms`);
-});
-
-
-// ===================================================================
-// DIMENSION 4: Craft Engine - Full Pipeline (nano/macro)
-// ===================================================================
-
-test('D4a: nano/macro - basic text roundtrip', async () => {
-  const data = Buffer.from('Hello, Craft Engine!\n'.repeat(100));
-  const pkg = await nano(data, 'test.txt', 'text/plain', PASS);
-  const restored = await macro(pkg.buffer, PASS);
-  assert.deepEqual(restored.buffer, data);
-  assert.equal(restored.integrityVerified, true);
-});
-
-test('D4b: nano/macro - edge: passphrase too short rejects', async () => {
-  const data = Buffer.from([0xff]);
-  await assert.rejects(() => nano(data, 'f.bin', 'application/octet-stream', 'ab'), /8 characters/i);
-});
-
-test('D4c: nano/macro - roundtrip with 7fold compression mode', async () => {
-  const data = makeBuffer('json', 8192);
-  const pkg = await nano(data, 'data.json', 'application/json', PASS, { compressionMode: '7fold' });
-  const restored = await macro(pkg.buffer, PASS);
-  assert.deepEqual(restored.buffer, data);
-  assert.equal(restored.metadata.compressionMode, '7fold');
-});
-
-test('D4d: nano/macro - wrong passphrase detected', async () => {
-  const data = Buffer.from('secret data');
-  const pkg = await nano(data, 'f.bin', 'application/octet-stream', PASS);
-  await assert.rejects(() => macro(pkg.buffer, 'wrong-passphrase!'));
-});
-
-test('D4e: nano/macro - performance: 256KB under 5s', async () => {
-  const data = makeBuffer('random', 256 * 1024);
-  const { elapsed } = await timedAsync(async () => {
-    const pkg = await nano(data, 'perf.bin', 'application/octet-stream', PASS);
-    await macro(pkg.buffer, PASS);
-  });
-  assert.ok(elapsed < 5000, `Full pipeline took ${elapsed.toFixed(0)}ms`);
-});
-
-test('D4f: nano/macro - cross-passphrase isolation', async () => {
-  const data = Buffer.from('isolation test');
-  const pkgA = await nano(data, 'f.bin', 'application/octet-stream', 'passphrase-alpha');
-  await assert.rejects(() => macro(pkgA.buffer, 'passphrase-bravo'));
-});
-
-test('D4g: peekMetadata - reads metadata without passphrase', async () => {
-  const data = Buffer.from('peek test data');
-  const pkg = await nano(data, 'peek.txt', 'text/plain', PASS);
-  const meta = peekMetadata(pkg.buffer);
-  assert.equal(meta.originalName, 'peek.txt');
-  assert.equal(meta.originalMime, 'text/plain');
-  assert.equal(meta.originalSize, data.length);
-  assert.equal(meta.compressionMode, '7fold');
-});
-
-
-// ===================================================================
-// DIMENSION 5: Toolkit - Manifests & Boundaries
-// ===================================================================
-
-test('D5a: MANYA_FOUNDATION - has name and principle', () => {
+test('D1a: MANYA_FOUNDATION - has name and principle', () => {
   assert.equal(MANYA_FOUNDATION.name, 'Manya');
   assert.ok(MANYA_FOUNDATION.principle.length > 0);
 });
 
-test('D5b: createToolManifest - requires id, name, purpose', () => {
+test('D1b: createToolManifest - requires id, name, purpose', () => {
   assert.throws(() => createToolManifest({ id: 'x' }));
   assert.throws(() => createToolManifest({ id: 'x', name: 'X' }));
   const m = createToolManifest({ id: 'x', name: 'X', purpose: 'test' });
@@ -490,18 +269,18 @@ test('D5b: createToolManifest - requires id, name, purpose', () => {
   assert.equal(m.foundation, 'Manya');
 });
 
-test('D5c: createToolManifest - result is frozen', () => {
+test('D1c: createToolManifest - result is frozen', () => {
   const m = createToolManifest({ id: 'x', name: 'X', purpose: 'test' });
   assert.throws(() => { m.id = 'changed'; });
 });
 
-test('D5d: assertDistinctCapabilities - all manifests are distinct', () => {
-  const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, forgeManifest, craftManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest]);
+test('D1d: assertDistinctCapabilities - all manifests are distinct', () => {
+  const result = assertDistinctCapabilities([usingaManifest, helixFlowManifest, forgeManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest]);
   assert.equal(result.distinct, true);
   assert.deepEqual(result.overlaps, []);
 });
 
-test('D5e: assertDistinctCapabilities - detects overlap', () => {
+test('D1e: assertDistinctCapabilities - detects overlap', () => {
   const result = assertDistinctCapabilities([
     usingaManifest,
     { ...helixFlowManifest, owns: [...helixFlowManifest.owns, 'apiKeyVault'] },
@@ -510,13 +289,12 @@ test('D5e: assertDistinctCapabilities - detects overlap', () => {
   assert.equal(result.overlaps[0].capability, 'apiKeyVault');
 });
 
-test('D5f: capabilityOwners - maps all capabilities to tool IDs', () => {
+test('D1f: capabilityOwners - maps all capabilities to tool IDs', () => {
   assert.equal(capabilityOwners.apiKeyVault, 'usinga-api-nexus');
   assert.equal(capabilityOwners.workflowDagBuilder, 'helixflow');
   assert.equal(capabilityOwners.keyDerivation, 'forge');
   assert.equal(capabilityOwners.passphraseStrength, 'forge');
   assert.equal(capabilityOwners.multiAlgorithmHash, 'forge');
-  assert.equal(capabilityOwners.compressionAnalytics, 'craft');
   assert.equal(capabilityOwners.timestampProof, 'stamp');
   assert.equal(capabilityOwners.provenanceChain, 'stamp');
   assert.equal(capabilityOwners.auditTrail, 'stamp');
@@ -534,8 +312,8 @@ test('D5f: capabilityOwners - maps all capabilities to tool IDs', () => {
   assert.ok(Object.keys(capabilityOwners).length >= 36);
 });
 
-test('D5g: manifests - own and handOff are consistent across all tools', () => {
-  const allManifests = [usingaManifest, helixFlowManifest, forgeManifest, craftManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest];
+test('D1g: manifests - own and handOff are consistent across all tools', () => {
+  const allManifests = [usingaManifest, helixFlowManifest, forgeManifest, stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest, pulseManifest, primarySectorManifest, cybersecurityManifest];
   const allOwns = new Set();
   for (const m of allManifests) {
     for (const cap of m.owns) allOwns.add(cap);
@@ -550,10 +328,10 @@ test('D5g: manifests - own and handOff are consistent across all tools', () => {
 
 
 // ===================================================================
-// DIMENSION 6: HelixFlow SDK - Workflow Construction & Validation
+// DIMENSION 2: HelixFlow SDK - Workflow Construction & Validation
 // ===================================================================
 
-test('D6a: createWorkflowDefinition - creates valid workflow', () => {
+test('D2a: createWorkflowDefinition - creates valid workflow', () => {
   const wf = createWorkflowDefinition({
     name: 'Test Flow',
     nodes: [{ id: 'start', type: 'trigger', label: 'Start' }],
@@ -564,24 +342,24 @@ test('D6a: createWorkflowDefinition - creates valid workflow', () => {
   assert.equal(wf.failurePolicy, 'stop_workflow');
 });
 
-test('D6b: createUsingaConnectionRef - prefixes correctly', () => {
+test('D2b: createUsingaConnectionRef - prefixes correctly', () => {
   assert.equal(createUsingaConnectionRef('crm'), 'usinga:crm');
   assert.equal(createUsingaConnectionRef('usinga:crm'), 'usinga:crm');
 });
 
-test('D6c: createUsingaConnectionRef - rejects empty input', () => {
+test('D2c: createUsingaConnectionRef - rejects empty input', () => {
   assert.throws(() => createUsingaConnectionRef(''));
   assert.throws(() => createUsingaConnectionRef());
 });
 
-test('D6d: createApiRequestNode - requires uSINGA connection ref', () => {
+test('D2d: createApiRequestNode - requires uSINGA connection ref', () => {
   assert.throws(() => createApiRequestNode({ id: 'api', label: 'API', connectionRef: 'raw-key' }));
   const node = createApiRequestNode({ id: 'api', label: 'API', connectionRef: 'usinga:crm' });
   assert.equal(node.type, 'api');
   assert.equal(node.config.connectionRef, 'usinga:crm');
 });
 
-test('D6e: validateWorkflowShape - valid workflow passes', () => {
+test('D2e: validateWorkflowShape - valid workflow passes', () => {
   const wf = createWorkflowDefinition({
     name: 'Valid',
     nodes: [
@@ -595,14 +373,14 @@ test('D6e: validateWorkflowShape - valid workflow passes', () => {
   assert.deepEqual(result.errors, []);
 });
 
-test('D6f: validateWorkflowShape - detects missing name and nodes', () => {
+test('D2f: validateWorkflowShape - detects missing name and nodes', () => {
   const result = validateWorkflowShape({ nodes: [], edges: [] });
   assert.equal(result.valid, false);
   assert.ok(result.errors.some(e => /name/i.test(e)));
   assert.ok(result.errors.some(e => /node/i.test(e)));
 });
 
-test('D6g: validateWorkflowShape - detects unknown edge source/target', () => {
+test('D2g: validateWorkflowShape - detects unknown edge source/target', () => {
   const result = validateWorkflowShape({
     name: 'Bad edges',
     nodes: [{ id: 'a', type: 'trigger', label: 'A' }],
@@ -614,7 +392,7 @@ test('D6g: validateWorkflowShape - detects unknown edge source/target', () => {
 
 
 // ===================================================================
-// DIMENSION 7: Hawk - Device Detection & Fingerprinting
+// DIMENSION 3: Hawk - Device Detection & Fingerprinting
 // ===================================================================
 
 const mockEnv = (ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36') => ({
@@ -622,7 +400,7 @@ const mockEnv = (ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537
   matchMedia: () => ({ matches: false }),
 });
 
-test('D7a: parseUserAgent - detects Chrome on Windows', () => {
+test('D3a: parseUserAgent - detects Chrome on Windows', () => {
   const info = parseUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36');
   assert.equal(info.browser, 'Chrome');
   assert.equal(info.os, 'Windows');
@@ -630,20 +408,20 @@ test('D7a: parseUserAgent - detects Chrome on Windows', () => {
   assert.equal(info.isBot, false);
 });
 
-test('D7b: parseUserAgent - detects mobile device', () => {
+test('D3b: parseUserAgent - detects mobile device', () => {
   const info = parseUserAgent('Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36');
   assert.equal(info.type, 'mobile');
   assert.equal(info.os, 'Android');
   assert.ok(['Samsung', 'Apple', 'unknown'].includes(info.brand), `Expected Samsung/Apple/unknown, got ${info.brand}`);
 });
 
-test('D7c: parseUserAgent - detects bot', () => {
+test('D3c: parseUserAgent - detects bot', () => {
   const info = parseUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
   assert.equal(info.isBot, true);
   assert.equal(info.type, 'bot');
 });
 
-test('D7d: detectDevice - returns structured info with mock env', () => {
+test('D3d: detectDevice - returns structured info with mock env', () => {
   const env = mockEnv();
   const info = detectDevice(env);
   assert.equal(info.browser, 'Chrome');
@@ -652,7 +430,7 @@ test('D7d: detectDevice - returns structured info with mock env', () => {
   assert.equal(info.onLine, true);
 });
 
-test('D7e: detectCapabilities - returns capability flags in Node', () => {
+test('D3e: detectCapabilities - returns capability flags in Node', () => {
   const caps = detectCapabilities();
   assert.equal(typeof caps.screen.supported, 'boolean');
   assert.equal(typeof caps.touch.supported, 'boolean');
@@ -660,7 +438,7 @@ test('D7e: detectCapabilities - returns capability flags in Node', () => {
   assert.equal(typeof caps.sw.supported, 'boolean');
 });
 
-test('D7f: generateFingerprint - produces consistent hash', () => {
+test('D3f: generateFingerprint - produces consistent hash', () => {
   const fp1 = generateFingerprint();
   const fp2 = generateFingerprint();
   assert.equal(fp1.hash, fp2.hash);
@@ -668,7 +446,7 @@ test('D7f: generateFingerprint - produces consistent hash', () => {
   assert.ok(fp1.timestamp > 0);
 });
 
-test('D7g: hawk.snapshot - combines all detection methods', () => {
+test('D3g: hawk.snapshot - combines all detection methods', () => {
   const snap = hawk.snapshot(mockEnv());
   assert.ok(snap.device, 'snapshot should have device');
   assert.ok(snap.capabilities, 'snapshot should have capabilities');
@@ -679,10 +457,10 @@ test('D7g: hawk.snapshot - combines all detection methods', () => {
 
 
 // ===================================================================
-// DIMENSION 8: Forge - Key Derivation & Passphrase Strength
+// DIMENSION 4: Forge - Key Derivation & Passphrase Strength
 // ===================================================================
 
-test('D8a: scorePassphrase - scores weak passphrase correctly', () => {
+test('D4a: scorePassphrase - scores weak passphrase correctly', () => {
   const result = scorePassphrase('password');
   assert.ok(result.score < 40, `Expected weak score, got ${result.score}`);
   assert.ok(['weak', 'fair'].includes(result.level), `Expected weak/fair level, got ${result.level}`);
@@ -690,7 +468,7 @@ test('D8a: scorePassphrase - scores weak passphrase correctly', () => {
   assert.ok(result.suggestions.length > 0, 'Should have suggestions for weak password');
 });
 
-test('D8b: scorePassphrase - scores strong passphrase correctly', () => {
+test('D4b: scorePassphrase - scores strong passphrase correctly', () => {
   const result = scorePassphrase('K#9m$pL2xQ!vR7nZ');
   assert.ok(result.score >= 60, `Expected strong score, got ${result.score}`);
   assert.ok(['strong', 'excellent', 'good'].includes(result.level), `Expected good+ level, got ${result.level}`);
@@ -701,7 +479,7 @@ test('D8b: scorePassphrase - scores strong passphrase correctly', () => {
   assert.ok(result.checks.symbols, 'Should pass symbols check');
 });
 
-test('D8c: deriveKeyPair - produces valid 32-byte key with salt', () => {
+test('D4c: deriveKeyPair - produces valid 32-byte key with salt', () => {
   const result = deriveKeyPair(PASS);
   assert.equal(result.key.length, 32);
   assert.equal(result.salt.length, 16);
@@ -709,21 +487,21 @@ test('D8c: deriveKeyPair - produces valid 32-byte key with salt', () => {
   assert.ok(result.derivedAt);
 });
 
-test('D8d: deriveKeyPair - different salts produce different keys', () => {
+test('D4d: deriveKeyPair - different salts produce different keys', () => {
   const r1 = deriveKeyPair(PASS);
   const r2 = deriveKeyPair(PASS);
   assert.notDeepEqual(r1.key, r2.key);
   assert.notDeepEqual(r1.salt, r2.salt);
 });
 
-test('D8e: deriveKeyPairAsync - async matches sync with same salt', async () => {
+test('D4e: deriveKeyPairAsync - async matches sync with same salt', async () => {
   const salt = Buffer.alloc(16, 0xcd);
   const sync = deriveKeyPair(PASS, salt);
   const async = await deriveKeyPairAsync(PASS, salt);
   assert.deepEqual(sync.key, async.key);
 });
 
-test('D8f: rotateKey - produces both old and new keys', () => {
+test('D4f: rotateKey - produces both old and new keys', () => {
   const salt = Buffer.alloc(16, 0xab);
   const result = rotateKey('old-passphrase-123', 'new-passphrase-456', salt);
   assert.equal(result.oldKey.length, 32);
@@ -731,7 +509,7 @@ test('D8f: rotateKey - produces both old and new keys', () => {
   assert.notDeepEqual(result.oldKey, result.newKey);
 });
 
-test('D8g: hash - supports multiple algorithms', () => {
+test('D4g: hash - supports multiple algorithms', () => {
   const data = Buffer.from('test data for hashing');
   const algorithms = ['sha256', 'sha384', 'sha512', 'sha3-256', 'sha3-512', 'blake2b512'];
   for (const algo of algorithms) {
@@ -744,171 +522,10 @@ test('D8g: hash - supports multiple algorithms', () => {
 
 
 // ===================================================================
-// DIMENSION 9: Craft Engine - Archive (Multi-file)
+// DIMENSION 5: Stamp - Timestamping & Audit Trails
 // ===================================================================
 
-test('D9a: archive/extract - basic multi-file roundtrip', async () => {
-  const entries = [
-    { name: 'readme.txt', mime: 'text/plain', data: Buffer.from('Hello, World!') },
-    { name: 'data.json', mime: 'application/json', data: Buffer.from('{"key":"value"}') },
-    { name: 'binary.bin', mime: 'application/octet-stream', data: makeBuffer('random', 1024) },
-  ];
-  const result = await archive(entries, PASS);
-  assert.ok(result.buffer.length > 0);
-  assert.equal(result.entryCount, 3);
-
-  const extracted = await extract(result.buffer, PASS);
-  assert.equal(extracted.entries.length, 3);
-  assert.equal(extracted.integrityVerified, true);
-
-  for (let i = 0; i < entries.length; i++) {
-    assert.equal(extracted.entries[i].name, entries[i].name);
-    assert.deepEqual(extracted.entries[i].data, entries[i].data);
-  }
-});
-
-test('D9b: archive - rejects empty entries', async () => {
-  await assert.rejects(() => archive([], PASS));
-});
-
-test('D9c: archive - rejects short passphrase', async () => {
-  const entries = [{ name: 'f.txt', mime: 'text/plain', data: Buffer.from('data') }];
-  await assert.rejects(() => archive(entries, 'short'), /8 characters/i);
-});
-
-test('D9d: archive/extract - wrong passphrase rejected', async () => {
-  const entries = [{ name: 'f.txt', mime: 'text/plain', data: Buffer.from('secret') }];
-  const result = await archive(entries, PASS);
-  await assert.rejects(() => extract(result.buffer, 'wrong-passphrase-!'));
-});
-
-test('D9e: peekArchiveMetadata - reads entry names without passphrase', async () => {
-  const entries = [
-    { name: 'file1.txt', mime: 'text/plain', data: Buffer.from('one') },
-    { name: 'file2.json', mime: 'application/json', data: Buffer.from('{"two":2}') },
-  ];
-  const result = await archive(entries, PASS);
-  const meta = peekArchiveMetadata(result.buffer);
-  assert.equal(meta.entryCount, 2);
-  assert.ok(meta.entryNames.includes('file1.txt'));
-  assert.ok(meta.entryNames.includes('file2.json'));
-});
-
-test('D9f: archive - single file works', async () => {
-  const entries = [{ name: 'single.txt', mime: 'text/plain', data: Buffer.from('just one file') }];
-  const result = await archive(entries, PASS);
-  const extracted = await extract(result.buffer, PASS);
-  assert.equal(extracted.entries.length, 1);
-  assert.equal(extracted.entries[0].name, 'single.txt');
-  assert.deepEqual(extracted.entries[0].data, Buffer.from('just one file'));
-});
-
-test('D9g: archive - large multi-file roundtrip', async () => {
-  const entries = Array.from({ length: 10 }, (_, i) => ({
-    name: `file-${i}.bin`,
-    mime: 'application/octet-stream',
-    data: makeBuffer(i % 2 === 0 ? 'text' : 'random', 4096),
-  }));
-  const result = await archive(entries, PASS);
-  assert.equal(result.entryCount, 10);
-  const extracted = await extract(result.buffer, PASS);
-  assert.equal(extracted.entries.length, 10);
-  assert.equal(extracted.integrityVerified, true);
-});
-
-
-// ===================================================================
-// DIMENSION 10: Craft Engine - Analytics
-// ===================================================================
-
-test('D10a: CompressionAnalytics - record and report', () => {
-  const analytics = new CompressionAnalytics();
-  const data = makeBuffer('text', 4096);
-  const result = compress7(data);
-  analytics.recordFromResult(result, 'text');
-
-  const report = analytics.report();
-  assert.equal(report.totalObservations, 1);
-  assert.ok(report.strategies.length > 0);
-  assert.ok(report.topStrategy);
-  assert.ok(report.topStrategy.winRate > 0);
-});
-
-test('D10b: CompressionAnalytics - empty report returns hints', () => {
-  const analytics = new CompressionAnalytics();
-  const report = analytics.report();
-  assert.equal(report.totalObservations, 0);
-  assert.ok(report.hints.length > 0);
-  assert.ok(report.hints[0].includes('No observations'));
-});
-
-test('D10c: CompressionAnalytics - multiple observations track wins', () => {
-  const analytics = new CompressionAnalytics();
-  const patterns = ['repeat', 'sequential', 'random', 'zeros', 'text'];
-  for (const pattern of patterns) {
-    const result = compress7(makeBuffer(pattern, 4096));
-    analytics.recordFromResult(result, pattern);
-  }
-  const report = analytics.report();
-  assert.equal(report.totalObservations, 5);
-  assert.ok(report.strategies.length > 0);
-  // Top strategy should have wins
-  assert.ok(report.topStrategy.wins > 0);
-});
-
-test('D10d: CompressionAnalytics - size distribution', () => {
-  const analytics = new CompressionAnalytics();
-  // Small file
-  const r1 = compress7(makeBuffer('text', 512));
-  analytics.recordFromResult(r1);
-  // Medium file
-  const r2 = compress7(makeBuffer('text', 50 * 1024));
-  analytics.recordFromResult(r2);
-
-  const report = analytics.report();
-  assert.ok(report.sizeDistribution.small > 0);
-  assert.ok(report.sizeDistribution.medium > 0);
-});
-
-test('D10e: CompressionAnalytics - clear resets observations', () => {
-  const analytics = new CompressionAnalytics();
-  const result = compress7(makeBuffer('text', 4096));
-  analytics.recordFromResult(result);
-  assert.equal(analytics.getObservations().length, 1);
-  analytics.clear();
-  assert.equal(analytics.getObservations().length, 0);
-});
-
-test('D10f: CompressionAnalytics - max observations eviction', () => {
-  const analytics = new CompressionAnalytics(3);
-  for (let i = 0; i < 5; i++) {
-    const result = compress7(makeBuffer('text', 4096 + i * 100));
-    analytics.recordFromResult(result);
-  }
-  assert.equal(analytics.getObservations().length, 3);
-});
-
-test('D10g: CompressionAnalytics - report hints for dominant strategy', () => {
-  const analytics = new CompressionAnalytics();
-  // Feed same pattern many times — likely same winner
-  for (let i = 0; i < 20; i++) {
-    const result = compress7(makeBuffer('repeat', 4096));
-    analytics.recordFromResult(result);
-  }
-  const report = analytics.report();
-  assert.ok(report.hints.length > 0);
-  // Should mention strategy dominance if one strategy wins >70%
-  if (report.topStrategy.winRate > 0.7) {
-    assert.ok(report.hints.some(h => h.includes('dominates')));
-  }
-});
-
-
-// ===================================================================
-// DIMENSION 11: Stamp - Timestamping & Audit Trails
-// ===================================================================
-
-test('D11a: stamp - creates proof with correct structure', () => {
+test('D5a: stamp - creates proof with correct structure', () => {
   const data = Buffer.from('important document content');
   const proof = stampProof(data);
   assert.ok(proof.hash.length > 0);
@@ -919,7 +536,7 @@ test('D11a: stamp - creates proof with correct structure', () => {
   assert.equal(proof.version, 1);
 });
 
-test('D11b: stamp + verify - roundtrip verification', () => {
+test('D5b: stamp + verify - roundtrip verification', () => {
   const data = Buffer.from('verifiable document');
   const proof = stampProof(data);
   const result = verifyStamp(proof, data);
@@ -927,7 +544,7 @@ test('D11b: stamp + verify - roundtrip verification', () => {
   assert.equal(result.hash, proof.hash);
 });
 
-test('D11c: stamp + verify - tampered data detected', () => {
+test('D5c: stamp + verify - tampered data detected', () => {
   const data = Buffer.from('original data');
   const proof = stampProof(data);
   const tampered = Buffer.from('modified data');
@@ -935,7 +552,7 @@ test('D11c: stamp + verify - tampered data detected', () => {
   assert.equal(result.valid, false);
 });
 
-test('D11d: buildChain - creates provenance chain', () => {
+test('D5d: buildChain - creates provenance chain', () => {
   const entries = [
     { data: Buffer.from('step-1'), label: 'Genesis' },
     { data: Buffer.from('step-2'), label: 'Transfer' },
@@ -949,7 +566,7 @@ test('D11d: buildChain - creates provenance chain', () => {
   assert.ok(chain.rootHash.length > 0);
 });
 
-test('D11e: buildChain + verifyChain - valid chain passes', () => {
+test('D5e: buildChain + verifyChain - valid chain passes', () => {
   const entries = Array.from({ length: 5 }, (_, i) => ({
     data: Buffer.from(`entry-${i}`),
     label: `Step ${i}`,
@@ -960,7 +577,7 @@ test('D11e: buildChain + verifyChain - valid chain passes', () => {
   assert.equal(result.errors.length, 0);
 });
 
-test('D11f: buildTrail + verifyTrail - audit trail integrity', () => {
+test('D5f: buildTrail + verifyTrail - audit trail integrity', () => {
   const events = [
     { event: 'user.login', actor: 'alice', resource: 'system', action: 'login' },
     { event: 'document.read', actor: 'alice', resource: 'doc-1', action: 'read' },
@@ -973,7 +590,7 @@ test('D11f: buildTrail + verifyTrail - audit trail integrity', () => {
   assert.equal(verification.valid, true);
 });
 
-test('D11g: stamp - custom issuer and algorithm', () => {
+test('D5g: stamp - custom issuer and algorithm', () => {
   const data = Buffer.from('custom stamp test');
   const proof = stampProof(data, { issuer: 'legal-dept', algorithm: 'sha256' });
   assert.equal(proof.issuer, 'legal-dept');
@@ -982,17 +599,17 @@ test('D11g: stamp - custom issuer and algorithm', () => {
 
 
 // ===================================================================
-// DIMENSION 12: Vault - Encrypted Key-Value Store
+// DIMENSION 6: Vault - Encrypted Key-Value Store
 // ===================================================================
 
-test('D12a: vault create + put + get - basic operations', () => {
+test('D6a: vault create + put + get - basic operations', () => {
   const v = vaultCreate('test-vault');
   vaultPut(v, 'api-key', 'sk-1234567890');
   assert.equal(vaultGet(v, 'api-key'), 'sk-1234567890');
   assert.equal(vaultSize(v), 1);
 });
 
-test('D12b: vault put + get - object values', () => {
+test('D6b: vault put + get - object values', () => {
   const v = vaultCreate('config-vault');
   vaultPut(v, 'database', { host: 'db.example.com', port: 5432, ssl: true });
   const val = vaultGet(v, 'database');
@@ -1001,7 +618,7 @@ test('D12b: vault put + get - object values', () => {
   assert.equal(val.ssl, true);
 });
 
-test('D12c: vault seal + open - encrypted roundtrip', () => {
+test('D6c: vault seal + open - encrypted roundtrip', () => {
   const v = vaultCreate('secure-vault');
   vaultPut(v, 'secret-key', 'super-secret-value');
   vaultPut(v, 'db-password', 'P@ssw0rd!23');
@@ -1013,14 +630,14 @@ test('D12c: vault seal + open - encrypted roundtrip', () => {
   assert.equal(vaultGet(opened, 'db-password'), 'P@ssw0rd!23');
 });
 
-test('D12d: vault seal + open - wrong passphrase fails', () => {
+test('D6d: vault seal + open - wrong passphrase fails', () => {
   const v = vaultCreate('fail-vault');
   vaultPut(v, 'key', 'value');
   const sealed = vaultSeal(v, PASS);
   assert.throws(() => vaultOpen(sealed, 'wrong-passphrase-x'), /Failed to decrypt/);
 });
 
-test('D12e: vault del + has + keys - CRUD operations', () => {
+test('D6e: vault del + has + keys - CRUD operations', () => {
   const v = vaultCreate('crud-vault');
   vaultPut(v, 'a', '1');
   vaultPut(v, 'b', '2');
@@ -1032,7 +649,7 @@ test('D12e: vault del + has + keys - CRUD operations', () => {
   assert.equal(vaultSize(v), 2);
 });
 
-test('D12f: vault search - tag-based search', () => {
+test('D6f: vault search - tag-based search', () => {
   const v = vaultCreate('tagged-vault');
   vaultPut(v, 'aws-key', 'AKIA...', { tags: ['cloud', 'aws'] });
   vaultPut(v, 'gcp-key', 'gcp...', { tags: ['cloud', 'gcp'] });
@@ -1041,7 +658,7 @@ test('D12f: vault search - tag-based search', () => {
   assert.equal(results.length, 2);
 });
 
-test('D12g: vault - large scale: 100 entries seal/open roundtrip', () => {
+test('D6g: vault - large scale: 100 entries seal/open roundtrip', () => {
   const v = vaultCreate('large-vault');
   for (let i = 0; i < 100; i++) {
     vaultPut(v, `key-${i}`, `value-${i}`, { tags: [i % 2 === 0 ? 'even' : 'odd'] });
@@ -1055,22 +672,22 @@ test('D12g: vault - large scale: 100 entries seal/open roundtrip', () => {
 
 
 // ===================================================================
-// DIMENSION 13: Lens - Data Inspection & Redaction
+// DIMENSION 7: Lens - Data Inspection & Redaction
 // ===================================================================
 
-test('D13a: detect - identifies JSON data', () => {
+test('D7a: detect - identifies JSON data', () => {
   const result = lensDetect(Buffer.from('{"name":"test","value":42}'));
   assert.equal(result.format, 'json');
   assert.equal(result.binary, false);
 });
 
-test('D13b: detect - identifies CSV data', () => {
+test('D7b: detect - identifies CSV data', () => {
   const csv = 'name,age,city\nAlice,30,NYC\nBob,25,LA\nCarol,35,SF';
   const result = lensDetect(Buffer.from(csv));
   assert.equal(result.format, 'csv');
 });
 
-test('D13c: redact - removes PII patterns', () => {
+test('D7c: redact - removes PII patterns', () => {
   const text = 'Contact john@example.com or call 555-123-4567. SSN: 123-45-6789';
   const result = redact(text, { rules: ['pii'] });
   assert.ok(result.count >= 2, `Expected at least 2 redactions, got ${result.count}`);
@@ -1078,14 +695,14 @@ test('D13c: redact - removes PII patterns', () => {
   assert.ok(!result.redacted.includes('123-45-6789'));
 });
 
-test('D13d: scan - detects sensitive data without modifying', () => {
+test('D7d: scan - detects sensitive data without modifying', () => {
   const text = 'Email: admin@corp.com and user@test.org';
   const result = scan(text, ['pii']);
   assert.ok(result.total >= 2);
   assert.ok(result.findings.some(f => f.type === 'EMAIL'));
 });
 
-test('D13e: classify - identifies restricted content', () => {
+test('D7e: classify - identifies restricted content', () => {
   const text = 'This document contains HIPAA protected health information and patient records.';
   const result = classify(text);
   assert.equal(result.level, 'restricted');
@@ -1093,13 +710,13 @@ test('D13e: classify - identifies restricted content', () => {
   assert.ok(result.recommendations.length > 0);
 });
 
-test('D13f: classify - identifies public content', () => {
+test('D7f: classify - identifies public content', () => {
   const text = 'This is a public press release about our marketing strategy for the new product launch.';
   const result = classify(text);
   assert.ok(['public', 'internal'].includes(result.level), `Expected public/internal, got ${result.level}`);
 });
 
-test('D13g: profile - statistical analysis', () => {
+test('D7g: profile - statistical analysis', () => {
   const data = Buffer.from('Hello, World! This is a test string with some entropy.');
   const result = profile(data);
   assert.ok(result.size > 0);
@@ -1110,10 +727,10 @@ test('D13g: profile - statistical analysis', () => {
 
 
 // ===================================================================
-// DIMENSION 14: Shield - Access Control & RBAC
+// DIMENSION 8: Shield - Access Control & RBAC
 // ===================================================================
 
-test('D14a: createPolicy + defineRole + grant - setup policy', () => {
+test('D8a: createPolicy + defineRole + grant - setup policy', () => {
   const policy = createPolicy('healthcare-access', { description: 'HIPAA access control' });
   defineRole(policy, 'doctor', { description: 'Medical professional' });
   defineRole(policy, 'nurse', { description: 'Nursing staff' });
@@ -1127,7 +744,7 @@ test('D14a: createPolicy + defineRole + grant - setup policy', () => {
   assert.equal(policy.roles.size, 2);
 });
 
-test('D14b: registerSubject + assignRole + checkAccess - RBAC flow', () => {
+test('D8b: registerSubject + assignRole + checkAccess - RBAC flow', () => {
   const policy = createPolicy('finance-rbac');
   defineRole(policy, 'trader', { description: 'Can trade' });
   grant(policy, 'trader', [{ resource: 'trades', actions: ['read', 'execute'] }]);
@@ -1137,7 +754,7 @@ test('D14b: registerSubject + assignRole + checkAccess - RBAC flow', () => {
   assert.equal(result.allowed, true);
 });
 
-test('D14c: checkAccess - denies unauthorized access', () => {
+test('D8c: checkAccess - denies unauthorized access', () => {
   const policy = createPolicy('strict-policy', { defaultAction: 'deny' });
   defineRole(policy, 'viewer', { description: 'Read only' });
   grant(policy, 'viewer', [{ resource: 'reports', actions: ['read'] }]);
@@ -1147,7 +764,7 @@ test('D14c: checkAccess - denies unauthorized access', () => {
   assert.equal(result.allowed, false);
 });
 
-test('D14d: checkAccess - wildcard resource patterns', () => {
+test('D8d: checkAccess - wildcard resource patterns', () => {
   const policy = createPolicy('wildcard-policy');
   defineRole(policy, 'admin');
   grant(policy, 'admin', [{ resource: 'documents:*', actions: ['read', 'write', 'delete'] }]);
@@ -1157,7 +774,7 @@ test('D14d: checkAccess - wildcard resource patterns', () => {
   assert.equal(result.allowed, true);
 });
 
-test('D14e: addRule + checkAccess - ABAC time-based rule', () => {
+test('D8e: addRule + checkAccess - ABAC time-based rule', () => {
   const policy = createPolicy('abac-policy');
   defineRole(policy, 'employee');
   grant(policy, 'employee', [{ resource: 'internal-wiki', actions: ['read'] }]);
@@ -1176,7 +793,7 @@ test('D14e: addRule + checkAccess - ABAC time-based rule', () => {
   assert.equal(afterHours.matchedRules.some(r => r.type === 'abac'), true);
 });
 
-test('D14f: getEffectivePermissions - lists all permissions', () => {
+test('D8f: getEffectivePermissions - lists all permissions', () => {
   const policy = createPolicy('perm-check');
   defineRole(policy, 'senior', { parent: null });
   defineRole(policy, 'junior', { parent: 'senior' });
@@ -1188,7 +805,7 @@ test('D14f: getEffectivePermissions - lists all permissions', () => {
   assert.ok(perms.permissions.length > 0);
 });
 
-test('D14g: buildAuditTrail + verifyAuditTrail - tamper-proof access log', () => {
+test('D8g: buildAuditTrail + verifyAuditTrail - tamper-proof access log', () => {
   const decisions = [
     { subject: 'alice', resource: 'records', action: 'read', granted: true, reason: 'RBAC: doctor' },
     { subject: 'bob', resource: 'records', action: 'write', granted: false, reason: 'Insufficient permissions' },
@@ -1203,10 +820,10 @@ test('D14g: buildAuditTrail + verifyAuditTrail - tamper-proof access log', () =>
 
 
 // ===================================================================
-// DIMENSION 15: Signal - Secure Message Envelopes
+// DIMENSION 9: Signal - Secure Message Envelopes
 // ===================================================================
 
-test('D15a: compose + signalSeal + signalOpen - encrypted message roundtrip', () => {
+test('D9a: compose + signalSeal + signalOpen - encrypted message roundtrip', () => {
   const envelope = compose('Patient lab results: CBC normal', {
     sender: 'lab-system',
     recipients: ['dr-smith'],
@@ -1226,13 +843,13 @@ test('D15a: compose + signalSeal + signalOpen - encrypted message roundtrip', ()
   assert.equal(opened.payload, envelope.payload);
 });
 
-test('D15b: compose + signalSeal + signalOpen - wrong passphrase fails', () => {
+test('D9b: compose + signalSeal + signalOpen - wrong passphrase fails', () => {
   const envelope = compose('Secret trade signal');
   const sealed = signalSeal(envelope, PASS);
   assert.throws(() => signalOpen(sealed, 'wrong-passphrase-!'), /Failed to decrypt/);
 });
 
-test('D15c: compose + signalSign + verifySignature - RSA signature roundtrip', () => {
+test('D9c: compose + signalSign + verifySignature - RSA signature roundtrip', () => {
   const { privateKey, publicKey } = generateSigningKeys();
   const envelope = compose('Authenticated command', { sender: 'controller' });
   const signed = signalSign(envelope, privateKey);
@@ -1243,7 +860,7 @@ test('D15c: compose + signalSign + verifySignature - RSA signature roundtrip', (
   assert.equal(result.valid, true);
 });
 
-test('D15d: verifySignature - tampered content detected', () => {
+test('D9d: verifySignature - tampered content detected', () => {
   const { privateKey, publicKey } = generateSigningKeys();
   const envelope = compose('Original message', { sender: 'alice' });
   const signed = signalSign(envelope, privateKey);
@@ -1253,7 +870,7 @@ test('D15d: verifySignature - tampered content detected', () => {
   assert.equal(result.valid, false);
 });
 
-test('D15e: compose + signalHmac + verifyHmac - HMAC integrity roundtrip', () => {
+test('D9e: compose + signalHmac + verifyHmac - HMAC integrity roundtrip', () => {
   const envelope = compose('IoT sensor reading: 72.5F', { sender: 'sensor-01', type: 'telemetry' });
   const authenticated = signalHmac(envelope, 'shared-secret-key');
   assert.ok(authenticated.hmac);
@@ -1263,14 +880,14 @@ test('D15e: compose + signalHmac + verifyHmac - HMAC integrity roundtrip', () =>
   assert.equal(result.valid, true);
 });
 
-test('D15f: verifyHmac - wrong secret detected', () => {
+test('D9f: verifyHmac - wrong secret detected', () => {
   const envelope = compose('Data packet', { sender: 'device-42' });
   const authenticated = signalHmac(envelope, 'correct-secret');
   const result = verifyHmac(authenticated, 'wrong-secret');
   assert.equal(result.valid, false);
 });
 
-test('D15g: compose - priority levels and metadata', () => {
+test('D9g: compose - priority levels and metadata', () => {
   const envelope = compose('Critical alert: server down', {
     sender: 'monitoring',
     recipients: ['ops-team', 'cto'],
@@ -1287,10 +904,10 @@ test('D15g: compose - priority levels and metadata', () => {
 
 
 // ===================================================================
-// DIMENSION 16: Pulse — Industry Presets
+// DIMENSION 10: Pulse — Industry Presets
 // ===================================================================
 
-test('D16a: getIndustry - returns valid config for each industry', () => {
+test('D10a: getIndustry - returns valid config for each industry', () => {
   for (const id of INDUSTRY_IDS) {
     const industry = getIndustry(id);
     assert.equal(industry.id, id, `Industry id mismatch for ${id}`);
@@ -1304,7 +921,7 @@ test('D16a: getIndustry - returns valid config for each industry', () => {
   }
 });
 
-test('D16b: listIndustries - returns all 10 industries', () => {
+test('D10b: listIndustries - returns all 10 industries', () => {
   const list = listIndustries();
   assert.equal(list.length, 10, `Expected 10 industries, got ${list.length}`);
   const ids = list.map(i => i.id).sort();
@@ -1317,7 +934,7 @@ test('D16b: listIndustries - returns all 10 industries', () => {
   }
 });
 
-test('D16c: createRedactionConfig - healthcare uses phi preset with mrn/npi', () => {
+test('D10c: createRedactionConfig - healthcare uses phi preset with mrn/npi', () => {
   const config = createRedactionConfig('healthcare');
   assert.equal(config.preset, 'phi');
   assert.ok(config.rules.includes('mrn'), 'Healthcare redaction should include mrn');
@@ -1326,7 +943,7 @@ test('D16c: createRedactionConfig - healthcare uses phi preset with mrn/npi', ()
   assert.equal(config.replacement, '[REDACTED]');
 });
 
-test('D16d: createRedactionConfig - finance uses financial preset with creditCard/swiftCode', () => {
+test('D10d: createRedactionConfig - finance uses financial preset with creditCard/swiftCode', () => {
   const config = createRedactionConfig('finance');
   assert.equal(config.preset, 'financial');
   assert.ok(config.rules.includes('creditCard'), 'Finance redaction should include creditCard');
@@ -1334,7 +951,7 @@ test('D16d: createRedactionConfig - finance uses financial preset with creditCar
   assert.ok(config.rules.length > 0, 'Finance redaction should have rules');
 });
 
-test('D16e: createIndustryPolicy - returns role templates without shield module', () => {
+test('D10e: createIndustryPolicy - returns role templates without shield module', () => {
   const policy = createIndustryPolicy('healthcare');
   assert.ok(policy.template, 'Policy should have a template name');
   assert.ok(policy.roles.length > 0, 'Policy should have role templates');
@@ -1348,7 +965,7 @@ test('D16e: createIndustryPolicy - returns role templates without shield module'
   }
 });
 
-test('D16f: createAuditTemplate - finance has transaction events', () => {
+test('D10f: createAuditTemplate - finance has transaction events', () => {
   const template = createAuditTemplate('finance');
   assert.ok(template.template, 'Audit template should have a template name');
   assert.ok(template.events.length > 0, 'Finance audit should have events');
@@ -1356,7 +973,7 @@ test('D16f: createAuditTemplate - finance has transaction events', () => {
   assert.ok(template.description.length > 0, 'Audit template should have a description');
 });
 
-test('D16g: createPreset - complete preset for each industry validates', () => {
+test('D10g: createPreset - complete preset for each industry validates', () => {
   for (const id of INDUSTRY_IDS) {
     const preset = createPreset(id);
     // Industry info
@@ -1383,24 +1000,24 @@ test('D16g: createPreset - complete preset for each industry validates', () => {
 
 
 // ===================================================================
-// DIMENSION 17: Lens — Extended Industry Redaction
+// DIMENSION 11: Lens — Extended Industry Redaction
 // ===================================================================
 
-test('D17a: redact - legal preset redacts case numbers', () => {
+test('D11a: redact - legal preset redacts case numbers', () => {
   const text = 'Refer to Case No. 2024-CV-00142 and Docket #3-CR-2023';
   const result = redact(text, { rules: ['legal'] });
   assert.ok(result.count >= 1, `Expected at least 1 redaction, got ${result.count}`);
   assert.ok(!result.redacted.includes('Case No. 2024-CV-00142'), 'Case number should be redacted');
 });
 
-test('D17b: redact - education preset redacts student IDs', () => {
+test('D11b: redact - education preset redacts student IDs', () => {
   const text = 'Student ID: 912345678 and SID 1234567 are on file';
   const result = redact(text, { rules: ['education'] });
   assert.ok(result.count >= 1, `Expected at least 1 redaction, got ${result.count}`);
   assert.ok(result.found.some(f => f.type === 'STUDENT_ID'), 'Should find STUDENT_ID patterns');
 });
 
-test('D17c: redact - telecom preset redacts IMEI-like patterns', () => {
+test('D11c: redact - telecom preset redacts IMEI-like patterns', () => {
   // Test that the IMEI pattern itself works
   const text = 'Device IMEI: 490154203237518 registered on network';
   const imeiResult = redact(text, { rules: ['imei'] });
@@ -1411,7 +1028,7 @@ test('D17c: redact - telecom preset redacts IMEI-like patterns', () => {
   assert.ok(telecomResult.count >= 1, `Telecom preset should redact, got ${telecomResult.count}`);
 });
 
-test('D17d: redact - iot preset redacts MAC addresses', () => {
+test('D11d: redact - iot preset redacts MAC addresses', () => {
   const text = 'Sensor reading from device AA:BB:CC:DD:EE:FF at noon';
   const result = redact(text, { rules: ['iot'] });
   assert.ok(result.count >= 1, `Expected at least 1 redaction, got ${result.count}`);
@@ -1419,14 +1036,14 @@ test('D17d: redact - iot preset redacts MAC addresses', () => {
   assert.ok(!result.redacted.includes('AA:BB:CC:DD:EE:FF'), 'MAC address should be redacted');
 });
 
-test('D17e: scan - financial preset finds IBAN patterns', () => {
+test('D11e: scan - financial preset finds IBAN patterns', () => {
   const text = 'Transfer to IBAN DE89370400440532013000 confirmed';
   const result = scan(text, ['financial']);
   assert.ok(result.total >= 1, `Expected at least 1 finding, got ${result.total}`);
   assert.ok(result.findings.some(f => f.type === 'IBAN'), 'Should find IBAN patterns');
 });
 
-test('D17f: PRESETS - has legal, education, telecom, iot keys', () => {
+test('D11f: PRESETS - has legal, education, telecom, iot keys', () => {
   assert.ok('legal' in PRESETS, 'PRESETS should have legal key');
   assert.ok('education' in PRESETS, 'PRESETS should have education key');
   assert.ok('telecom' in PRESETS, 'PRESETS should have telecom key');
@@ -1438,7 +1055,7 @@ test('D17f: PRESETS - has legal, education, telecom, iot keys', () => {
   }
 });
 
-test('D17g: redact - healthcare phi preset finds DEA numbers', () => {
+test('D11g: redact - healthcare phi preset finds DEA numbers', () => {
   const text = 'Prescription by provider DEANumber: BG1234567 on file';
   const result = redact(text, { rules: ['phi'] });
   assert.ok(result.count >= 1, `Expected at least 1 redaction, got ${result.count}`);
@@ -1447,26 +1064,26 @@ test('D17g: redact - healthcare phi preset finds DEA numbers', () => {
 
 
 // ===================================================================
-// DIMENSION 18: Toolkit — Expanded Manifests
+// DIMENSION 12: Toolkit — Expanded Manifests
 // ===================================================================
 
-test('D18a: capabilityOwners - maps pulse capabilities', () => {
+test('D12a: capabilityOwners - maps pulse capabilities', () => {
   assert.equal(capabilityOwners.industryPresets, 'pulse');
   assert.equal(capabilityOwners.complianceTemplates, 'pulse');
   assert.equal(capabilityOwners.industryPolicyTemplates, 'pulse');
   assert.equal(capabilityOwners.industrySignalTypes, 'pulse');
 });
 
-test('D18b: pulseManifest - has correct id and purpose', () => {
+test('D12b: pulseManifest - has correct id and purpose', () => {
   assert.equal(pulseManifest.id, 'pulse');
   assert.equal(pulseManifest.name, 'Pulse');
   assert.ok(pulseManifest.purpose.length > 0, 'Pulse manifest should have a purpose');
   assert.equal(pulseManifest.foundation, 'Manya');
 });
 
-test('D18c: assertDistinctCapabilities - all 17 manifests are distinct (including pulse, primary-sector, cybersecurity, transport-logistics, research-academic, unify, lycon-browser, upmp)', () => {
+test('D12c: assertDistinctCapabilities - all 17 manifests are distinct (including pulse, primary-sector, cybersecurity, transport-logistics, research-academic, unify, lycon-browser, upmp)', () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftManifest,
+    usingaManifest, helixFlowManifest, forgeManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest,
     pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,
@@ -1476,28 +1093,28 @@ test('D18c: assertDistinctCapabilities - all 17 manifests are distinct (includin
   assert.deepEqual(result.overlaps, []);
 });
 
-test('D18d: capabilityOwners - has at least 64 capabilities', () => {
+test('D12d: capabilityOwners - has at least 64 capabilities', () => {
   const capCount = Object.keys(capabilityOwners).length;
   assert.ok(capCount >= 64, `Expected at least 64 capabilities, got ${capCount}`);
 });
 
-test('D18e: pulseManifest - owns industryPresets and complianceTemplates', () => {
+test('D12e: pulseManifest - owns industryPresets and complianceTemplates', () => {
   assert.ok(pulseManifest.owns.includes('industryPresets'), 'Pulse should own industryPresets');
   assert.ok(pulseManifest.owns.includes('complianceTemplates'), 'Pulse should own complianceTemplates');
   assert.ok(pulseManifest.owns.includes('industryPolicyTemplates'), 'Pulse should own industryPolicyTemplates');
   assert.ok(pulseManifest.owns.includes('industrySignalTypes'), 'Pulse should own industrySignalTypes');
 });
 
-test('D18f: pulseManifest - handsOff does not overlap with owns', () => {
+test('D12f: pulseManifest - handsOff does not overlap with owns', () => {
   const ownsSet = new Set(pulseManifest.owns);
   for (const cap of pulseManifest.handsOff) {
     assert.ok(!ownsSet.has(cap), `Pulse handsOff ${cap} overlaps with owns`);
   }
 });
 
-test('D18g: manifests - all manifests have consistent foundation name', () => {
+test('D12g: manifests - all manifests have consistent foundation name', () => {
   const allManifests = [
-    usingaManifest, helixFlowManifest, forgeManifest, craftManifest,
+    usingaManifest, helixFlowManifest, forgeManifest,
     stampManifest, vaultManifest, lensManifest, shieldManifest, signalManifest,
     pulseManifest, primarySectorManifest, cybersecurityManifest,
     transportLogisticsManifest, researchAcademicManifest, unifyManifest, lyconManifest, upmpManifest,
@@ -1509,10 +1126,10 @@ test('D18g: manifests - all manifests have consistent foundation name', () => {
 
 
 // ===================================================================
-// DIMENSION 19: Primary Sector - Validation & Compliance
+// DIMENSION 13: Primary Sector - Validation & Compliance
 // ===================================================================
 
-test('D19a: validateCoordinates - valid GPS coordinates roundtrip', () => {
+test('D13a: validateCoordinates - valid GPS coordinates roundtrip', () => {
   const result = validateCoordinates({ latitude: -33.9249, longitude: 18.4241 });
   assert.equal(result.valid, true);
   assert.ok(result.normalized);
@@ -1520,25 +1137,25 @@ test('D19a: validateCoordinates - valid GPS coordinates roundtrip', () => {
   assert.equal(result.normalized.longitude, 18.4241);
 });
 
-test('D19b: validateCommodity - agriculture wheat is valid', () => {
+test('D13b: validateCommodity - agriculture wheat is valid', () => {
   const result = validateCommodity('agriculture', 'wheat', SECTORS);
   assert.equal(result.valid, true);
   assert.equal(result.commodity, 'wheat');
 });
 
-test('D19c: validateSensorReading - temperature reading validates', () => {
+test('D13c: validateSensorReading - temperature reading validates', () => {
   const result = validateSensorReading({ type: 'temperature', value: 25.5, unit: 'celsius' });
   assert.equal(result.valid, true);
   assert.ok(result.reading.timestamp);
 });
 
-test('D19d: checkCompliance - agriculture pesticide requires applicator', () => {
+test('D13d: checkCompliance - agriculture pesticide requires applicator', () => {
   const result = checkCompliance('agriculture', { type: 'pesticide-application', timestamp: '2024-01-15T10:00:00Z' });
   assert.equal(result.compliant, false);
   assert.ok(result.issues.some(i => /applicator/i.test(i)));
 });
 
-test('D19e: createSectorPreset - mining has complete preset', () => {
+test('D13e: createSectorPreset - mining has complete preset', () => {
   const preset = createSectorPreset('mining');
   assert.equal(preset.sector.id, 'mining');
   assert.ok(preset.commodities.includes('gold'));
@@ -1546,7 +1163,7 @@ test('D19e: createSectorPreset - mining has complete preset', () => {
   assert.ok(preset.compliance.length > 0);
 });
 
-test('D19f: validateProductionReport - valid report with location', () => {
+test('D13f: validateProductionReport - valid report with location', () => {
   const result = validateProductionReport({
     sectorId: 'fishing',
     commodity: 'tuna',
@@ -1557,7 +1174,7 @@ test('D19f: validateProductionReport - valid report with location', () => {
   assert.equal(result.valid, true);
 });
 
-test('D19g: listSectors - all 4 primary sectors present', () => {
+test('D13g: listSectors - all 4 primary sectors present', () => {
   const sectors = listSectors();
   assert.equal(sectors.length, 4);
   assert.ok(sectors.every(s => s.commodities.length > 0));
@@ -1565,23 +1182,23 @@ test('D19g: listSectors - all 4 primary sectors present', () => {
 
 
 // ===================================================================
-// DIMENSION 20: Cybersecurity - Threat Intel & Vulnerability
+// DIMENSION 14: Cybersecurity - Threat Intel & Vulnerability
 // ===================================================================
 
-test('D20a: classifyThreat - critical threat classification', () => {
+test('D14a: classifyThreat - critical threat classification', () => {
   const result = classifyThreat({ name: 'Log4Shell', cvssScore: 10.0 });
   assert.equal(result.severity, 'critical');
   assert.equal(result.riskLevel, 'extreme');
 });
 
-test('D20b: createIOC - IP indicator with hash', () => {
+test('D14b: createIOC - IP indicator with hash', () => {
   const result = createIOC({ type: 'ip', value: '10.0.0.1', source: 'firewall' });
   assert.equal(result.type, 'ip');
   assert.ok(result.hash.length === 64);
   assert.equal(result.source, 'firewall');
 });
 
-test('D20c: calculateCVSS - critical CVSS score', () => {
+test('D14c: calculateCVSS - critical CVSS score', () => {
   const result = calculateCVSS({
     attackVector: 'N', attackComplexity: 'L', privilegesRequired: 'N',
     userInteraction: 'N', scope: 'U', confidentiality: 'H', integrity: 'H', availability: 'H',
@@ -1591,14 +1208,14 @@ test('D20c: calculateCVSS - critical CVSS score', () => {
   assert.ok(result.vector.startsWith('CVSS:3.1/'));
 });
 
-test('D20d: createEvidence - integrity hash and chain of custody', () => {
+test('D14d: createEvidence - integrity hash and chain of custody', () => {
   const evidence = createEvidence({ name: 'Access Log', type: 'log', data: 'log data here' });
   assert.ok(evidence.hash.length === 64);
   assert.equal(evidence.chainOfCustody.length, 1);
   assert.equal(evidence.state, 'collected');
 });
 
-test('D20e: verifyEvidenceIntegrity - tamper detection', () => {
+test('D14e: verifyEvidenceIntegrity - tamper detection', () => {
   const evidence = createEvidence({ name: 'Test', data: 'original data' });
   const valid = verifyEvidenceIntegrity(evidence, 'original data');
   assert.equal(valid.valid, true);
@@ -1606,14 +1223,14 @@ test('D20e: verifyEvidenceIntegrity - tamper detection', () => {
   assert.equal(tampered.valid, false);
 });
 
-test('D20f: createIncident + escalateIncident - full incident lifecycle', () => {
+test('D14f: createIncident + escalateIncident - full incident lifecycle', () => {
   const incident = createIncident({ title: 'Breach Detected', severity: 'medium', category: 'data-breach' });
   assert.equal(incident.status, 'new');
   escalateIncident(incident, 'Scope widened to production', 'soc-lead');
   assert.equal(incident.severity, 'high');
 });
 
-test('D20g: assessRisk - mixed vulnerability risk assessment', () => {
+test('D14g: assessRisk - mixed vulnerability risk assessment', () => {
   const vulns = [
     createVulnerability({ name: 'SQLi', cvss: { attackVector: 'N', attackComplexity: 'L', privilegesRequired: 'N', userInteraction: 'N', scope: 'U', confidentiality: 'H', integrity: 'H', availability: 'H' } }),
     createVulnerability({ name: 'XSS', cvss: { attackVector: 'N', attackComplexity: 'L', privilegesRequired: 'N', userInteraction: 'R', scope: 'U', confidentiality: 'L', integrity: 'L', availability: 'N' } }),
@@ -1626,30 +1243,30 @@ test('D20g: assessRisk - mixed vulnerability risk assessment', () => {
 
 
 // ===================================================================
-// DIMENSION 21: Transport & Logistics - Identifier Validation & Tracking
+// DIMENSION 15: Transport & Logistics - Identifier Validation & Tracking
 // ===================================================================
 
-test('D21a: validateAWB - valid IATA modulo-11 sample 02000000003', () => {
+test('D15a: validateAWB - valid IATA modulo-11 sample 02000000003', () => {
   const result = validateAWB('02000000003');
   assert.equal(result.valid, true);
   assert.equal(result.carrierPrefix, '020');
   assert.equal(result.checkDigit, 3);
 });
 
-test('D21b: validateIMO - valid IMO 9074729', () => {
+test('D15b: validateIMO - valid IMO 9074729', () => {
   const result = validateIMO('9074729');
   assert.equal(result.valid, true);
   assert.equal(result.checkDigit, 9);
 });
 
-test('D21c: validateContainerNumber - ISO 6346 sample MSCU6639870', () => {
+test('D15c: validateContainerNumber - ISO 6346 sample MSCU6639870', () => {
   const result = validateContainerNumber('MSCU6639870');
   assert.equal(result.valid, true);
   assert.equal(result.ownerCode, 'MSC');
   assert.equal(result.categoryId, 'U');
 });
 
-test('D21d: createShipment + recordEvent - maritime container tracking lifecycle', () => {
+test('D15d: createShipment + recordEvent - maritime container tracking lifecycle', () => {
   const shipment = createShipment({
     trackingNumber: 'MSCU6639870',
     mode: 'maritime',
@@ -1664,7 +1281,7 @@ test('D21d: createShipment + recordEvent - maritime container tracking lifecycle
   assert.equal(shipment.status, 'arrived');
 });
 
-test('D21e: createGeofence + checkGeofence - port geofencing', () => {
+test('D15e: createGeofence + checkGeofence - port geofencing', () => {
   const g = createGeofence({
     id: 'port-ct', name: 'Cape Town Port', type: 'circle',
     center: { latitude: -33.91, longitude: 18.43 }, radiusMeters: 10000,
@@ -1675,7 +1292,7 @@ test('D21e: createGeofence + checkGeofence - port geofencing', () => {
   assert.equal(outside.inside, false);
 });
 
-test('D21f: lookupDangerousGood + createDangerousGoodsDeclaration - DG classification', () => {
+test('D15f: lookupDangerousGood + createDangerousGoodsDeclaration - DG classification', () => {
   const lookup = lookupDangerousGood('1203');
   assert.equal(lookup.found, true);
   assert.equal(lookup.properShippingName, 'Gasoline');
@@ -1687,7 +1304,7 @@ test('D21f: lookupDangerousGood + createDangerousGoodsDeclaration - DG classific
   assert.equal(dg.verifiedAgainstLookup, true);
 });
 
-test('D21g: screenSanctions - clear counterparty vs flagged entity', () => {
+test('D15g: screenSanctions - clear counterparty vs flagged entity', () => {
   const clear = screenSanctions({ name: 'Acme Logistics Inc.' });
   assert.equal(clear.clear, true);
   const flagged = screenSanctions({ name: 'Sanctioned Entity Alpha' });
@@ -1697,10 +1314,10 @@ test('D21g: screenSanctions - clear counterparty vs flagged entity', () => {
 
 
 // ===================================================================
-// DIMENSION 22: Research & Academic - Citations, Reproducibility & Peer Review
+// DIMENSION 16: Research & Academic - Citations, Reproducibility & Peer Review
 // ===================================================================
 
-test('D22a: validateDOI + validateORCID - citation identifiers', () => {
+test('D16a: validateDOI + validateORCID - citation identifiers', () => {
   const doi = validateDOI('10.1000/182');
   assert.equal(doi.valid, true);
   assert.equal(doi.registrant, '1000');
@@ -1709,7 +1326,7 @@ test('D22a: validateDOI + validateORCID - citation identifiers', () => {
   assert.equal(orcid.checkDigit, '7');
 });
 
-test('D22b: validateArxivID + validateISBN13 - mixed-format identifiers', () => {
+test('D16b: validateArxivID + validateISBN13 - mixed-format identifiers', () => {
   const arxiv = validateArxivID('2304.12345');
   assert.equal(arxiv.valid, true);
   assert.equal(arxiv.scheme, 'modern');
@@ -1719,7 +1336,7 @@ test('D22b: validateArxivID + validateISBN13 - mixed-format identifiers', () => 
   assert.equal(isbn.checkDigit, 7);
 });
 
-test('D22c: createManifest + verifyManifest - reproducibility manifest roundtrip', () => {
+test('D16c: createManifest + verifyManifest - reproducibility manifest roundtrip', () => {
   const manifest = createManifest({
     experimentId: 'exp-d22',
     software: { name: 'manya', version: '0.3.0' },
@@ -1734,7 +1351,7 @@ test('D22c: createManifest + verifyManifest - reproducibility manifest roundtrip
   assert.equal(verified.manifestHashVerified, true);
 });
 
-test('D22d: assessFAIR - fully FAIR artifact achieves score 1', () => {
+test('D16d: assessFAIR - fully FAIR artifact achieves score 1', () => {
   const assessment = assessFAIR({
     doi: '10.1000/182',
     license: 'CC-BY-4.0',
@@ -1747,7 +1364,7 @@ test('D22d: assessFAIR - fully FAIR artifact achieves score 1', () => {
   assert.equal(assessment.score, 1);
 });
 
-test('D22e: createSubmission + assignReviewer + recordReview - peer-review lifecycle', () => {
+test('D16e: createSubmission + assignReviewer + recordReview - peer-review lifecycle', () => {
   const submission = createSubmission({
     manuscriptId: 'ms-d22',
     title: 'Test',
@@ -1764,7 +1381,7 @@ test('D22e: createSubmission + assignReviewer + recordReview - peer-review lifec
   assert.equal(submission.status, 'revision-requested');
 });
 
-test('D22f: verifyReviewIntegrity - detects out-of-order events', () => {
+test('D16f: verifyReviewIntegrity - detects out-of-order events', () => {
   const submission = createSubmission({
     manuscriptId: 'ms-d22-integrity',
     title: 'X',
@@ -1778,7 +1395,7 @@ test('D22f: verifyReviewIntegrity - detects out-of-order events', () => {
   assert.equal(result.verified, false);
 });
 
-test('D22g: createDMP + checkCompliance - life-sciences DMP and clinical-trial compliance', () => {
+test('D16g: createDMP + checkCompliance - life-sciences DMP and clinical-trial compliance', () => {
   const dmp = createDMP({
     domainId: 'life_sciences',
     projectTitle: 'Cancer genomics study',
@@ -1796,11 +1413,11 @@ test('D22g: createDMP + checkCompliance - life-sciences DMP and clinical-trial c
 
 
 // ===================================================================
-// DIMENSION 23: Unify - Federation, Event Bus, Mesh & Vocabularies
+// DIMENSION 17: Unify - Federation, Event Bus, Mesh & Vocabularies
 // ===================================================================
 // The connective tissue that makes "Everything Connected. Everyone Unified." true at runtime.
 
-test('D23a: registerTool + route + dispatch - capability-based dispatch to owning tool', () => {
+test('D17a: registerTool + route + dispatch - capability-based dispatch to owning tool', () => {
   _resetMesh();
   _resetFederation();
   registerTool({
@@ -1817,7 +1434,7 @@ test('D23a: registerTool + route + dispatch - capability-based dispatch to ownin
   assert.equal(result.normalized, 'https://doi.org/10.1000/182');
 });
 
-test('D23b: createIdentity + linkIdentity + resolveIdentity - cross-tool identity federation', () => {
+test('D17b: createIdentity + linkIdentity + resolveIdentity - cross-tool identity federation', () => {
   _resetMesh();
   _resetFederation();
   const researcher = createIdentity({ type: 'orcid', value: '0000-0002-1825-0097' });
@@ -1833,7 +1450,7 @@ test('D23b: createIdentity + linkIdentity + resolveIdentity - cross-tool identit
   assert.equal(byOrcid.linked.length, 2);
 });
 
-test('D23c: createBus + subscribe + publish + routeEvent - event bus with sync-channel routing', () => {
+test('D17c: createBus + subscribe + publish + routeEvent - event bus with sync-channel routing', () => {
   const bus = createBus({ replay: true });
   const received = [];
   subscribe(bus, 'citation-verified', (evt) => received.push(evt));
@@ -1855,7 +1472,7 @@ test('D23c: createBus + subscribe + publish + routeEvent - event bus with sync-c
   assert.equal(stats.historySize, researchAcademicManifest.syncChannels.length);
 });
 
-test('D23d: translate - HS code → industry → research_domain chain', () => {
+test('D17d: translate - HS code → industry → research_domain chain', () => {
   // HS 3004 = pharmaceutical products → healthcare → life_sciences
   const r1 = translate('hs_code', 'industry', '300490');
   assert.equal(r1.translated, true);
@@ -1865,14 +1482,14 @@ test('D23d: translate - HS code → industry → research_domain chain', () => {
   assert.equal(r2.value, 'life_sciences');
 });
 
-test('D23e: translate - UN/LOCODE → country + capability → tool_id', () => {
+test('D17e: translate - UN/LOCODE → country + capability → tool_id', () => {
   const r1 = translate('unlocode', 'country', 'NLRTM');
   assert.equal(r1.value, 'NL');
   const r2 = translate('capability', 'tool_id', 'shipmentTracking');
   assert.equal(r2.value, 'transport-logistics');
 });
 
-test('D23f: mergeIdentities - consolidates two identities and their linked identifiers', () => {
+test('D17f: mergeIdentities - consolidates two identities and their linked identifiers', () => {
   _resetMesh();
   _resetFederation();
   const a = createIdentity({ type: 'orcid', value: '0000-0002-1825-0097', metadata: { name: 'Josiah' } });
@@ -1891,7 +1508,7 @@ test('D23f: mergeIdentities - consolidates two identities and their linked ident
   assert.equal(byDoi.id, merged.id);
 });
 
-test('D23g: getSyncChannels - collects union of all declared channels across registered tools', () => {
+test('D17g: getSyncChannels - collects union of all declared channels across registered tools', () => {
   _resetMesh();
   _resetFederation();
   registerTool({ manifest: forgeManifest, api: {} });
@@ -1910,7 +1527,7 @@ test('D23g: getSyncChannels - collects union of all declared channels across reg
 
 
 // ===================================================================
-// DIMENSION 24: CLI - Argument Parsing, Command Dispatch & Weave Generation
+// DIMENSION 18: CLI - Argument Parsing, Command Dispatch & Weave Generation
 // ===================================================================
 // The command-line interface that makes Unify accessible from the shell.
 
@@ -1926,7 +1543,7 @@ async function runCli(argv, stateFile) {
   return { exitCode: result.exitCode, output: result.output, stdout: proc.stdout._out, stderr: proc.stderr._out };
 }
 
-test('D24a: parseArgs - parses command + subcommand + value flags', () => {
+test('D18a: parseArgs - parses command + subcommand + value flags', () => {
   const r = parseArgs(['mesh', 'register', 'forge', '--state', '/tmp/x.json']);
   assert.equal(r.command, 'mesh');
   assert.equal(r.subcommand, 'register');
@@ -1934,7 +1551,7 @@ test('D24a: parseArgs - parses command + subcommand + value flags', () => {
   assert.equal(r.flags.state, '/tmp/x.json');
 });
 
-test('D24b: mesh register-all via dispatcher - registers all 7 tools', async () => {
+test('D18b: mesh register-all via dispatcher - registers all 7 tools', async () => {
   const stateFile = `/tmp/manya-7x7-d24b-${Date.now()}.json`;
   const r = await runCli(['mesh', 'register-all'], stateFile);
   assert.equal(r.exitCode, 0);
@@ -1945,7 +1562,7 @@ test('D24b: mesh register-all via dispatcher - registers all 7 tools', async () 
   assert.ok(out.registered.includes('unify'));
 });
 
-test('D24c: identity create + link + resolve via CLI dispatcher', async () => {
+test('D18c: identity create + link + resolve via CLI dispatcher', async () => {
   const stateFile = `/tmp/manya-7x7-d24c-${Date.now()}.json`;
   // Create
   const createR = await runCli(['identity', 'create', 'orcid', '0000-0002-1825-0097', '--metadata', '{"name":"Josiah"}'], stateFile);
@@ -1961,7 +1578,7 @@ test('D24c: identity create + link + resolve via CLI dispatcher', async () => {
   assert.equal(JSON.parse(resolveR.output).identity.id, identityId);
 });
 
-test('D24d: mesh dispatch via CLI - invokes validateDOI on research-academic', async () => {
+test('D18d: mesh dispatch via CLI - invokes validateDOI on research-academic', async () => {
   const stateFile = `/tmp/manya-7x7-d24d-${Date.now()}.json`;
   await runCli(['mesh', 'register', 'research-academic'], stateFile);
   const r = await runCli(['mesh', 'dispatch', 'citationValidation', 'validateDOI', '10.1000/182'], stateFile);
@@ -1971,7 +1588,7 @@ test('D24d: mesh dispatch via CLI - invokes validateDOI on research-academic', a
   assert.equal(out.result.valid, true);
 });
 
-test('D24e: translate via CLI - HS code → industry', async () => {
+test('D18e: translate via CLI - HS code → industry', async () => {
   const stateFile = `/tmp/manya-7x7-d24e-${Date.now()}.json`;
   const r = await runCli(['translate', 'hs_code', 'industry', '300490'], stateFile);
   assert.equal(r.exitCode, 0);
@@ -1980,7 +1597,7 @@ test('D24e: translate via CLI - HS code → industry', async () => {
   assert.equal(out.translated, true);
 });
 
-test('D24f: generateWeaveHtml - produces self-contained HTML with embedded data', () => {
+test('D18f: generateWeaveHtml - produces self-contained HTML with embedded data', () => {
   const html = generateWeaveHtml({
     tools: [
       { toolId: 'forge', name: 'Forge', owns: ['keyDerivation'], syncChannels: ['key-rotation-event'], registeredAt: '2026-01-01T00:00:00Z' },
@@ -2005,7 +1622,7 @@ test('D24f: generateWeaveHtml - produces self-contained HTML with embedded data'
   assert.ok(!html.includes('<script src='));
 });
 
-test('D24g: knownToolIds - returns all 8 CLI-registerable tools', () => {
+test('D18g: knownToolIds - returns all 8 CLI-registerable tools', () => {
   const ids = knownToolIds();
   assert.ok(ids.includes('forge'));
   assert.ok(ids.includes('pulse'));
@@ -2019,7 +1636,7 @@ test('D24g: knownToolIds - returns all 8 CLI-registerable tools', () => {
 
 
 // ===================================================================
-// DIMENSION 25: Serve & Repl - HTTP Server + SSE Stream + Interactive Shell
+// DIMENSION 19: Serve & Repl - HTTP Server + SSE Stream + Interactive Shell
 // ===================================================================
 // The runtime surfaces that make Manya accessible from any client.
 
@@ -2027,7 +1644,7 @@ test('D24g: knownToolIds - returns all 8 CLI-registerable tools', () => {
 let d25Server;
 let d25BaseUrl;
 
-test('D25a: startServer boots and serves /api/health', async () => {
+test('D19a: startServer boots and serves /api/health', async () => {
   d25Server = await startServer({ port: 0, host: '127.0.0.1' });
   const addr = d25Server.server.address();
   d25BaseUrl = `http://127.0.0.1:${addr.port}`;
@@ -2038,8 +1655,8 @@ test('D25a: startServer boots and serves /api/health', async () => {
   assert.equal(body.ok, true);
 });
 
-test('D25b: GET /api/mesh returns auto-registered tools', async () => {
-  assert.ok(d25BaseUrl, 'D25a must run first');
+test('D19b: GET /api/mesh returns auto-registered tools', async () => {
+  assert.ok(d25BaseUrl, 'D19a must run first');
   const res = await fetch(d25BaseUrl + '/api/mesh');
   const body = await res.json();
   assert.equal(res.status, 200);
@@ -2047,7 +1664,7 @@ test('D25b: GET /api/mesh returns auto-registered tools', async () => {
   assert.ok(body.tools.some(t => t.toolId === 'research-academic'));
 });
 
-test('D25c: POST /api/mesh/dispatch invokes a capability call', async () => {
+test('D19c: POST /api/mesh/dispatch invokes a capability call', async () => {
   assert.ok(d25BaseUrl);
   const res = await fetch(d25BaseUrl + '/api/mesh/dispatch', {
     method: 'POST',
@@ -2059,7 +1676,7 @@ test('D25c: POST /api/mesh/dispatch invokes a capability call', async () => {
   assert.equal(body.result.valid, true);
 });
 
-test('D25d: POST /api/identities + GET /api/identities/resolve roundtrip', async () => {
+test('D19d: POST /api/identities + GET /api/identities/resolve roundtrip', async () => {
   assert.ok(d25BaseUrl);
   const createRes = await fetch(d25BaseUrl + '/api/identities', {
     method: 'POST',
@@ -2074,7 +1691,7 @@ test('D25d: POST /api/identities + GET /api/identities/resolve roundtrip', async
   assert.equal(resolved.identity.id, created.id);
 });
 
-test('D25e: POST /api/bus/route routes via tool sync channels', async () => {
+test('D19e: POST /api/bus/route routes via tool sync channels', async () => {
   assert.ok(d25BaseUrl);
   const res = await fetch(d25BaseUrl + '/api/bus/route', {
     method: 'POST',
@@ -2086,7 +1703,7 @@ test('D25e: POST /api/bus/route routes via tool sync channels', async () => {
   assert.ok(body.routes.length >= 5);
 });
 
-test('D25f: SSE /api/events streams published events', async () => {
+test('D19f: SSE /api/events streams published events', async () => {
   assert.ok(d25BaseUrl);
   const res = await fetch(d25BaseUrl + '/api/events');
   assert.equal(res.status, 200);
@@ -2104,7 +1721,7 @@ test('D25f: SSE /api/events streams published events', async () => {
   await reader.cancel();
 });
 
-test('D25g: REPL processes commands interactively', async () => {
+test('D19g: REPL processes commands interactively', async () => {
   const { Readable, Writable } = await import('node:stream');
   let output = '';
   const input = Readable.from(['mesh register-all\n', 'mesh list\n', ':quit\n']);
@@ -2127,11 +1744,11 @@ test('D25 cleanup: shutdown server', async () => {
 
 
 // ===================================================================
-// DIMENSION 26: Lycon Browser - Privacy Browser Integration with Manya Unify
+// DIMENSION 20: Lycon Browser - Privacy Browser Integration with Manya Unify
 // ===================================================================
 // The privacy-first browser wired into the ecosystem via the Manya event bus.
 
-test('D26a: lyconManifest has correct identity and 6 capabilities', () => {
+test('D20a: lyconManifest has correct identity and 6 capabilities', () => {
   assert.equal(lyconManifest.id, 'lycon-browser');
   assert.equal(lyconManifest.name, 'Lycon Browser');
   assert.equal(lyconManifest.foundation, 'Manya');
@@ -2144,7 +1761,7 @@ test('D26a: lyconManifest has correct identity and 6 capabilities', () => {
   assert.ok(lyconManifest.owns.includes('browserHistoryManagement'));
 });
 
-test('D26b: createAdapter + forward - navigation event flows to bus', () => {
+test('D20b: createAdapter + forward - navigation event flows to bus', () => {
   _resetMesh();
   _resetFederation();
   registerTool({ manifest: lyconManifest, api: {} });
@@ -2159,7 +1776,7 @@ test('D26b: createAdapter + forward - navigation event flows to bus', () => {
   assert.equal(received.payload.sessionId, adapter.sessionId);
 });
 
-test('D26c: createAdapter + forward - shield-blocked event flows to bus', () => {
+test('D20c: createAdapter + forward - shield-blocked event flows to bus', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   let received = null;
@@ -2170,7 +1787,7 @@ test('D26c: createAdapter + forward - shield-blocked event flows to bus', () => 
   assert.equal(received.payload.filter, 'easylist');
 });
 
-test('D26d: linkIdentity - browser profile links to federated identity', () => {
+test('D20d: linkIdentity - browser profile links to federated identity', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   let identityEvent = null;
@@ -2182,20 +1799,20 @@ test('D26d: linkIdentity - browser profile links to federated identity', () => {
   assert.equal(identityEvent.payload.identityId, 'id-josiah');
 });
 
-test('D26e: forward rejects unknown channel', () => {
+test('D20e: forward rejects unknown channel', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   assert.throws(() => adapter.forward('lycon:bogus', {}), /Unknown Lycon sync channel/);
 });
 
-test('D26f: LYCON_SYNC_CHANNELS matches lyconManifest.syncChannels', () => {
+test('D20f: LYCON_SYNC_CHANNELS matches lyconManifest.syncChannels', () => {
   for (const ch of LYCON_SYNC_CHANNELS) {
     assert.ok(lyconManifest.syncChannels.includes(ch), `manifest should declare ${ch}`);
   }
   assert.equal(LYCON_SYNC_CHANNELS.length, lyconManifest.syncChannels.length);
 });
 
-test('D26g: full browsing session - navigation + shield + bookmark + download + identity-link', () => {
+test('D20g: full browsing session - navigation + shield + bookmark + download + identity-link', () => {
   _resetMesh();
   _resetFederation();
   registerTool({ manifest: lyconManifest, api: {} });
@@ -2224,11 +1841,11 @@ test('D26g: full browsing session - navigation + shield + bookmark + download + 
 
 
 // ===================================================================
-// DIMENSION 27: Lycon Deep Integration - Shield Intel, Identity Panel, Private Sessions
+// DIMENSION 21: Lycon Deep Integration - Shield Intel, Identity Panel, Private Sessions
 // ===================================================================
 // The three deep-integration features that wire Lycon deeper into Manya.
 
-test('D27a: shield intelligence auto-creates IOC for malicious .tk domain', () => {
+test('D21a: shield intelligence auto-creates IOC for malicious .tk domain', () => {
   _resetMesh();
   _resetFederation();
   const bus = createBus();
@@ -2245,7 +1862,7 @@ test('D27a: shield intelligence auto-creates IOC for malicious .tk domain', () =
   assert.equal(result.ioc.source, 'lycon-shields');
 });
 
-test('D27b: shield intelligence returns matched=false for benign URLs', () => {
+test('D21b: shield intelligence returns matched=false for benign URLs', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   const intel = createShieldIntelligence({
@@ -2257,7 +1874,7 @@ test('D27b: shield intelligence returns matched=false for benign URLs', () => {
   assert.equal(result.ioc, null);
 });
 
-test('D27c: identity panel - link/unlink/switch profile', () => {
+test('D21c: identity panel - link/unlink/switch profile', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   const panel = createIdentityPanel({ adapter });
@@ -2275,7 +1892,7 @@ test('D27c: identity panel - link/unlink/switch profile', () => {
   assert.equal(panel.unlinkCurrent(), false);
 });
 
-test('D27d: private session factory - create + end session', () => {
+test('D21d: private session factory - create + end session', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   const factory = createPrivateSessionFactory({ adapter });
@@ -2296,7 +1913,7 @@ test('D27d: private session factory - create + end session', () => {
   assert.equal(adapter.resolveIdentity(session.profileId), null);
 });
 
-test('D27e: private session with unify creates real federated identity', () => {
+test('D21e: private session with unify creates real federated identity', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   const mockUnify = {
@@ -2317,7 +1934,7 @@ test('D27e: private session with unify creates real federated identity', () => {
   assert.ok(session.identityId.startsWith('id-private-'));
 });
 
-test('D27f: shield intelligence processShieldBlock forwards + checks', () => {
+test('D21f: shield intelligence processShieldBlock forwards + checks', () => {
   const bus = createBus();
   const adapter = createLyconAdapter({ bus });
   const intel = createShieldIntelligence({
@@ -2335,7 +1952,7 @@ test('D27f: shield intelligence processShieldBlock forwards + checks', () => {
   assert.equal(forwarded.payload.url, 'https://phishing.tk/x');
 });
 
-test('D27g: end-to-end — private session + identity panel + shield intelligence', () => {
+test('D21g: end-to-end — private session + identity panel + shield intelligence', () => {
   _resetMesh();
   _resetFederation();
   const bus = createBus();
@@ -2367,11 +1984,11 @@ test('D27g: end-to-end — private session + identity panel + shield intelligenc
 
 
 // ===================================================================
-// DIMENSION 28: Weaver Rules - Connection Rules Engine
+// DIMENSION 22: Weaver Rules - Connection Rules Engine
 // ===================================================================
 // The intelligence that knows what can connect to what.
 
-test('D28a: canConnect - identity ↔ primary type returns edgeType=primary', () => {
+test('D22a: canConnect - identity ↔ primary type returns edgeType=primary', () => {
   const identity = { id: 'identity:id-1', kind: 'identity', label: 'Josiah', identityId: 'id-1', primaryType: 'orcid', linkedTypes: ['doi'] };
   const type = { id: 'type:orcid', kind: 'type', label: 'orcid', typeId: 'orcid' };
   const result = canConnect(identity, type, {});
@@ -2380,7 +1997,7 @@ test('D28a: canConnect - identity ↔ primary type returns edgeType=primary', ()
   assert.equal(result.strength, 1.0);
 });
 
-test('D28b: canConnect - tool ↔ tool with shared sync channel', () => {
+test('D22b: canConnect - tool ↔ tool with shared sync channel', () => {
   const toolA = { id: 'tool:a', kind: 'tool', label: 'A', toolId: 'a', syncChannels: ['shared'], handsOff: [], owns: [] };
   const toolB = { id: 'tool:b', kind: 'tool', label: 'B', toolId: 'b', syncChannels: ['shared'], handsOff: [], owns: [] };
   const result = canConnect(toolA, toolB, {});
@@ -2388,7 +2005,7 @@ test('D28b: canConnect - tool ↔ tool with shared sync channel', () => {
   assert.equal(result.edgeType, 'sync-channel');
 });
 
-test('D28c: canConnect - tool ↔ type via validating capability', () => {
+test('D22c: canConnect - tool ↔ type via validating capability', () => {
   const tool = { id: 'tool:research-academic', kind: 'tool', label: 'Research', toolId: 'research-academic' };
   const type = { id: 'type:orcid', kind: 'type', label: 'orcid', typeId: 'orcid' };
   const result = canConnect(tool, type, {});
@@ -2396,14 +2013,14 @@ test('D28c: canConnect - tool ↔ type via validating capability', () => {
   assert.equal(result.edgeType, 'validates');
 });
 
-test('D28d: canConnect - type ↔ type is never possible', () => {
+test('D22d: canConnect - type ↔ type is never possible', () => {
   const typeA = { id: 'type:orcid', kind: 'type', typeId: 'orcid' };
   const typeB = { id: 'type:doi', kind: 'type', typeId: 'doi' };
   const result = canConnect(typeA, typeB, {});
   assert.equal(result.possible, false);
 });
 
-test('D28e: canConnect - identity ↔ identity sharing a type', () => {
+test('D22e: canConnect - identity ↔ identity sharing a type', () => {
   const idA = { id: 'identity:a', kind: 'identity', label: 'A', identityId: 'a', primaryType: 'orcid', linkedTypes: ['doi'] };
   const idB = { id: 'identity:b', kind: 'identity', label: 'B', identityId: 'b', primaryType: 'ror', linkedTypes: ['doi'] };
   const result = canConnect(idA, idB, {});
@@ -2411,7 +2028,7 @@ test('D28e: canConnect - identity ↔ identity sharing a type', () => {
   assert.equal(result.edgeType, 'shared-type');
 });
 
-test('D28f: findPotentialConnections returns all possible pairs', () => {
+test('D22f: findPotentialConnections returns all possible pairs', () => {
   const nodes = [
     { id: 'tool:forge', kind: 'tool', label: 'Forge', toolId: 'forge', owns: ['keyDerivation'], handsOff: [], syncChannels: ['key-rotation-event'] },
     { id: 'tool:research-academic', kind: 'tool', label: 'Research', toolId: 'research-academic', owns: ['citationValidation'], handsOff: ['keyDerivation'], syncChannels: ['citation-verified'] },
@@ -2428,7 +2045,7 @@ test('D28f: findPotentialConnections returns all possible pairs', () => {
   }
 });
 
-test('D28g: getTypeToToolMap returns orcid → research-academic', () => {
+test('D22g: getTypeToToolMap returns orcid → research-academic', () => {
   const map = getTypeToToolMap();
   assert.equal(map.orcid, 'research-academic');
   assert.equal(map.imo, 'transport-logistics');
@@ -2436,11 +2053,11 @@ test('D28g: getTypeToToolMap returns orcid → research-academic', () => {
 
 
 // ===================================================================
-// DIMENSION 29: UPMP - Activity Tracking & Intelligence Engagement
+// DIMENSION 23: UPMP - Activity Tracking & Intelligence Engagement
 // ===================================================================
 // Universal Progress Monitoring wired into the Manya event bus.
 
-test('D29a: upmpManifest has correct identity and 6 capabilities', () => {
+test('D23a: upmpManifest has correct identity and 6 capabilities', () => {
   assert.equal(upmpManifest.id, 'upmp');
   assert.equal(upmpManifest.name, 'UPMP');
   assert.equal(upmpManifest.foundation, 'Manya');
@@ -2450,7 +2067,7 @@ test('D29a: upmpManifest has correct identity and 6 capabilities', () => {
   assert.ok(upmpManifest.syncChannels.includes('upmp:session-started'));
 });
 
-test('D29b: createAdapter + startSession forwards to bus', () => {
+test('D23b: createAdapter + startSession forwards to bus', () => {
   const bus = createBus();
   const adapter = createUpmpAdapter({ bus });
   let received = null;
@@ -2461,7 +2078,7 @@ test('D29b: createAdapter + startSession forwards to bus', () => {
   assert.equal(received.sourceToolId, 'upmp');
 });
 
-test('D29c: recordStuckPoint + resolveStuckPoint fires breakthrough', () => {
+test('D23c: recordStuckPoint + resolveStuckPoint fires breakthrough', () => {
   const bus = createBus();
   const adapter = createUpmpAdapter({ bus });
   let breakthrough = null;
@@ -2473,7 +2090,7 @@ test('D29c: recordStuckPoint + resolveStuckPoint fires breakthrough', () => {
   assert.equal(breakthrough.payload.intelligence, 'linguistic');
 });
 
-test('D29d: recordDiscovery forwards to bus', () => {
+test('D23d: recordDiscovery forwards to bus', () => {
   const bus = createBus();
   const adapter = createUpmpAdapter({ bus });
   let received = null;
@@ -2484,7 +2101,7 @@ test('D29d: recordDiscovery forwards to bus', () => {
   assert.equal(received.payload.type, 'post');
 });
 
-test('D29e: intelligence engagement increments on session start', () => {
+test('D23e: intelligence engagement increments on session start', () => {
   const bus = createBus();
   const adapter = createUpmpAdapter({ bus });
   adapter.startSession({ activityType: 'writing', intelligence: 'linguistic' });
@@ -2495,7 +2112,7 @@ test('D29e: intelligence engagement increments on session start', () => {
   assert.equal(intel.sessions, 2);
 });
 
-test('D29f: linkIntelligenceToIdentity federates intelligences', () => {
+test('D23f: linkIntelligenceToIdentity federates intelligences', () => {
   const bus = createBus();
   const adapter = createUpmpAdapter({ bus });
   adapter.linkIntelligenceToIdentity('linguistic', 'id-josiah');
@@ -2504,7 +2121,7 @@ test('D29f: linkIntelligenceToIdentity federates intelligences', () => {
   assert.equal(links.length, 1);
 });
 
-test('D29g: full session E2E — stuck + discovery + breakthrough + end', () => {
+test('D23g: full session E2E — stuck + discovery + breakthrough + end', () => {
   const bus = createBus({ replay: true });
   const adapter = createUpmpAdapter({ bus });
   const received = [];

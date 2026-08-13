@@ -409,3 +409,43 @@ Stage Summary:
 - The Weaver is now interactive: drag nodes to probe connections, valid connections attract and establish, invalid connections repel, boundary keeps order
 - UPMP brings personal activity intelligence to the ecosystem — your writing sessions, stuck points, and discoveries flow through the same event bus as everything else
 - "Your linguistic intelligence profile is part of who you are" — intelligences can be linked to federated identities
+
+---
+Task ID: 10
+Agent: Main
+Task: Remove Craft Engine from Manya monorepo (it has its own repository: craft-engine)
+
+Work Log:
+- Removed Craft Engine from the Manya monorepo per user decision (craft-engine now has its own repository)
+- Removed "tools/craft" from root package.json workspaces array
+- Removed all craft:* scripts from root package.json (craft:test, craft:build)
+- Removed craft:build dependency from test:7x7 script (now: "node --test tests/performance-7x7.test.js")
+- Added tools:test script covering all 16 non-craft tool workspaces
+- Removed craftManifest from packages/toolkit/src/index.js (definition and capabilityOwners entry for compressionAnalytics)
+- Removed craftEngineManifest from packages/toolkit/src/index.d.ts type declarations
+- Removed craftManifest from packages/toolkit/test/index.test.js (imports, test arrays, assertions) — toolkit tests went from 23 to 21
+- Removed Craft Engine imports and craftManifest references from tests/performance-7x7.test.js
+- Removed D1-D4 and D9-D10 craft-specific test dimensions from 7x7 test (29 -> 23 dimensions, 204 -> 162 tests)
+- Fixed broken array syntax in 7x7 test: missing commas after forgeManifest where craftManifest was regex-removed (lines 1086, 1117)
+- Removed Craft Engine from README.md (tools table, packages table, test results table)
+- Updated README.md test counts: 7x7 190->162, total 987->924
+- Removed Craft Engine from skills/hael-ecosystem/SKILL.md
+- Updated SKILL.md test counts: 7x7 190->162, total 987->924
+- Removed helper scripts: scripts/fix-craft-imports.mjs, scripts/find-craft-refs.mjs
+- Deleted the entire tools/craft/ directory (including tsconfig files, dist/, craft-codec subdirectory)
+- Regenerated package-lock.json via npm install — 0 craft references remain
+- Removed obsolete helper script: scripts/fix-esm-extensions.sh
+- Fixed Windows path-separator bug in tools/cli/src/index.js auto-execute check
+- Fixed process.exit() -> process.exitCode in tools/cli/src/index.js to allow stdout to flush
+
+Validation Results:
+- Toolkit tests: 21 pass, 0 fail
+- 7x7 performance integration tests: 162 pass, 0 fail
+- All 37 non-craft node:test suites verified passing individually
+- CLI: manya --version outputs "manya 0.6.0", manya --help works, mesh list/register-all/identity list all produce correct output
+
+- Stage Summary:
+- Craft Engine fully removed from the Manya monorepo — all source files, workspace entries, scripts, tests, and documentation references eliminated
+- All remaining tests pass: 924 total (162 in 7x7 + 21 toolkit + 881 across other suites)
+- tools/craft/ directory deleted, package-lock.json regenerated with 0 craft references
+- CLI entry point verified: manya --version, --help, mesh list, mesh register-all, identity list all work correctly
