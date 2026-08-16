@@ -20,7 +20,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
 
       - name: Typecheck
         run: npm run site:typecheck

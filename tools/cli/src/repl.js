@@ -73,7 +73,7 @@ export async function startRepl(options = {}) {
   }
 
   output.write('\n');
-  output.write('  Manya REPL v0.6.0 — Everything Connected. Everyone Unified.\n');
+  output.write('  Manya REPL v0.9.0 — Everything Connected. Everyone Unified.\n');
   output.write('  Type :help for commands, :quit to exit.\n');
   output.write('\n');
   rl.prompt();
@@ -177,7 +177,7 @@ function completer(line) {
   // 3rd arg: toolId for mesh register / bus route
   if (tokens.length === 3) {
     if ((tokens[0] === 'mesh' && tokens[1] === 'register') || (tokens[0] === 'bus' && tokens[1] === 'route')) {
-      const toolIds = ['forge', 'pulse', 'primary-sector', 'cybersecurity', 'transport-logistics', 'research-academic', 'unify'];
+      const toolIds = ['forge', 'pulse', 'primary-sector', 'cybersecurity', 'transport-logistics', 'research-academic', 'unify', 'lycon-browser'];
       const hits = toolIds.filter(t => t.startsWith(lastToken));
       return [hits, lastToken];
     }
@@ -196,7 +196,7 @@ const REPL_HELP = `Manya REPL commands:
   Mesh:
     mesh list                   List registered tools
     mesh register <toolId>      Register a tool
-    mesh register-all           Register all 7 tools
+    mesh register-all           Register all 8 tools
     mesh dispatch <cap> <method> [args...]
                                 Dispatch a capability call
     mesh channels               List declared sync channels

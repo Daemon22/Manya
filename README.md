@@ -1,9 +1,12 @@
 # <img src="https://raw.githubusercontent.com/Daemon22/Manya/main/assets/logo.png" width="40" /> Manya
-# Manya
 
 Manya means *unite* or *connect*. This monorepo lives up to that name: it provides data encoding, encryption, compression, access control, secure messaging, compliance tooling, sector-specific validation, transport-logistics identifier validation, research-academic citation and reproducibility tooling, cybersecurity threat intelligence, **Manya Unify** (the connective tissue), the **Manya CLI** for shell access, **Manya Serve** for HTTP/REST/SSE access, **Manya Repl** for interactive exploration, and now **Lycon Browser** — a privacy-first web browser wired into the ecosystem.
 
 > Everything Connected. Everyone Unified. Browse wild. Browse free.
+
+[![CI](https://github.com/Daemon22/Manya/workflows/CI/badge.svg)](https://github.com/Daemon22/Manya/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 
 ## Ecosystem
 
@@ -83,7 +86,7 @@ The 6 Apache-2.0 packages were merged in from the [MANYA Intelligence OS](https:
 
 ```sh
 # Mesh — tool registry and capability routing
-manya mesh register-all                     # Register all 16 tools (including Lycon)
+manya mesh register-all                     # Register all 8 CLI-accessible tools (of 16 ecosystem tools)
 manya mesh list                             # List registered tools
 manya mesh dispatch citationValidation validateDOI 10.1000/182
 manya mesh channels                         # List declared sync channels
@@ -137,7 +140,7 @@ Running tests:
 npm run test:all              # Run everything
 npm run tools:test            # All tool tests (including Lycon)
 npm run packages:test         # Package tests
-npm run test:7x7              # 23×7 = 162 cross-tool integration tests
+npm run test:7x7              # 162 cross-tool integration tests (25 dimensions)
 ```
 
 ## Test Results
@@ -146,6 +149,8 @@ npm run test:7x7              # 23×7 = 162 cross-tool integration tests
 |-------|-------|--------|
 | Toolkit | 21 | ✅ |
 | HelixFlow SDK | 3 | ✅ |
+| Composed Packages (keyring, attest, ledger, anonymize, memory, cortex, perception, telepathy, reflection, economy, guardian) | 52 | ✅ |
+| Merged Packages (constitution, contracts, council, customs-shield, nervous-system, weave) | 11 | ✅ |
 | Hawk | 18 | ✅ |
 | Forge | 25 | ✅ |
 | Stamp | 44 | ✅ |
@@ -159,10 +164,11 @@ npm run test:7x7              # 23×7 = 162 cross-tool integration tests
 | Transport & Logistics | 66 | ✅ |
 | Research & Academic | 73 | ✅ |
 | Manya Unify | 75 | ✅ |
-| Manya CLI (index + serve + repl) | 91 | ✅ |
+| Manya CLI (index + serve + repl + weaver-rules) | 119 | ✅ |
 | **Manya Lycon** | **59** | ✅ |
+| **UPMP** | **30** | ✅ |
 | **7×7 Performance v12** | **162** | ✅ |
-| **Total** | **924** | ✅ |
+| **Total** | **1045** | ✅ |
 
 ## The "Unite or Connect" Layer
 

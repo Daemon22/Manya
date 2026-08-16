@@ -35,7 +35,7 @@ async function driveRepl(inputs) {
 
 test('Repl: starts and exits cleanly', async () => {
   const output = await driveRepl([':quit']);
-  assert.match(output, /Manya REPL v0\.6\.0/);
+  assert.match(output, /Manya REPL v0\.\d+\.\d+/);
   assert.match(output, /Goodbye/);
 });
 
@@ -125,7 +125,7 @@ test('Repl: --pretty indents JSON output', async () => {
 test('Repl: --quiet suppresses output', async () => {
   const output = await driveRepl(['mesh register-all --quiet', 'mesh list --quiet', ':quit']);
   // Should still have the welcome message but no JSON for the quiet commands
-  assert.match(output, /Manya REPL v0\.6\.0/);
+  assert.match(output, /Manya REPL v0\.\d+\.\d+/);
   assert.ok(!output.includes('"count"'));
 });
 

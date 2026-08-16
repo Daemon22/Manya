@@ -1,7 +1,7 @@
 /**
  * Manya 7x7 Performance Test Suite — v12
  *
- * 23 dimensions x 7 test scenarios = 162 comprehensive tests
+ * 23 dimensions × 7 test scenarios + 1 cleanup test = 162 comprehensive tests
  * Covering all core functions across the entire Manya ecosystem
  *
  * Dimensions:
@@ -1731,7 +1731,7 @@ test('D19g: REPL processes commands interactively', async () => {
     output: out,
     process: { stdin: input, stdout: out, stderr: out, env: {} },
   });
-  assert.match(output, /Manya REPL v0\.6\.0/);
+  assert.match(output, /Manya REPL v0\.\d+\.\d+/);
   assert.match(output, /"count"/);
   assert.match(output, /research-academic/);
   assert.match(output, /Goodbye/);

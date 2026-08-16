@@ -25,12 +25,12 @@ export async function main(argv, options = {}) {
   const proc = options.process || process;
   try {
     const parsed = parseArgs(argv);
-    if (parsed.help) {
-      proc.stdout.write(HELP_TEXT + '\n');
+    if (parsed.version) {
+      proc.stdout.write('manya 0.9.0\n');
       return 0;
     }
-    if (parsed.version) {
-      proc.stdout.write('manya 0.6.0\n');
+    if (parsed.help || parsed.command === 'help' || parsed.command === null) {
+      proc.stdout.write(HELP_TEXT + '\n');
       return 0;
     }
     // Long-running commands that need to be handled outside the dispatcher
@@ -100,7 +100,7 @@ COMMANDS
 
   mesh list                            List all registered tools
   mesh register <toolId>               Register a tool by id (forge, research-academic, ...)
-  mesh register-all                    Register all 15 known tools
+  mesh register-all                    Register all 8 known tools
   mesh dispatch <capability> <method> [args...]
                                        Dispatch a capability-based call
   mesh channels                        List all declared sync channels

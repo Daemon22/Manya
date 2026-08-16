@@ -82,11 +82,11 @@ export async function runCommand(parsed, context = {}) {
   try {
     switch (parsed.command) {
       case 'version':
-        return { output: 'manya 0.6.0', exitCode: 0 };
+        return { output: 'manya 0.9.0', exitCode: 0 };
 
       case 'help':
       case null:
-        return { output: '', exitCode: 0 }; // Help handled by main()
+        return { output: '', exitCode: 0 }; // Help is handled by main() — this case is unreachable via main()
 
       // -- MESH --
       case 'mesh': {
