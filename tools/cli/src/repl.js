@@ -32,7 +32,7 @@
 import { createInterface } from 'node:readline';
 import { parseArgs } from './parser.js';
 import { runCommand } from './dispatcher.js';
-import { generateWeaveHtml } from './weave.js';
+import { generateWeaveHtml as _generateWeaveHtml } from './weave.js';
 
 /**
  * Starts the interactive REPL.
@@ -62,7 +62,7 @@ export async function startRepl(options = {}) {
 
   // Safe prompt that no-ops if the readline is already closed
   function safePrompt() {
-    try { rl.prompt(); } catch (e) { /* readline closed — ignore */ }
+    try { rl.prompt(); } catch { /* readline closed — ignore */ }
   }
 
   // Serialize command processing so async commands complete before the next line is processed
@@ -84,7 +84,7 @@ export async function startRepl(options = {}) {
       if (resolved) return;
       resolved = true;
       // Wait for all pending commands to flush, then resolve
-      pending.then(() => { try { rl.close(); } catch (e) {} resolve(); });
+      pending.then(() => { try { rl.close(); } catch {} resolve(); });
     }
 
     rl.on('line', (line) => {
@@ -137,7 +137,7 @@ export async function startRepl(options = {}) {
             }
           }
         } catch (err) {
-          try { output.write(`  Error: ${err.message}\n`); } catch (e) { /* ignore */ }
+          try { output.write(`  Error: ${err.message}\n`); } catch { /* ignore */ }
         }
         safePrompt();
       });

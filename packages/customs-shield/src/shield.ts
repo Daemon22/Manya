@@ -8,7 +8,7 @@
  * Licensed under the Apache License, Version 2.0.
  */
 
-import type { Shipment, ShieldFinding, ShieldReport, Severity } from './types.js';
+import type { Shipment, ShieldFinding, ShieldReport, Severity as _Severity } from './types.js';
 import { validate as validateHsCode } from './hscode/catalog.js';
 import { screenParties } from './sanctions/screener.js';
 import {

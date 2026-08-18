@@ -24,7 +24,7 @@ import { canConnect, buildContext } from './weaver-rules.js';
  * @param {Array} input.channels - Sync channels (unused, kept for API compat).
  * @returns {string} Self-contained HTML.
  */
-export function generateWeaveHtml({ tools, identities, channels }) {
+export function generateWeaveHtml({ tools, identities, _channels }) {
   // Build nodes
   const nodes = [];
   const edges = [];

@@ -288,7 +288,7 @@ function checkToolToType(nodeA, nodeB) {
  * Identity ↔ Identity: NOT directly possible. They connect via shared types
  * or via mergeIdentities (unify tool).
  */
-function checkIdentityToIdentity(nodeA, nodeB, context) {
+function checkIdentityToIdentity(nodeA, nodeB, _context) {
   const idA = nodeA;
   const idB = nodeB;
 

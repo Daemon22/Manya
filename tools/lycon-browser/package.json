@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Manya Lycon \u2014 Privacy-first web browser integrated with the Manya ecosystem. Lycon's shields, tabs, bookmarks, history, and downloads are wired into Manya Unify's event bus and identity federation.",
   "type": "module",
-  "main": "main.js",
+  "main": "main.cjs",
   "manya": {
     "main": "manya/index.js",
     "types": "manya/types.d.ts"
@@ -23,15 +23,15 @@
     "@cliqz/adblocker-electron": "^1.27.0"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron": "^43.0.0",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.manya.lycon",
     "productName": "Lycon",
     "files": [
-      "main.js",
-      "preload.js",
+      "main.cjs",
+      "preload.cjs",
       "src/**/*",
       "build/**/*",
       "manya/**/*.js"

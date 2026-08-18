@@ -57,7 +57,7 @@ export const LYCON_CAPABILITIES = [
  * @param {object} [options.unify] - Optional Manya Unify module (for identity federation).
  * @returns {ManyaLyconAdapter}
  */
-export function createAdapter({ bus, unify } = {}) {
+export function createAdapter({ bus, _unify } = {}) {
   if (!bus) throw new Error('createAdapter requires a bus (Manya event bus)');
 
   const sessionId = `lycon-${randomUUID().slice(0, 8)}`;
@@ -84,10 +84,7 @@ export function createAdapter({ bus, unify } = {}) {
         sessionId: this.sessionId,
         timestamp: event.timestamp || new Date().toISOString(),
       };
-      // Use the bus's publish (not routeEvent) since we're publishing to a single channel
-      const result = bus._publishEx
-        ? bus._publishEx(channel, enriched)
-        : publishToBus(bus, channel, enriched);
+      const result = publishToBus(bus, channel, enriched);
       return result;
     },
 
@@ -247,7 +244,7 @@ function publishToBus(bus, topic, event) {
   const subs = bus.subscribers?.get(topic);
   if (subs) {
     for (const sub of subs) {
-      try { sub.handler(enriched); delivered++; } catch (e) { /* swallow */ }
+      try { sub.handler(enriched); delivered++; } catch { /* swallow */ }
     }
   }
   if (bus.history) {

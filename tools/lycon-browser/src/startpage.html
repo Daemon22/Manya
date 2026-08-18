@@ -108,16 +108,16 @@
     <input class="search-input" id="q" type="text" placeholder="Search or type a URL" autocomplete="off" spellcheck="false" autofocus />
     <button class="search-btn" type="submit">Search</button>
   </form>
-  <div class="engine-label">Powered by <b id="engine-name">Brave Search</b> — your queries never get tracked</div>
+  <div class="engine-label">Powered by <b id="engine-name">DuckDuckGo</b> — your queries never get tracked</div>
 
   <div class="shortcuts" id="shortcuts"></div>
 
   <div class="footer">🦊 <b>Lycon</b> v1.0 · Privacy-first browsing</div>
 
   <script>
-    // Read settings from URL query parameters (?engine=brave&accent=orange&theme=dark)
+    // Read settings from URL query parameters (?engine=duckduckgo&accent=orange&theme=dark)
     const params = new URLSearchParams(location.search);
-    const engineName = params.get('engine') || 'brave';
+    const engineName = params.get('engine') || 'duckduckgo';
     const accent = params.get('accent') || 'orange';
     const theme = params.get('theme') || 'dark';
 
@@ -126,22 +126,21 @@
     if (theme === 'light') document.body.classList.add('light');
 
     const engineNames = {
-      brave: 'Brave Search', duckduckgo: 'DuckDuckGo', google: 'Google',
+      duckduckgo: 'DuckDuckGo', google: 'Google',
       bing: 'Bing', startpage: 'Startpage'
     };
     const engineUrls = {
-      brave: 'https://search.brave.com/search?q=',
       duckduckgo: 'https://duckduckgo.com/?q=',
       google: 'https://www.google.com/search?q=',
       bing: 'https://www.bing.com/search?q=',
       startpage: 'https://www.startpage.com/sp/search?query='
     };
 
-    document.getElementById('engine-name').textContent = engineNames[engineName] || 'Brave Search';
-    document.getElementById('q').placeholder = 'Search ' + (engineNames[engineName] || 'Brave Search') + ' or type a URL';
+    document.getElementById('engine-name').textContent = engineNames[engineName] || 'DuckDuckGo';
+    document.getElementById('q').placeholder = 'Search ' + (engineNames[engineName] || 'DuckDuckGo') + ' or type a URL';
 
     const shortcuts = [
-      { title: 'Brave Search', url: 'https://search.brave.com', icon: '🦁' },
+      { title: 'DuckDuckGo',   url: 'https://duckduckgo.com',    icon: '🦆' },
       { title: 'YouTube',      url: 'https://youtube.com',      icon: '▶️' },
       { title: 'Wikipedia',    url: 'https://wikipedia.org',    icon: '📚' },
       { title: 'GitHub',       url: 'https://github.com',       icon: '🐙' },
@@ -169,7 +168,7 @@
       if (!text) return '';
       if (URL_RE.test(text)) return text;
       if (DOMAIN_RE.test(text)) return 'https://' + text;
-      return (engineUrls[engineName] || engineUrls.brave) + encodeURIComponent(text);
+      return (engineUrls[engineName] || engineUrls.duckduckgo) + encodeURIComponent(text);
     }
 
     document.getElementById('search-form').addEventListener('submit', (e) => {

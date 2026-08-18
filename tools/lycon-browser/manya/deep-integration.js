@@ -49,7 +49,7 @@ export function createShieldIntelligence({ adapter, cybersecurityApi, iocStore }
      * @param {string} [input.filter] - The filter that triggered the block (e.g. 'easylist').
      * @returns {{ checked: boolean, matched: boolean, ioc: object|null, threat: object|null }}
      */
-    checkBlockedUrl({ url, tabId, filter }) {
+    checkBlockedUrl({ url, _tabId, filter }) {
       if (!url) throw new Error('checkBlockedUrl requires a url');
       totalChecked++;
 
@@ -92,7 +92,7 @@ export function createShieldIntelligence({ adapter, cybersecurityApi, iocStore }
                 cvssScore: 5.0,
                 tactics: ['initial-access'],
               });
-            } catch (e) {
+            } catch {
               // classifyThreat optional — skip if it fails
             }
           }
@@ -101,7 +101,7 @@ export function createShieldIntelligence({ adapter, cybersecurityApi, iocStore }
           store.set(hash, ioc);
           totalMatches++;
           return { checked: true, matched: true, ioc, threat };
-        } catch (e) {
+        } catch {
           // If IOC creation fails (e.g. invalid type), just record the block
         }
       }
@@ -180,7 +180,7 @@ export function createIdentityPanel({ adapter, defaultProfileId = 'default' }) {
 
   function notify(event) {
     for (const fn of listeners) {
-      try { fn(event); } catch (e) { /* swallow */ }
+      try { fn(event); } catch { /* swallow */ }
     }
   }
 
@@ -402,7 +402,7 @@ function parseUrl(url) {
       domain: ipMatch ? null : hostname,
       ip: ipMatch ? hostname : null,
     };
-  } catch (e) {
+  } catch {
     // Not a valid URL — try treating it as a domain
     if (typeof url === 'string' && url.includes('.')) {
       return { url, domain: url, ip: null };

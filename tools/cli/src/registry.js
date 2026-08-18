@@ -1,7 +1,7 @@
 /**
  * Manya CLI — tool registry.
  *
- * Maps each of the 15 Manya tool ids to its manifest and an API loader.
+ * Maps each of the 8 CLI-accessible Manya tool ids to its manifest and an API loader.
  * The loader uses async dynamic import() to fetch the tool's actual API
  * object so dispatch() can invoke methods on it. We use lazy loading so
  * the CLI only loads a tool's source when it's actually needed.

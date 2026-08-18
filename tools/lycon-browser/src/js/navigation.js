@@ -28,9 +28,9 @@
       return 'https://' + text;
     }
     // Otherwise treat as a search query
-    const engine = state.settings.searchEngine || 'brave';
+    const engine = state.settings.searchEngine || 'duckduckgo';
     const engines = state.searchEngines || {};
-    const eng = engines[engine] || { url: 'https://search.brave.com/search?q=%s' };
+    const eng = engines[engine] || { url: 'https://duckduckgo.com/?q=%s' };
     return eng.url.replace('%s', encodeURIComponent(text));
   }
 
@@ -117,7 +117,7 @@
     try {
       backBtn.disabled = !t.webview.canGoBack() && t.historyIdx <= 0;
       fwdBtn.disabled = !t.webview.canGoForward() && t.historyIdx >= t.history.length - 1;
-    } catch (e) {
+    } catch {
       backBtn.disabled = true;
       fwdBtn.disabled = true;
     }

@@ -6,11 +6,11 @@
   'use strict';
 
   const tabsEl = document.getElementById('tabs');
-  const tabstripEl = document.getElementById('tabstrip');
+  const _tabstripEl = document.getElementById('tabstrip');
   const contentEl = document.getElementById('content');
   const newTabBtn = document.getElementById('tab-new');
 
-  const { state, on, emit, addTab, removeTab, getTab, getActive, setActive, updateTab, reorderTab } = window.LyconState;
+  const { state, on, emit: _emit, addTab, removeTab, getTab, getActive, setActive, updateTab, reorderTab } = window.LyconState;
 
   // ---------------- Rendering ----------------
   function renderTabs() {

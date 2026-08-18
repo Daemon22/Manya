@@ -42,7 +42,7 @@ The ecosystem is structured as a living tree:
 |---|---|---|---|
 | **HAEL Foundation** | Public gateway and philosophical grounding | HTML/JS | — |
 | **Orren** | Universal mediator language ("Sacred Tongue") | Pure Python StdLib | — |
-| **Manya** | Connective hub: 16 tools, 20+ packages, CLI, browser | Node.js/TypeScript | MIT |
+| **Manya** | Connective hub: 16 tools, 20+ packages, CLI, HTTP server, Lycon browser | Node.js/TypeScript | MIT |
 | **MANYA Intelligence OS** | Sovereign, local-first intelligence operating system | Node.js/TypeScript | Apache-2.0 |
 | **Gqobonco** | Research, intelligence, ancestral-knowledge preservation | Data/Research | — |
 | **OMNIMIND** | The supreme intelligence core | — | — |
@@ -111,10 +111,14 @@ identity types, and vocabularies. This is how the mesh knows where to route call
 ### Running the Full Test Suite
 ```bash
 npm install
-npm run test:all        # Everything (924 tests)
-npm run tools:test      # All 16 tools + Lycon
+npm run test:all        # Everything (1715 tests)
+npm run test:spec       # TypeScript vitest suite only (670 tests)
+npm run test:coverage   # With coverage report (88%+ statements)
+npm run lint            # ESLint (flat config)
+npm run tools:test      # All 16 ecosystem tools + Lycon
 npm run packages:test   # All packages
-npm run test:7x7        # 162 cross-tool integration tests
+npm run test:7x7        # 162 cross-tool integration tests (23 dimensions)
+many domains            # List all 23 dimension namespaces
 ```
 
 ---
@@ -150,10 +154,11 @@ Manya's tools operate. Licensed Apache-2.0.
 Manya is the public-facing monorepo: 16 tools, 20+ packages, CLI, HTTP server, and Lycon browser.
 
 ## The 16 Tools (Summary)
-- **Security**: Vault, Forge, Signal, Shield, Cybersecurity.
-- **Operations**: uSINGA, HelixFlow, Hawk, Stamp.
-- **Intelligence**: Lens, Pulse, Manya Unify.
+- **Security**: Vault, Forge, Signal, Shield, Cybersecurity, Hawk.
+- **Operations**: uSINGA, Stamp, Manya Unify.
+- **Intelligence**: Lens, Pulse.
 - **Sectors**: Primary Sector, Transport & Logistics, Research & Academic.
+- **CLI tools** (8 accessible via `manya`): Forge, Pulse, Primary Sector, Cybersecurity, Transport & Logistics, Research & Academic, Unify, Lycon Browser.
 
 ## The CLI (`manya`)
 Subcommands: `mesh`, `identity`, `bus`, `translate`, `weave`, `serve`, `repl`, `browse`.

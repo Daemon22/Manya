@@ -24,13 +24,18 @@ jobs:
 
       - name: Security audit
         run: npm audit --audit-level=moderate
-        continue-on-error: true
+
+      - name: Lint
+        run: npm run lint
 
       - name: Typecheck
         run: npm run site:typecheck
 
       - name: Run all tests
         run: npm run test:all
+
+      - name: Run TypeScript spec coverage
+        run: npm run test:coverage
 
       - name: Build site
         run: npm run site:build

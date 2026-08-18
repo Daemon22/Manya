@@ -138,9 +138,13 @@ Running tests:
 
 ```sh
 npm run test:all              # Run everything
+npm run test:spec             # TypeScript vitest suite only
+npm run test:coverage         # With coverage report
+npm run lint                  # ESLint (flat config)
 npm run tools:test            # All tool tests (including Lycon)
 npm run packages:test         # Package tests
-npm run test:7x7              # 162 cross-tool integration tests (25 dimensions)
+npm run test:7x7              # 162 cross-tool integration tests (23 dimensions)
+many domains                   # List all 23 dimension namespaces
 ```
 
 ## Test Results
@@ -168,7 +172,7 @@ npm run test:7x7              # 162 cross-tool integration tests (25 dimensions)
 | **Manya Lycon** | **59** | ✅ |
 | **UPMP** | **30** | ✅ |
 | **7×7 Performance v12** | **162** | ✅ |
-| **Total** | **1045** | ✅ |
+| **Total** | **1715** | ✅ |
 
 ## The "Unite or Connect" Layer
 

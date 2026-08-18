@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const { state } = window.LyconState;
+  const { state: _state } = window.LyconState;
 
   function createPrivateTab(url) {
     if (!window.LyconTabs) return;

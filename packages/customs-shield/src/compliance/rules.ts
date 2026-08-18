@@ -9,7 +9,7 @@
  * Licensed under the Apache License, Version 2.0.
  */
 
-import type { CargoItem, Shipment, ShieldFinding } from '../types.js';
+import type { CargoItem as _CargoItem, Shipment, ShieldFinding } from '../types.js';
 import { chapter } from '../hscode/catalog.js';
 import { ComplianceError } from '../errors.js';
 

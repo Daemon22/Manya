@@ -7,9 +7,9 @@
  *   4. File exists on disk and is non-empty
  *   5. Download appears in state.downloads list
  */
-const path = require('path');
+const _path = require('path');
 const fs = require('fs');
-const os = require('os');
+const _os = require('os');
 
 module.exports = {
   name: 'downloads',
@@ -19,7 +19,7 @@ module.exports = {
     let pass = 0, fail = 0;
 
     const downloadUrl = `${api.testServerUrl}/download`;
-    const expectedFilename = 'lycon-test-download.txt';
+    const _expectedFilename = 'lycon-test-download.txt';
 
     // Subscribe to download events via the renderer
     await api.exec(`(function(){

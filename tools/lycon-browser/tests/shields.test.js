@@ -69,7 +69,7 @@ module.exports = {
       // Try one more site known to have many trackers
       const newId2 = await api.openNewTab('https://www.cnn.com');
       if (newId2) {
-        try { await api.waitForTabLoad(45000); } catch (e) {}
+        try { await api.waitForTabLoad(45000); } catch {}
         await api.wait(12000);
       }
       const count2 = await api.shieldsCount();

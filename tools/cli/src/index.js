@@ -36,7 +36,7 @@ export async function main(argv, options = {}) {
     // Long-running commands that need to be handled outside the dispatcher
     if (parsed.command === 'serve') {
       const port = parseInt(parsed.flags.port || '3100', 10);
-      const { server, url } = await startServer({ port });
+      const { server: _server, url } = await startServer({ port });
       proc.stdout.write(`Manya server listening on ${url}\n`);
       proc.stdout.write(`  Dashboards: ${url}/  ${url}/weave\n`);
       proc.stdout.write(`  REST API:   ${url}/api/health\n`);

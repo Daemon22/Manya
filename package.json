@@ -70,9 +70,21 @@
     "packages:test:core": "npm --workspace @manya/toolkit test && npm --workspace @manya/helixflow-sdk test",
     "packages:test:composed": "npm run keyring:test && npm run attest:test && npm run ledger:test && npm run anonymize:test && npm run memory:test && npm run cortex:test && npm run perception:test && npm run telepathy:test && npm run reflection:test && npm run economy:test && npm run guardian:test",
     "packages:test:merged": "npm run constitution:test && npm run contracts:test && npm run council:test && npm run customs-shield:test && npm run nervous-system:test && npm run weave:test",
-    "test:all": "npm run packages:test && npm run tools:test && npm run test:7x7"
+    "test:all": "npm run packages:test && npm run tools:test && npm run test:spec && npm run test:7x7",
+    "test:spec": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "@eslint/js": "^9.39.5",
+    "@vitest/coverage-v8": "^3.2.7",
+    "eslint": "^9.39.5",
+    "globals": "^16.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
+    "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "is-extglob": "^2.1.1"
   }
 }

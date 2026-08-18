@@ -6,7 +6,7 @@
  */
 
 import {
-  CustomsShield, screen,
+  CustomsShield as _CustomsShield, screen,
   normalize, chapter, heading, international, isValidFormat, lookup, validate,
   suggest, verifyMatch,
   normalizeName, levenshtein, similarity, screenParty, screenParties,
@@ -15,7 +15,7 @@ import {
   HIGH_RISK_TRANSSHIPMENT, detectIndicators, bandFor, scoreFrom, analyzeVulnerabilities,
   buildImportDeclaration, buildSanctionsRecord, serialize, validateReport,
   DEFAULT_CONFIG,
-  HSCodeError, SanctionsError, CustomsShieldError,
+  HSCodeError, SanctionsError as _SanctionsError, CustomsShieldError,
 } from '../src';
 import type { Shipment, ShieldFinding } from '../src';
 

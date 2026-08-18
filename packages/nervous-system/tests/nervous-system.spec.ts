@@ -33,7 +33,7 @@ import {
   SCRUBBED_FIELD_NAMES, shouldScrubField, scrubMetadata, SilentLogger,
 } from '../src';
 import type {
-  NervousEvent, EventFilter, Severity, NervousConfig,
+  NervousEvent, EventFilter, Severity, _NervousConfig,
 } from '../src';
 
 // ---------- helpers ----------
@@ -921,24 +921,22 @@ describe('Sources', () => {
       expect(src.isAvailable()).toBe(false);
     });
 
-    test('emits fs.change on file creation', (done) => {
+    test('emits fs.change on file creation', async () => {
       const src = new FilesystemSource({ path: tmpDir });
       const seen: NervousEvent[] = [];
       src.start((e) => seen.push(e));
       // Allow watcher to settle.
-      setTimeout(() => {
-        const filePath = path.join(tmpDir, 'hello.txt');
-        fs.writeFileSync(filePath, 'world');
-        setTimeout(() => {
-          try {
-            const changes = seen.filter((e) => e.topic === 'fs.change');
-            expect(changes.length).toBeGreaterThan(0);
-            expect(changes[0].source).toBe('filesystem');
-            src.stop();
-            done();
-          } catch (e) { src.stop(); done(e); }
-        }, 200);
-      }, 100);
+      await new Promise(r => setTimeout(r, 100));
+      const filePath = path.join(tmpDir, 'hello.txt');
+      fs.writeFileSync(filePath, 'world');
+      await new Promise(r => setTimeout(r, 200));
+      try {
+        const changes = seen.filter((e) => e.topic === 'fs.change');
+        expect(changes.length).toBeGreaterThan(0);
+        expect(changes[0].source).toBe('filesystem');
+      } finally {
+        src.stop();
+      }
     });
 
     test('rejects missing path', () => {
@@ -955,24 +953,20 @@ describe('Sources', () => {
 
   // ----- OS -----
   describe('OSSource', () => {
-    test('emits os.metrics on start and interval', (done) => {
+    test('emits os.metrics on start and interval', async () => {
       const src = new OSSource({ intervalMs: 50 });
       const seen: NervousEvent[] = [];
       src.start((e) => seen.push(e));
-      setTimeout(() => {
-        src.stop();
-        try {
-          expect(seen.length).toBeGreaterThanOrEqual(1);
-          expect(seen[0].topic).toBe('os.metrics');
-          const payload = seen[0].payload as { cpus: unknown[]; loadavg: number[]; memory: { total: number; free: number; used: number; usedPct: number }; uptime: number };
-          expect(Array.isArray(payload.cpus)).toBe(true);
-          expect(payload.loadavg).toHaveLength(3);
-          expect(typeof payload.memory.total).toBe('number');
-          expect(typeof payload.memory.usedPct).toBe('number');
-          expect(typeof payload.uptime).toBe('number');
-          done();
-        } catch (e) { done(e); }
-      }, 120);
+      await new Promise(r => setTimeout(r, 120));
+      src.stop();
+      expect(seen.length).toBeGreaterThanOrEqual(1);
+      expect(seen[0].topic).toBe('os.metrics');
+      const payload = seen[0].payload as { cpus: unknown[]; loadavg: number[]; memory: { total: number; free: number; used: number; usedPct: number }; uptime: number };
+      expect(Array.isArray(payload.cpus)).toBe(true);
+      expect(payload.loadavg).toHaveLength(3);
+      expect(typeof payload.memory.total).toBe('number');
+      expect(typeof payload.memory.usedPct).toBe('number');
+      expect(typeof payload.uptime).toBe('number');
     });
 
     test('rejects invalid interval', () => {
@@ -1016,19 +1010,15 @@ describe('Sources', () => {
 
   // ----- Network -----
   describe('NetworkSource', () => {
-    test('emits net.stats or net.warning (defensive)', (done) => {
+    test('emits net.stats or net.warning (defensive)', async () => {
       const src = new NetworkSource({ intervalMs: 50 });
       const seen: NervousEvent[] = [];
       src.start((e) => seen.push(e));
-      setTimeout(() => {
-        src.stop();
-        try {
-          expect(seen.length).toBeGreaterThanOrEqual(1);
-          const topics = seen.map((e) => e.topic);
-          expect(topics.includes('net.stats') || topics.includes('net.warning')).toBe(true);
-          done();
-        } catch (e) { done(e); }
-      }, 120);
+      await new Promise(r => setTimeout(r, 120));
+      src.stop();
+      expect(seen.length).toBeGreaterThanOrEqual(1);
+      const topics = seen.map((e) => e.topic);
+      expect(topics.includes('net.stats') || topics.includes('net.warning')).toBe(true);
     });
 
     test('readLinuxNetDev returns null on non-Linux or array on Linux', () => {
@@ -1227,18 +1217,14 @@ describe('Sources', () => {
       expect(seen).toHaveLength(0);
     });
 
-    test('simulationIntervalMs emits periodic samples', (done) => {
+    test('simulationIntervalMs emits periodic samples', async () => {
       const seen: NervousEvent[] = [];
       const src = new UsbSource({ simulationIntervalMs: 30 });
       src.start((e) => seen.push(e));
-      setTimeout(() => {
-        src.stop();
-        try {
-          const samples = seen.filter((e) => e.topic === 'stub.usb.sample');
-          expect(samples.length).toBeGreaterThan(0);
-          done();
-        } catch (e) { done(e); }
-      }, 100);
+      await new Promise(r => setTimeout(r, 100));
+      src.stop();
+      const samples = seen.filter((e) => e.topic === 'stub.usb.sample');
+      expect(samples.length).toBeGreaterThan(0);
     });
 
     test('StubSource is abstract (cannot be instantiated at runtime via TS type-check)', () => {
@@ -1343,32 +1329,26 @@ describe('Logging', () => {
 
 // ========== End-to-end ==========
 describe('End-to-end', () => {
-  test('fabric + recorder + filesystem source round-trip', (done) => {
+  test('fabric + recorder + filesystem source round-trip', async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nervous-e2e-'));
     const fabric = new EventFabric({ recordByDefault: true, logger: new SilentLogger() });
     const fsSource = new FilesystemSource({ path: tmpDir, id: 'fs-e2e' });
     fabric.attach(fsSource);
 
     // Allow watcher to settle, then write a file.
-    setTimeout(() => {
-      fs.writeFileSync(path.join(tmpDir, 'e2e.txt'), 'hello');
-      setTimeout(() => {
-        try {
-          const events = fabric.recorder.getEvents({ topic: 'fs.change' });
-          expect(events.length).toBeGreaterThan(0);
-          expect(events[0].source).toBe('fs-e2e');
-          const payload = events[0].payload as { path: string; event: string };
-          expect(payload.path).toContain('e2e.txt');
-          fabric.shutdown();
-          try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
-          done();
-        } catch (e) {
-          fabric.shutdown();
-          try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
-          done(e);
-        }
-      }, 300);
-    }, 150);
+    await new Promise(r => setTimeout(r, 150));
+    fs.writeFileSync(path.join(tmpDir, 'e2e.txt'), 'hello');
+    await new Promise(r => setTimeout(r, 300));
+    try {
+      const events = fabric.recorder.getEvents({ topic: 'fs.change' });
+      expect(events.length).toBeGreaterThan(0);
+      expect(events[0].source).toBe('fs-e2e');
+      const payload = events[0].payload as { path: string; event: string };
+      expect(payload.path).toContain('e2e.txt');
+    } finally {
+      fabric.shutdown();
+      try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
+    }
   });
 
   test('fabric + router + queue integration', async () => {

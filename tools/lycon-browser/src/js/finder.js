@@ -15,7 +15,7 @@
   const { getActive } = window.LyconState;
 
   let active = false;
-  let requestId = 0;
+  let _requestId = 0;
   let lastResult = { activeMatchOrdinal: 0, matches: 0 };
 
   function open() {
@@ -44,7 +44,7 @@
       t.webview.stopFindInPage('clearSelection');
       return;
     }
-    requestId = t.webview.findInPage(text, { forward, findNext: false });
+    _requestId = t.webview.findInPage(text, { forward, findNext: false });
   }
 
   input.addEventListener('input', () => find(true));
@@ -64,7 +64,7 @@
   // Listen for find results
   document.addEventListener('webkitbrowser-find-in-page-results-updated' , () => {});
   // For webview tag, listen on the element
-  document.addEventListener('did-get-find-in-page-results', (e) => {
+  document.addEventListener('did-get-find-in-page-results', (_e) => {
     // Not standard; rely on webview's 'found-in-page'
   });
 

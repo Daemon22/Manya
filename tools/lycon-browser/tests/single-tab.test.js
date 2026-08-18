@@ -16,7 +16,7 @@ module.exports = {
       return { pass, fail, details };
     }
     try {
-      const loaded = await api.waitForTabLoad(30000);
+      const _loaded = await api.waitForTabLoad(30000);
       await api.wait(2000);
       const tab = await api.activeTab();
       if (tab.url && tab.url.includes('example.com') && tab.title && !tab.title.includes('Crash')) {

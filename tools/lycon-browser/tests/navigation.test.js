@@ -2,7 +2,7 @@
  * Test: navigation
  * Visits 3 real websites and verifies each loads with correct URL + title.
  */
-const path = require('path');
+const _path = require('path');
 
 module.exports = {
   name: 'navigation',
@@ -34,9 +34,9 @@ module.exports = {
         continue;
       }
       // Wait for it to load
-      let loaded;
+      let _loaded;
       try {
-        loaded = await api.waitForTabLoad(30000);
+        _loaded = await api.waitForTabLoad(30000);
       } catch (e) {
         details.push({ name: `${site.url} loads`, ok: false, message: e.message });
         fail++;

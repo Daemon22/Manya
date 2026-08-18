@@ -12,7 +12,7 @@
     // The renderer is loaded from src/index.html, so startpage.html is in the same dir.
     const base = window.location.href.replace(/index\.html.*$/, 'startpage.html');
     const params = new URLSearchParams({
-      engine: s.searchEngine || 'brave',
+      engine: s.searchEngine || 'duckduckgo',
       accent: s.accent || 'orange',
       theme: s.theme === 'system'
         ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')

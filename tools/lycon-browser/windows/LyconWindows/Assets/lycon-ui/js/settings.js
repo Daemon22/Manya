@@ -8,7 +8,7 @@
   const modalHost = document.getElementById('modal-host');
   const modalContent = document.getElementById('modal-content');
 
-  const { state, on, emit } = window.LyconState;
+  const { state, on: _on, emit } = window.LyconState;
 
   async function set(patch) {
     if (window.lycon) {
@@ -87,7 +87,7 @@
       <div class="modal-row">
         <div>
           <label>Open new tabs in Private mode by default</label>
-          <div class="desc">New tabs use a no-history partition (Brave-style always-on private)</div>
+          <div class="desc">New tabs use a no-history partition (always-on private)</div>
         </div>
         <label class="switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
           <input type="checkbox" id="private-default-toggle" ${state.settings.privateTabDefault ? 'checked' : ''} />

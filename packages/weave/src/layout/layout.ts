@@ -215,7 +215,7 @@ export function forceDirected(graph: Graph, opts: ForceDirectedOptions = {}): La
 export function hierarchical(graph: Graph, opts: HierarchicalOptions = {}): Layout {
   assertNonEmpty(graph);
   const width = opts.width ?? 800;
-  const height = opts.height ?? 600;
+  const _height = opts.height ?? 600;
   const layerGap = opts.layerGap ?? 80;
   const nodeGap = opts.nodeGap ?? 80;
   const padding = opts.padding ?? 40;
@@ -372,8 +372,8 @@ export function radial(graph: Graph, opts: RadialOptions = {}): Layout {
  */
 export function grid(graph: Graph, opts: GridOptions = {}): Layout {
   assertNonEmpty(graph);
-  const width = opts.width ?? 800;
-  const height = opts.height ?? 600;
+  const _width = opts.width ?? 800;
+  const _height = opts.height ?? 600;
   const cellWidth = opts.cellWidth ?? 80;
   const cellHeight = opts.cellHeight ?? 80;
   const padding = opts.padding ?? 40;

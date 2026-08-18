@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const { state, on, getActive } = window.LyconState;
+  const { state, on: _on, getActive } = window.LyconState;
 
   // ---------- Global shortcuts ----------
   document.addEventListener('keydown', (e) => {

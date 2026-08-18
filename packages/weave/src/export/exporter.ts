@@ -21,7 +21,7 @@ function jsonString(s: unknown): string {
 }
 
 /** Escape a string for DOT identifiers / labels. */
-function escapeDot(s: string): string {
+function _escapeDot(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 

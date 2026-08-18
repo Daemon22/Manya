@@ -29,12 +29,12 @@
  *   - api.openNewTab(url)         — open a tab via the renderer API
  *   - api.closeActiveTab()
  */
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain: _ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
 
-const ROOT = path.resolve(__dirname, '..');
+const _ROOT = path.resolve(__dirname, '..');
 const OUT_DIR = '/home/z/my-project/download/lycon-tests';
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -313,7 +313,7 @@ async function runTests() {
         await api.closeActiveTab();
         await api.wait(150);
       }
-    } catch (e) { /* ignore */ }
+    } catch { /* ignore */ }
 
     console.log(`▶ ${test.name}: ${test.description}`);
     const t0 = Date.now();

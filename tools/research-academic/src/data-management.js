@@ -249,7 +249,7 @@ export function checkCompliance(domainId, data) {
 
 // -- Internal mappings --
 
-const PRESET_TO_RULES = {
+const _PRESET_TO_RULES = {
   'life-sciences': ['email', 'phone', 'orcid', 'mrn', 'biosample-id', 'genomic-data'],
   'physical-sciences': ['email', 'phone', 'orcid', 'instrument-config', 'lab-notebook'],
   'social-sciences': ['email', 'phone', 'orcid', 'participant-id', 'interview-transcript', 'field-note'],

@@ -3,7 +3,7 @@
  * Provides secure storage for secrets, config, and credentials.
  */
 
-import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes, createHash } from 'node:crypto';
+import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes, createHash as _createHash } from 'node:crypto';
 
 const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
@@ -206,7 +206,7 @@ export function open(sealedBuffer, passphrase) {
   let decrypted;
   try {
     decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-  } catch (e) {
+  } catch {
     throw new Error('Failed to decrypt vault: wrong passphrase or corrupted data');
   }
   const data = JSON.parse(decrypted.toString('utf8'));

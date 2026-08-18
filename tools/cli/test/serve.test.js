@@ -104,7 +104,7 @@ test('Serve: POST /api/mesh/dispatch invokes capability', async () => {
 });
 
 test('Serve: POST /api/mesh/dispatch rejects missing fields', async () => {
-  const { status, body } = await fetchJson('/api/mesh/dispatch', {
+  const { status, body: _body } = await fetchJson('/api/mesh/dispatch', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ capability: 'x' }),
   });
@@ -137,7 +137,7 @@ test('Serve: POST /api/identities creates a new identity', async () => {
 });
 
 test('Serve: POST /api/identities rejects missing fields', async () => {
-  const { status, body } = await fetchJson('/api/identities', {
+  const { status, body: _body } = await fetchJson('/api/identities', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'orcid' }),
   });
@@ -220,7 +220,7 @@ test('Serve: POST /api/bus/route routes via tool sync channels', async () => {
 });
 
 test('Serve: POST /api/bus/route rejects unknown tool', async () => {
-  const { status, body } = await fetchJson('/api/bus/route', {
+  const { status, body: _body } = await fetchJson('/api/bus/route', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ toolId: 'nonexistent' }),
   });

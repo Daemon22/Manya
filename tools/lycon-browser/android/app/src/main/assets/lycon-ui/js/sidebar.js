@@ -10,7 +10,7 @@
   const sidebarBody = document.getElementById('sidebar-body');
   const sidebarClose = document.getElementById('sidebar-close');
 
-  const { state, on, getActive, emit } = window.LyconState;
+  const { state, on, getActive, emit: _emit } = window.LyconState;
 
   let currentView = null;
 
@@ -179,7 +179,7 @@
       return;
     }
     const fmtBytes = window.LyconDownloads ? window.LyconDownloads.fmtBytes : ((n) => n + ' B');
-    const fmtTime = window.LyconDownloads ? window.LyconDownloads.fmtTime : ((ts) => new Date(ts).toLocaleString());
+    const _fmtTime = window.LyconDownloads ? window.LyconDownloads.fmtTime : ((ts) => new Date(ts).toLocaleString());
 
     const clearBtn = document.createElement('button');
     clearBtn.className = 'btn';

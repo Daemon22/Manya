@@ -165,7 +165,7 @@ function createWindow() {
     icon: path.join(__dirname, 'build', 'icon.png'),
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       sandbox: false, // needed for webview tag IPC
       nodeIntegration: false,

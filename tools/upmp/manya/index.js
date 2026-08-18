@@ -488,7 +488,7 @@ function publishToBus(bus, topic, event) {
   const subs = bus.subscribers?.get(topic);
   if (subs) {
     for (const sub of subs) {
-      try { sub.handler(enriched); delivered++; } catch (e) { /* swallow */ }
+      try { sub.handler(enriched); delivered++; } catch { /* swallow */ }
     }
   }
   if (bus.history) {

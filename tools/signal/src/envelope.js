@@ -124,7 +124,7 @@ export function open(sealedBuffer, passphrase) {
   if (magic !== ENVELOPE_MAGIC) {
     throw new Error('Invalid envelope magic bytes');
   }
-  const version = sealedBuffer[offset];
+  const _version = sealedBuffer[offset];
   offset += 1;
   const salt = sealedBuffer.subarray(offset, offset + SALT_LENGTH);
   offset += SALT_LENGTH;
@@ -139,7 +139,7 @@ export function open(sealedBuffer, passphrase) {
   let decrypted;
   try {
     decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-  } catch (e) {
+  } catch {
     throw new Error('Failed to decrypt envelope: wrong passphrase or corrupted data');
   }
   const envelope = JSON.parse(decrypted.toString('utf8'));

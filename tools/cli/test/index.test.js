@@ -6,12 +6,12 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync as _writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { parseArgs, tryParseJson } from '../src/parser.js';
-import { runCommand } from '../src/dispatcher.js';
+import { runCommand as _runCommand } from '../src/dispatcher.js';
 import { generateWeaveHtml } from '../src/weave.js';
 import { knownToolIds } from '../src/registry.js';
 

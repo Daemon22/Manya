@@ -1257,7 +1257,6 @@ describe('errors and logging', () => {
       [DocumentError as never, 'DOCUMENT_ERROR'],
     ];
     for (const [Ctor, code] of cases) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const err = new (Ctor as any)('msg');
       expect(err).toBeInstanceOf(ConstitutionError);
       expect(err.code).toBe(code);

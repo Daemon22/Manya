@@ -33,12 +33,12 @@ export function statePath(override) {
  * Loads state from disk. Returns an empty state structure if the file
  * does not exist or is unreadable.
  * @param {string} [path] - Optional path override.
- * @returns {{ tools: any[], identities: any[], busEvents: any[] }}
+ * @returns {{ tools: any[], identities: any[] }}
  */
 export function loadState(path) {
   const resolved = statePath(path);
   if (!existsSync(resolved)) {
-    return { tools: [], identities: [], busEvents: [] };
+    return { tools: [], identities: [] };
   }
   try {
     const raw = readFileSync(resolved, 'utf8');
@@ -46,10 +46,9 @@ export function loadState(path) {
     return {
       tools: Array.isArray(parsed.tools) ? parsed.tools : [],
       identities: Array.isArray(parsed.identities) ? parsed.identities : [],
-      busEvents: Array.isArray(parsed.busEvents) ? parsed.busEvents : [],
     };
-  } catch (err) {
-    return { tools: [], identities: [], busEvents: [] };
+  } catch {
+    return { tools: [], identities: [] };
   }
 }
 
@@ -74,7 +73,7 @@ export function saveState(state, path) {
 export function resetState(path) {
   const resolved = statePath(path);
   if (!existsSync(resolved)) return false;
-  writeFileSync(resolved, JSON.stringify({ tools: [], identities: [], busEvents: [] }, null, 2), 'utf8');
+  writeFileSync(resolved, JSON.stringify({ tools: [], identities: [] }, null, 2), 'utf8');
   return true;
 }
 

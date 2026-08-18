@@ -26,7 +26,7 @@
         if (wcId != null) {
           wcIdToTabId.set(wcId, t.id);
         }
-      } catch (e) { /* not ready */ }
+      } catch { /* not ready */ }
     };
     if (t.domReady) onReady();
     else {

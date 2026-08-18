@@ -91,7 +91,7 @@ export function publish(bus, topic, event) {
       try {
         sub.handler(enrichedEvent);
         delivered++;
-      } catch (err) {
+      } catch {
         // Swallow handler errors so one bad subscriber doesn't break the bus
         // (Production deployments may want to surface these via a dead-letter topic)
       }

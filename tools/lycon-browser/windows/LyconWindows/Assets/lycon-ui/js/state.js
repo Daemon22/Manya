@@ -11,7 +11,7 @@
     settings: {
       theme: 'dark',
       accent: 'orange',
-      searchEngine: 'brave',
+      searchEngine: 'duckduckgo',
       shieldsEnabled: true,
       startupPage: 'startpage',
       privateTabDefault: false,

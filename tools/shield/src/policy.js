@@ -3,7 +3,7 @@
  * Supports both RBAC (Role-Based Access Control) and ABAC (Attribute-Based Access Control).
  */
 
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash as _createHash, randomBytes } from 'node:crypto';
 
 /**
  * Creates a new access control policy.

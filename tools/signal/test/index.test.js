@@ -5,7 +5,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { randomBytes } from 'node:crypto';
+import { randomBytes as _randomBytes } from 'node:crypto';
 
 import {
   compose, seal, open, sign, verifySignature,
