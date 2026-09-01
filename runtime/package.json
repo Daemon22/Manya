@@ -1,0 +1,11 @@
+{
+  "name": "manya-runtime",
+  "private": true,
+  "type": "module",
+  "version": "0.9.0",
+  "description": "Executable Manya ecosystem runtime and gateway.",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node index.mjs"
+  }
+}
