@@ -6,6 +6,7 @@
   "description": "Executable Manya ecosystem runtime and gateway.",
   "scripts": {
     "start": "node index.mjs",
-    "dev": "node index.mjs"
+    "dev": "node index.mjs",
+    "test": "node --test connector.test.mjs e2e.test.mjs"
   }
 }

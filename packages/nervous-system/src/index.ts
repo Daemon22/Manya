@@ -17,9 +17,10 @@ export * from './errors.js';
 
 // ----- logging -----
 export {
-  Logger, LogLevel, ConsoleLogger, SilentLogger,
+  ConsoleLogger, SilentLogger,
   scrubMetadata, shouldScrubField, SCRUBBED_FIELD_NAMES,
 } from './logging.js';
+export type { Logger, LogLevel } from './logging.js';
 
 // ----- event model -----
 export {
