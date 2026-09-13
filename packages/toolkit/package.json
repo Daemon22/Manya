@@ -1,5 +1,5 @@
 {
-  "name": "@manya/toolkit",
+  "name": "@manya-hael/toolkit",
   "version": "0.2.0",
   "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
@@ -27,7 +27,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Daemon22/Manya.git",
+    "url": "git+https://github.com/Daemon22/Manya.git",
     "directory": "packages/toolkit"
   },
   "exports": {
