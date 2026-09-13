@@ -14,7 +14,7 @@
 /** Base class for all @manya/contracts errors. */
 export class ContractsError extends Error {
   public readonly code: string;
-  public override readonly cause?: unknown;
+  public readonly cause?: unknown;
   constructor(message: string, code?: string, cause?: unknown) {
     super(message);
     this.name = new.target.name;
