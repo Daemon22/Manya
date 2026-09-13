@@ -28,10 +28,6 @@ const TOOLS = [
     owns: ['toolFederation', 'identityLinking', 'capabilityDispatch', 'vocabularyBridging'],
     handsOff: ['keyDerivation', 'citationValidation'],
     syncChannels: ['identity-linked', 'event-routed', 'capability-dispatched'] },
-  { id: 'tool:lycon-browser', label: 'Lycon Browser', kind: 'tool', toolId: 'lycon-browser',
-    owns: ['webBrowsing', 'adBlocking', 'bookmarkManagement'],
-    handsOff: ['keyDerivation', 'identityLinking'],
-    syncChannels: ['lycon:navigation', 'lycon:shield-blocked'] },
   { id: 'tool:transport-logistics', label: 'Transport & Logistics', kind: 'tool', toolId: 'transport-logistics',
     owns: ['transportIdentifierValidation', 'shipmentTracking', 'customsCompliance'],
     handsOff: ['keyDerivation'],
@@ -122,14 +118,14 @@ test('Weaver/Rules: tools with consumer-provider relationship can connect', () =
 });
 
 test('Weaver/Rules: unify can bridge any tool', () => {
-  const result = canConnect(TOOLS[2], TOOLS[4], CONTEXT); // unify ↔ transport-logistics
+  const result = canConnect(TOOLS[2], TOOLS[3], CONTEXT); // unify ↔ transport-logistics
   assert.equal(result.possible, true);
   assert.equal(result.edgeType, 'capability-dispatch');
 });
 
 test('Weaver/Rules: tools with no relationship cannot connect', () => {
-  // lycon-browser and transport-logistics share no channels, no consumer-provider, neither is unify
-  const result = canConnect(TOOLS[3], TOOLS[4], CONTEXT);
+  // These tools share no channels or consumer-provider relationship.
+  const result = canConnect(TOOLS[1], TOOLS[3], CONTEXT);
   assert.equal(result.possible, false);
   assert.match(result.reason, /share no sync channels/);
 });
@@ -146,7 +142,7 @@ test('Weaver/Rules: research-academic ↔ orcid can connect (citationValidation)
 });
 
 test('Weaver/Rules: transport-logistics ↔ imo can connect', () => {
-  const result = canConnect(TOOLS[4], TYPES[2], CONTEXT);
+  const result = canConnect(TOOLS[3], TYPES[2], CONTEXT);
   assert.equal(result.possible, true);
   assert.equal(result.edgeType, 'validates');
 });
@@ -164,7 +160,7 @@ test('Weaver/Rules: unify ↔ any type can connect via vocabulary bridge', () =>
 });
 
 // =====================================================================
-// IDENTITY ↔ TOOL — unify or lycon can connect, others need existing link
+// IDENTITY ↔ TOOL — unify can connect, others need existing link
 // =====================================================================
 
 test('Weaver/Rules: unify ↔ identity can connect (identityLinking)', () => {
@@ -172,12 +168,6 @@ test('Weaver/Rules: unify ↔ identity can connect (identityLinking)', () => {
   assert.equal(result.possible, true);
   assert.equal(result.edgeType, 'federation');
   assert.equal(result.strength, 0.9);
-});
-
-test('Weaver/Rules: lycon-browser ↔ identity can connect (browser profiles)', () => {
-  const result = canConnect(TOOLS[3], IDENTITIES[0], CONTEXT);
-  assert.equal(result.possible, true);
-  assert.equal(result.edgeType, 'browser-identity');
 });
 
 test('Weaver/Rules: forge ↔ identity cannot connect (no identityLinking)', () => {

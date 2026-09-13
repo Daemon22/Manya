@@ -68,12 +68,6 @@ export const capabilityOwners = {
   syncChannelRouting: "unify",
   vocabularyBridging: "unify",
   capabilityDispatch: "unify",
-  webBrowsing: "lycon-browser",
-  adBlocking: "lycon-browser",
-  bookmarkManagement: "lycon-browser",
-  downloadManagement: "lycon-browser",
-  privateBrowsing: "lycon-browser",
-  browserHistoryManagement: "lycon-browser",
   activityTracking: "upmp",
   stuckPointDetection: "upmp",
   discoveryLogging: "upmp",
@@ -334,23 +328,6 @@ export const unifyManifest = createToolManifest({
 });
 
 /**
- * Pre-built manifest for Lycon Browser — the privacy-first web browser
- * integrated with the Manya ecosystem. Owns web browsing, ad/tracker blocking
- * (Lycon Shields), bookmark management, download management, private browsing,
- * and browser history. Browser events flow into Manya's event bus on the
- * lycon:* sync channels, and browser profiles can be linked to Manya
- * federated identities.
- */
-export const lyconManifest = createToolManifest({
-  id: "lycon-browser",
-  name: "Lycon Browser",
-  purpose: "Privacy-first web browser with ad/tracker blocking (Lycon Shields), multi-tab browsing, bookmarks, history, downloads, and private mode. Browser events (navigation, shield-blocked, bookmark-added, download) flow into Manya's event bus, and browser profiles can be linked to Manya federated identities. Browse wild. Browse free. Everything Connected.",
-  owns: ["webBrowsing", "adBlocking", "bookmarkManagement", "downloadManagement", "privateBrowsing", "browserHistoryManagement"],
-  handsOff: ["keyDerivation", "encryptedStorage", "accessControl", "messageSigning", "dataRedaction", "industryPresets", "citationValidation", "shipmentTracking", "toolFederation", "identityLinking"],
-  syncChannels: ["lycon:navigation", "lycon:bookmark-added", "lycon:download", "lycon:shield-blocked", "lycon:tab-opened", "lycon:tab-closed", "lycon:identity-linked"]
-});
-
-/**
  * Pre-built manifest for UPMP — Universal Progress Monitoring with Active
  * Device Tracker. Owns activity tracking, stuck-point detection, discovery
  * logging, intelligence engagement (Gardner's 9 + custom), 15-layer progress
@@ -362,6 +339,6 @@ export const upmpManifest = createToolManifest({
   name: "UPMP",
   purpose: "Universal Progress Monitoring with Active Device Tracker. Captures writing/activity sessions with stuck-point detection, logs discoveries from scrolling, tracks intelligence engagement (Gardner's 9 + custom), and generates 15-layer progress reports. Activity events flow into Manya's event bus on upmp:* sync channels, and intelligences can be linked to Manya federated identities — so your linguistic intelligence profile is part of who you are.",
   owns: ["activityTracking", "stuckPointDetection", "discoveryLogging", "intelligenceEngagement", "progressMonitoring", "discussionExport"],
-  handsOff: ["keyDerivation", "encryptedStorage", "accessControl", "messageSigning", "dataRedaction", "industryPresets", "citationValidation", "shipmentTracking", "toolFederation", "webBrowsing"],
+  handsOff: ["keyDerivation", "encryptedStorage", "accessControl", "messageSigning", "dataRedaction", "industryPresets", "citationValidation", "shipmentTracking", "toolFederation"],
   syncChannels: ["upmp:session-started", "upmp:session-ended", "upmp:stuck-point", "upmp:stuck-resolved", "upmp:discovery", "upmp:intelligence-engaged", "upmp:breakthrough"]
 });

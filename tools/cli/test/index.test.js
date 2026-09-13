@@ -426,7 +426,6 @@ test('CLI/registry: knownToolIds returns all expected ids', () => {
   assert.ok(ids.includes('research-academic'));
   assert.ok(ids.includes('transport-logistics'));
   assert.ok(ids.includes('unify'));
-  assert.ok(ids.includes('lycon-browser'));
 });
 
 // =====================================================================

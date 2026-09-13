@@ -8,7 +8,7 @@
  *   - Repel + reject invalid connections
  *
  * Node types:
- *   - tool     — a Manya tool (forge, research-academic, lycon-browser, ...)
+ *   - tool     — a Manya tool (forge, research-academic, ...)
  *   - identity — a federated identity
  *   - type     — an identifier type (orcid, doi, imo, container, ...)
  *
@@ -140,7 +140,7 @@ function checkIdentityToType(nodeA, nodeB) {
 
 /**
  * Identity ↔ Tool: possible if the tool owns identityLinking, or if the tool
- * has already linked this identity (via the Lycon adapter or similar).
+ * has already linked this identity.
  */
 function checkIdentityToTool(nodeA, nodeB, context) {
   const identity = nodeA.kind === 'identity' ? nodeA : nodeB;
@@ -153,16 +153,6 @@ function checkIdentityToTool(nodeA, nodeB, context) {
       reason: `${tool.label} owns identityLinking — can federate any identity`,
       edgeType: 'federation',
       strength: 0.9,
-    };
-  }
-
-  // The lycon-browser can link browser profiles to identities
-  if (tool.toolId === 'lycon-browser') {
-    return {
-      possible: true,
-      reason: `${tool.label} can link browser profiles to federated identities`,
-      edgeType: 'browser-identity',
-      strength: 0.7,
     };
   }
 

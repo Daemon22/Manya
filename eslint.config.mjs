@@ -52,27 +52,6 @@ export default [
     },
   },
 
-  // --- Browser UI files (Lycon renderer process) ---
-  {
-    files: [
-      'tools/lycon-browser/src/js/**/*.js',
-      'tools/lycon-browser/src/bridge/**/*.js',
-      'tools/lycon-browser/**/lycon-ui/**/*.js',
-    ],
-    ...js.configs.recommended[0],
-    languageOptions: {
-      ecmaVersion: 2024,
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-      },
-    },
-    rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
-      'no-undef': 'error',
-    },
-  },
-
   // --- TypeScript: source files ---
   {
     files: ['packages/*/src/**/*.ts'],

@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/Daemon22/Manya/main/assets/logo.png" width="40" /> Manya
 
-Manya means *unite* or *connect*. This monorepo lives up to that name: it provides data encoding, encryption, compression, access control, secure messaging, compliance tooling, sector-specific validation, transport-logistics identifier validation, research-academic citation and reproducibility tooling, cybersecurity threat intelligence, **Manya Unify** (the connective tissue), the **Manya CLI** for shell access, **Manya Serve** for HTTP/REST/SSE access, **Manya Repl** for interactive exploration, and now **Lycon Browser** — a privacy-first web browser wired into the ecosystem.
+Manya means *unite* or *connect*. This monorepo lives up to that name: it provides data encoding, encryption, compression, access control, secure messaging, compliance tooling, sector-specific validation, transport-logistics identifier validation, research-academic citation and reproducibility tooling, cybersecurity threat intelligence, **Manya Unify** (the connective tissue), the **Manya CLI** for shell access, **Manya Serve** for HTTP/REST/SSE access, and **Manya Repl** for interactive exploration.
 
 > Everything Connected. Everyone Unified. Browse wild. Browse free.
 
@@ -12,7 +12,7 @@ Manya means *unite* or *connect*. This monorepo lives up to that name: it provid
 
 Manya is one branch of the HAEL Foundation ecosystem — segregated repositories, that reference and reinforce each other rather than share a single codebase:
 
-- **[Manya](https://github.com/Daemon22/Manya)** (this repo) — the public face and connective hub: tools, packages, and Lycon Browser.
+- **[Manya](https://github.com/Daemon22/Manya)** (this repo) — the public face and connective hub: tools, packages, and shared platform capabilities.
 - **[MANYA Intelligence OS](https://github.com/manya-hael/intelligence-os)** — a sibling platform sharing the Manya name, with its own standalone identity/memory/reasoning packages (not merged here — see [NOTICE](NOTICE) for the 6 packages that were).
 - **[Gqobonco](https://github.com/Daemon22/Gqobonco)** — the Supreme Prince of Research, Intelligence & Information: research initiatives, the Xhosa NLP Database, and ancestral-knowledge preservation.
 - **[OMNIMIND](https://github.com/Daemon22/OMNIMIND)** — the Supreme Intelligence Core.
@@ -48,7 +48,6 @@ Each repo stays independently buildable and testable; none depend on another at 
 | **Transport & Logistics** | Waybill, IMO, ISO 6346, UIC, flight, HS, TIR validation; shipment tracking with geofencing and ETA; customs declarations; dangerous-goods (IMDG/IATA-DGR/ADR/RID); sanctions screening | Aviation, Maritime, Road, Rail, Multimodal |
 | **Research & Academic** | Citation validation (DOI, ORCID, arXiv, PMID, NCT, ROR, ISBN-13); reproducibility manifests with FAIR assessment; peer-review lifecycle and integrity verification; DMP templates | Life Sciences, Physical Sciences, Social Sciences, Computational Sciences |
 | **Manya Unify** | Connective tissue: federates identities across tools, routes events through declared sync channels, bridges vocabularies, and dispatches capability-based calls to the owning tool | All |
-| **Lycon Browser** | Privacy-first web browser with ad/tracker blocking (Lycon Shields), multi-tab browsing, bookmarks, history, downloads, and private mode. Browser events flow into Manya's event bus on `lycon:*` sync channels, and browser profiles can be linked to Manya federated identities. Built on Electron (desktop), WinUI 3 + WebView2 (Windows), and Kotlin + GeckoView (Android) — three platforms, one shared UI bundle. | All |
 | **Manya CLI** | Command-line interface: `manya mesh/identity/bus/translate/weave/serve/repl/browse` | All |
 
 ## Packages
@@ -61,7 +60,6 @@ All packages are MIT licensed unless noted otherwise. See [NOTICE](NOTICE) for d
 | `@manya/helixflow-sdk` | HelixFlow client and workflow helpers | MIT |
 | `@manya/unify` | Connective tissue: mesh, federation, event bus, vocabularies | MIT |
 | `@manya/cli` | Command-line interface, HTTP server, and interactive REPL | MIT |
-| `@manya/lycon` | Lycon browser Manya integration layer (adapter, event factories, manifest) | MIT |
 | `@manya/keyring` | Sovereign identity wallet — composed from vault, forge, signal, shield | MIT |
 | `@manya/attest` | Device/session attestation — composed from hawk, signal, shield | MIT |
 | `@manya/ledger` | Tamper-evident audit ledger — composed from stamp, unify | MIT |

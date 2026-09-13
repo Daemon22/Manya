@@ -48,33 +48,6 @@ export async function main(argv, options = {}) {
       await startRepl({ process: proc, stateFile: parsed.flags.state });
       return 0;
     }
-    if (parsed.command === 'browse') {
-      // Launch the Lycon browser via Electron
-      const { spawn } = await import('node:child_process');
-      const url = parsed.args[0] || parsed.flags.url || null;
-      const isPrivate = !!parsed.flags.private;
-      proc.stdout.write('Launching Lycon browser (Manya-integrated)...\n');
-      if (url) proc.stdout.write(`  Initial URL: ${url}\n`);
-      if (isPrivate) proc.stdout.write('  Mode: Private (temporary federated identity)\n');
-      try {
-        const args = ['.'];
-        if (url) args.push(url);
-        if (isPrivate) args.push('--private');
-        if (parsed.flags.noSandbox) args.push('--no-sandbox');
-        const child = spawn('npx', ['electron', ...args], {
-          cwd: process.cwd() + '/tools/lycon-browser',
-          stdio: 'inherit',
-          shell: true,
-        });
-        return new Promise((resolve) => {
-          child.on('exit', (code) => resolve(code || 0));
-        });
-      } catch (err) {
-        proc.stderr.write(`Failed to launch Lycon: ${err.message}\n`);
-        proc.stderr.write('Make sure Electron is installed: cd tools/lycon-browser && npm install\n');
-        return 1;
-      }
-    }
     const result = await runCommand(parsed, { process: proc });
     if (result && typeof result.output === 'string' && result.output.length > 0) {
       proc.stdout.write(result.output + (result.output.endsWith('\n') ? '' : '\n'));
@@ -130,9 +103,6 @@ COMMANDS
   serve [--port <port>]                Start the HTTP server with REST API + SSE event stream
                                       (serves /, /weave, /api/* endpoints)
   repl                                 Start the interactive shell (tab-completion, history)
-  browse [url] [--no-sandbox] [--private]
-                                      Launch the Lycon browser (Manya-integrated)
-                                      --private: auto-creates a temporary federated identity
 
 FLAGS
   --pretty                             Pretty-print JSON output

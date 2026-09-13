@@ -177,7 +177,7 @@ function completer(line) {
   // 3rd arg: toolId for mesh register / bus route
   if (tokens.length === 3) {
     if ((tokens[0] === 'mesh' && tokens[1] === 'register') || (tokens[0] === 'bus' && tokens[1] === 'route')) {
-      const toolIds = ['forge', 'pulse', 'primary-sector', 'cybersecurity', 'transport-logistics', 'research-academic', 'unify', 'lycon-browser'];
+      const toolIds = ['forge', 'pulse', 'primary-sector', 'cybersecurity', 'transport-logistics', 'research-academic', 'unify'];
       const hits = toolIds.filter(t => t.startsWith(lastToken));
       return [hits, lastToken];
     }

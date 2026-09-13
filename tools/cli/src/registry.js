@@ -1,7 +1,7 @@
 /**
  * Manya CLI — tool registry.
  *
- * Maps each of the 8 CLI-accessible Manya tool ids to its manifest and an API loader.
+ * Maps each of the 7 CLI-accessible Manya tool ids to its manifest and an API loader.
  * The loader uses async dynamic import() to fetch the tool's actual API
  * object so dispatch() can invoke methods on it. We use lazy loading so
  * the CLI only loads a tool's source when it's actually needed.
@@ -15,7 +15,6 @@ import {
   transportLogisticsManifest,
   researchAcademicManifest,
   unifyManifest,
-  lyconManifest,
 } from '@manya/toolkit';
 
 const TOOL_DEFS = [
@@ -73,24 +72,6 @@ const TOOL_DEFS = [
     apiLoader: async () => {
       const m = await import('../../unify/src/index.js');
       return m.unify || m.default || m;
-    },
-  },
-  {
-    id: 'lycon-browser',
-    manifest: lyconManifest,
-    apiLoader: async () => {
-      // The Lycon browser's manya integration layer
-      const m = await import('../../lycon-browser/manya/index.js');
-      // Export the adapter factory + event factories + constants as the API
-      return {
-        createAdapter: m.createAdapter,
-        createNavigationEvent: m.createNavigationEvent,
-        createShieldBlockedEvent: m.createShieldBlockedEvent,
-        createBookmarkEvent: m.createBookmarkEvent,
-        createDownloadEvent: m.createDownloadEvent,
-        LYCON_SYNC_CHANNELS: m.LYCON_SYNC_CHANNELS,
-        LYCON_CAPABILITIES: m.LYCON_CAPABILITIES,
-      };
     },
   },
 ];
