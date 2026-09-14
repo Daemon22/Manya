@@ -1,7 +1,7 @@
 {
   "name": "@manya/memory",
   "version": "1.0.0",
-  "description": "A true memory engine \u2014 working, episodic, semantic, procedural, and archival memory, with selective sharing \u2014 composed from vault, stamp, and unify.",
+  "description": "A true memory engine — working, episodic, semantic, procedural, and archival memory, with selective sharing — composed from vault, stamp, and unify.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

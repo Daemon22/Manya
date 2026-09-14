@@ -1,7 +1,7 @@
 {
   "name": "@manya/perception",
   "version": "1.0.0",
-  "description": "Ingests text, structured data, and environment signals into working memory \u2014 redacting sensitive content before it lands \u2014 composed from memory, lens, and hawk.",
+  "description": "Ingests text, structured data, and environment signals into working memory — redacting sensitive content before it lands — composed from memory, lens, and hawk.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

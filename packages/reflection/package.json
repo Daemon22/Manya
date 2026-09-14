@@ -1,7 +1,7 @@
 {
   "name": "@manya/reflection",
   "version": "1.0.0",
-  "description": "Evaluates outputs, critiques plans, and turns failures into lessons that force a revised plan \u2014 composed from memory and cortex.",
+  "description": "Evaluates outputs, critiques plans, and turns failures into lessons that force a revised plan — composed from memory and cortex.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

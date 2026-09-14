@@ -1,4 +1,4 @@
-# @manya/toolkit
+# @manya-hael/toolkit
 
 Shared manifests, capability boundaries, and sync contracts for Manya tools.
 
@@ -72,7 +72,7 @@ import {
   assertDistinctCapabilities,
   usingaManifest,
   helixFlowManifest
-} from "@manya/toolkit";
+} from "@manya-hael/toolkit";
 
 // Create a custom tool manifest
 const myTool = createToolManifest({

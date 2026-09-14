@@ -1,7 +1,7 @@
 {
   "name": "@manya/telepathy",
   "version": "1.0.0",
-  "description": "Signed, verifiable inter-agent messaging over a shared bus \u2014 composed from keyring, memory, and unify.",
+  "description": "Signed, verifiable inter-agent messaging over a shared bus — composed from keyring, memory, and unify.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

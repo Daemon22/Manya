@@ -1,7 +1,7 @@
 {
   "name": "@manya/keyring",
   "version": "1.0.0",
-  "description": "Sovereign identity wallet: derive, store, sign, and gate access to your own keys \u2014 composed from vault, forge, signal, and shield.",
+  "description": "Sovereign identity wallet: derive, store, sign, and gate access to your own keys — composed from vault, forge, signal, and shield.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

@@ -1,7 +1,7 @@
 {
   "name": "@manya/contracts",
   "version": "1.0.0",
-  "description": "Universal contract and schema validation for the MANYA Intelligence OS \u2014 interface schemas, manifests, semver compatibility, API contracts, schema sync, boundary enforcement, and validation reports.",
+  "description": "Universal contract and schema validation for the MANYA Intelligence OS — interface schemas, manifests, semver compatibility, API contracts, schema sync, boundary enforcement, and validation reports.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

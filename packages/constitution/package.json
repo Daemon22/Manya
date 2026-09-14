@@ -1,7 +1,7 @@
 {
   "name": "@manya/constitution",
   "version": "1.0.0",
-  "description": "Governance substrate for the MANYA Intelligence OS \u2014 ethical rules, operational policies, permission models, decision hierarchies, emergency procedures, safety rules, conflict resolution, runtime enforcement, and versioned governance documents.",
+  "description": "Governance substrate for the MANYA Intelligence OS — ethical rules, operational policies, permission models, decision hierarchies, emergency procedures, safety rules, conflict resolution, runtime enforcement, and versioned governance documents.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "name": "@manya/guardian",
   "version": "1.0.0",
-  "description": "Holds standing rules (ethical boundaries, family rules, emergency protocols) and enforces them with a tamper-evident decision trail \u2014 composed from vault, shield, and ledger.",
+  "description": "Holds standing rules (ethical boundaries, family rules, emergency protocols) and enforces them with a tamper-evident decision trail — composed from vault, shield, and ledger.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

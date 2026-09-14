@@ -1,7 +1,7 @@
 {
   "name": "@manya/economy",
   "version": "1.0.0",
-  "description": "Tracks and enforces a shared resource budget with a tamper-evident usage ledger \u2014 composed from vault, ledger, and memory.",
+  "description": "Tracks and enforces a shared resource budget with a tamper-evident usage ledger — composed from vault, ledger, and memory.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",

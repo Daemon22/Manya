@@ -1,7 +1,7 @@
 {
   "name": "@manya/cortex",
   "version": "1.0.0",
-  "description": "A reasoning fabric that routes tasks to the tools that already own them, gates dispatch through access control, and chains every decision into an auditable trail \u2014 composed from memory, unify, shield, and stamp.",
+  "description": "A reasoning fabric that routes tasks to the tools that already own them, gates dispatch through access control, and chains every decision into an auditable trail — composed from memory, unify, shield, and stamp.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
   "license": "MIT",
   "type": "module",
