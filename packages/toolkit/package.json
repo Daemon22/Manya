@@ -1,5 +1,5 @@
 {
-  "name": "@manya-hael/toolkit",
+  "name": "@manya/toolkit",
   "version": "0.2.0",
   "description": "Shared manifests, boundaries, and synchronization contracts for Manya tools.",
   "author": "Uviwe Menyiwe (Azura Daemon)",
