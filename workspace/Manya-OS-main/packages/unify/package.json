@@ -1,0 +1,43 @@
+{
+  "name": "@manya-os/unify",
+  "version": "1.0.0",
+  "description": "Manya Unify — Connective tissue for the Manya ecosystem. Federates identities across tools (ORCID, DOI, ROR, IMO, container, AWB, HS code), routes events through declared sync channels, bridges vocabularies (HS↔industry, UN/LOCODE↔country, industry↔sector/domain), and dispatches capability-based calls to the tool that owns each capability. Makes 'Everything Connected. Everyone Unified.' true at runtime.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/types.d.ts",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "manya",
+    "manya-os",
+    "unify"
+  ],
+  "dependencies": {
+    "@manya-os/toolkit": "*"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya-OS.git",
+    "directory": "packages/unify"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/types.d.ts",
+      "import": "./src/index.js",
+      "require": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

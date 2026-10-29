@@ -1,0 +1,35 @@
+{
+  "name": "@manya/foundation",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "HAEL Foundation people-and-organization domain for Manya — roles and permission tiers (visitor/member/partner/organization/council/steward), profiles, organization directory, and the visibility-gated relationship web spanning technical and Foundation domains, rendered through @manya/weave.",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
+  },
+  "keywords": [
+    "manya",
+    "foundation",
+    "hael",
+    "profiles",
+    "directory",
+    "relationship-map",
+    "weave"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "dependencies": {
+    "@manya/shield": "^1.0.0",
+    "@manya/weave": "^1.0.0"
+  },
+  "sideEffects": false
+}

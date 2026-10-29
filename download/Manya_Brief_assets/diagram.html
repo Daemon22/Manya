@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1200px 900px; margin: 0; }
+  html, body { margin: 0; padding: 0; background: #f5f8fc; }
+  .poster {
+    position: relative; width: 1200px; height: 900px;
+    background: #f5f8fc;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #142840;
+  }
+  .container {
+    position: absolute; top: 100px; height: 420px;
+    background: #e4ecf5; border: 1.5px solid #c0d0e2; border-radius: 10px;
+    box-sizing: border-box; padding: 18px 18px;
+  }
+  .container.bridge { background: #edf2f9; border: 2.5px solid #2d7ab3; }
+  .ctitle { font-size: 28px; font-weight: 700; color: #1a4a7a; letter-spacing: 0.3px; }
+  .csub { font-size: 19px; color: #5a7a96; margin-top: 4px; margin-bottom: 14px; }
+  .chip {
+    background: #ffffff; border: 1px solid #c0d0e2; border-radius: 6px;
+    padding: 8px 12px; font-size: 22px; line-height: 1.3; margin-bottom: 10px;
+    color: #142840;
+  }
+  .external {
+    position: absolute; top: 680px; height: 190px;
+    background: #ffffff; border: 2px dashed #5a7a96; border-radius: 10px;
+    box-sizing: border-box; padding: 14px 16px;
+  }
+  .etitle { font-size: 28px; font-weight: 700; color: #142840; }
+  .edesc { font-size: 22px; color: #5a7a96; line-height: 1.35; margin-top: 6px; }
+  .lbl {
+    position: absolute; font-size: 20px; font-style: italic; color: #5a7a96;
+    background: #f5f8fc; padding: 1px 6px;
+  }
+  svg.wires { position: absolute; inset: 0; width: 1200px; height: 900px; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <svg class="wires" viewBox="0 0 1200 900">
+    <defs>
+      <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L8,4.5 L0,9 Z" fill="#5a7a96"/>
+      </marker>
+      <marker id="arA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto-start-reverse">
+        <path d="M0,0 L8,4.5 L0,9 Z" fill="#2d7ab3"/>
+      </marker>
+    </defs>
+    <!-- Domain A <-> Bridge -->
+    <line x1="384" y1="130" x2="441" y2="130" stroke="#2d7ab3" stroke-width="2.5" marker-start="url(#arA)" marker-end="url(#arA)"/>
+    <!-- Bridge <-> Domain B -->
+    <line x1="769" y1="130" x2="826" y2="130" stroke="#2d7ab3" stroke-width="2.5" marker-start="url(#arA)" marker-end="url(#arA)"/>
+    <!-- Lycon -> Domain A -->
+    <line x1="210" y1="678" x2="210" y2="526" stroke="#5a7a96" stroke-width="2" marker-end="url(#ar)"/>
+    <!-- Aruk -> Bridge -->
+    <line x1="600" y1="678" x2="600" y2="526" stroke="#5a7a96" stroke-width="2" marker-end="url(#ar)"/>
+    <!-- Aruk -> Domain B (dashed, routed below Bridge) -->
+    <path d="M 732 750 C 830 750 900 660 900 528" fill="none" stroke="#5a7a96" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#ar)"/>
+  </svg>
+
+  <div class="container" style="left: 30px; width: 350px;">
+    <div class="ctitle">MANYA-TECHNICAL</div>
+    <div class="csub">Domain A - existing Manya repo</div>
+    <div class="chip">Unify mesh + federation</div>
+    <div class="chip">Event fabric + sources</div>
+    <div class="chip">Cortex: task dispatch</div>
+    <div class="chip">11 composed packages</div>
+  </div>
+
+  <div class="container bridge" style="left: 445px; width: 320px;">
+    <div class="ctitle">FEDERATION BRIDGE</div>
+    <div class="csub">Controlled, permission-scoped</div>
+    <div class="chip">Identity trust (DIDs)</div>
+    <div class="chip">Scoped event relay</div>
+    <div class="chip">Knowledge dereference</div>
+    <div class="chip">Grants + enforcement</div>
+  </div>
+
+  <div class="container" style="left: 830px; width: 350px;">
+    <div class="ctitle">MANYA-FOUNDATION</div>
+    <div class="csub">Domain B - new HAEL system</div>
+    <div class="chip">Foundation registry</div>
+    <div class="chip">Member + partner profiles</div>
+    <div class="chip">Announcements + comms</div>
+    <div class="chip">Directory + resources</div>
+  </div>
+
+  <div class="external" style="left: 80px; width: 260px;">
+    <div class="etitle">LYCON</div>
+    <div class="edesc">Browser / host platform. lycon:* channels + native bridge contract.</div>
+  </div>
+
+  <div class="external" style="left: 470px; width: 260px;">
+    <div class="etitle">ARUK</div>
+    <div class="edesc">Security authority. Identities, credentials, grants, revocation.</div>
+  </div>
+
+  <div class="lbl" style="left: 345px; top: 62px;">federation</div>
+  <div class="lbl" style="left: 740px; top: 62px;">scoped events</div>
+  <div class="lbl" style="left: 224px; top: 590px;">lycon:* channels</div>
+  <div class="lbl" style="left: 614px; top: 590px;">authn / authz</div>
+  <div class="lbl" style="left: 752px; top: 792px;">policy enforcement</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "name": "@manya/core-runtime",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Manya core runtime — the composition root that boots one connected Manya: unify mesh + event bus, nervous-system EventFabric, knowledge registry, HAEL Foundation domain, WebSocket transport with presence, and optional Manya-OS bridge.",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
+  },
+  "keywords": [
+    "manya",
+    "runtime",
+    "composition-root",
+    "nervous-system",
+    "cortex",
+    "knowledge",
+    "foundation"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "dependencies": {
+    "@manya/unify": "^1.0.0",
+    "@manya/transport": "^1.0.0",
+    "@manya/knowledge": "^1.0.0",
+    "@manya/foundation": "^1.0.0",
+    "@manya/nervous-system": "^1.0.0",
+    "@manya/toolkit": "^0.2.0"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manya Weave Live — Federated Identity Graph</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1410; color: #f5ede0; font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  #canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+  #canvas:active { cursor: grabbing; }
+  .panel { position: fixed; top: 16px; left: 16px; background: rgba(26, 20, 16, 0.92); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 12px; padding: 16px 20px; backdrop-filter: blur(12px); max-width: 320px; z-index: 10; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+  .panel h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; background: linear-gradient(135deg, #f4c430, #d4a574); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .panel .subtitle { font-size: 12px; color: #a89a85; margin-bottom: 12px; }
+  .panel .stat { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+  .panel .stat:first-of-type { border-top: none; }
+  .panel .stat .label { color: #a89a85; }
+  .panel .stat .value { color: #f5ede0; font-weight: 600; }
+  .panel .live-badge { display: inline-block; padding: 2px 8px; background: rgba(76, 175, 80, 0.2); color: #4caf50; border-radius: 999px; font-size: 10px; font-weight: 600; margin-left: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .legend { position: fixed; bottom: 16px; left: 16px; background: rgba(26, 20, 16, 0.92); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 12px; padding: 12px 16px; backdrop-filter: blur(12px); z-index: 10; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 3px 0; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend-dot.tool { background: #d4a574; box-shadow: 0 0 8px #d4a574; }
+  .legend-dot.identity { background: #38aaa0; box-shadow: 0 0 8px #38aaa0; }
+  .legend-dot.type { background: #4caf50; box-shadow: 0 0 8px #4caf50; }
+  .legend-line { width: 16px; height: 2px; }
+  .legend-line.sync { background: rgba(212, 165, 116, 0.5); }
+  .legend-line.primary { background: rgba(56, 170, 160, 0.6); }
+  .legend-line.linked { background: rgba(56, 170, 160, 0.3); border-top: 1px dashed rgba(56, 170, 160, 0.6); height: 0; }
+  .controls { position: fixed; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 10; }
+  .controls button { background: rgba(26, 20, 16, 0.92); border: 1px solid rgba(212, 165, 116, 0.3); color: #f5ede0; padding: 8px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; backdrop-filter: blur(12px); transition: all 0.2s; }
+  .controls button:hover { background: rgba(212, 165, 116, 0.2); border-color: #d4a574; }
+  .controls input { background: rgba(26, 20, 16, 0.92); border: 1px solid rgba(212, 165, 116, 0.3); color: #f5ede0; padding: 8px 12px; border-radius: 8px; font-size: 12px; backdrop-filter: blur(12px); width: 200px; }
+  .controls input::placeholder { color: #6b5f50; }
+  .tooltip { position: fixed; background: rgba(26, 20, 16, 0.96); border: 1px solid rgba(212, 165, 116, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 12px; pointer-events: none; z-index: 20; max-width: 280px; display: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); }
+  .tooltip .title { font-weight: 600; margin-bottom: 4px; color: #d4a574; }
+  .tooltip .row { color: #a89a85; }
+  .tooltip .row b { color: #f5ede0; }
+  .footer { position: fixed; bottom: 16px; right: 16px; font-size: 11px; color: #6b5f50; z-index: 10; }
+  .footer .gradient-text { background: linear-gradient(135deg, #f4c430, #d4a574); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 600; }
+  .event-log { position: fixed; bottom: 16px; right: 16px; width: 360px; max-height: 200px; overflow-y: auto; background: rgba(26, 20, 16, 0.92); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 8px; padding: 8px 12px; backdrop-filter: blur(12px); z-index: 10; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .event-log .event-row { padding: 3px 0; color: #a89a85; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .event-log .event-row:last-child { border-bottom: none; }
+  .event-log .event-row .topic { color: #d4a574; font-weight: 600; }
+  .event-log .event-row .time { color: #6b5f50; float: right; }
+  .event-log h3 { font-size: 11px; font-weight: 600; color: #f5ede0; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="panel">
+  <h1>Manya Weave Live <span class="live-badge" id="live-badge">CONNECTING</span></h1>
+  <div class="subtitle">Everything Connected. Everyone Unified.</div>
+  <div class="stat"><span class="label">Tools registered</span><span class="value" id="stat-tools">0</span></div>
+  <div class="stat"><span class="label">Sync channels</span><span class="value" id="stat-channels">0</span></div>
+  <div class="stat"><span class="label">Federated identities</span><span class="value" id="stat-identities">0</span></div>
+  <div class="stat"><span class="label">Identifier types</span><span class="value" id="stat-types">0</span></div>
+  <div class="stat"><span class="label">Events received</span><span class="value" id="stat-events">0</span></div>
+</div>
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot tool"></span>Tool</div>
+  <div class="legend-item"><span class="legend-dot identity"></span>Federated identity</div>
+  <div class="legend-item"><span class="legend-dot type"></span>Identifier type</div>
+  <div class="legend-item"><span class="legend-line sync"></span>Sync channel</div>
+  <div class="legend-item"><span class="legend-line primary"></span>Primary identifier</div>
+  <div class="legend-item"><span class="legend-line linked"></span>Linked identifier</div>
+</div>
+<div class="controls">
+  <input id="publish-topic" type="text" placeholder="topic (e.g. citation-verified)" />
+  <button id="btn-publish">Publish</button>
+  <button id="btn-reheat">Reheat</button>
+  <button id="btn-refresh">Refresh</button>
+</div>
+<div class="tooltip" id="tooltip"></div>
+<div class="event-log">
+  <h3>Event Stream</h3>
+  <div id="event-list"></div>
+</div>
+<div class="footer"><span class="gradient-text">Manya</span> Weave Live v0.6.0</div>
+<script>
+const API_BASE = window.location.origin;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+let width, height, dpr;
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// State
+let nodes = [];
+let edges = [];
+let nodeIndex = new Map();
+let eventCount = 0;
+let pulseNodes = new Map(); // nodeId -> { startTime, intensity }
+
+// Initialize positions in a circle
+function initPositions() {
+  const cx = width / 2, cy = height / 2;
+  const R = Math.min(width, height) * 0.35;
+  nodes.forEach((n, i) => {
+    if (n.x === undefined) {
+      const angle = (i / nodes.length) * Math.PI * 2;
+      n.x = cx + Math.cos(angle) * R + (Math.random() - 0.5) * 50;
+      n.y = cy + Math.sin(angle) * R + (Math.random() - 0.5) * 50;
+      n.vx = 0;
+      n.vy = 0;
+    }
+  });
+}
+
+function rebuildIndex() {
+  nodeIndex = new Map();
+  for (const n of nodes) nodeIndex.set(n.id, n);
+}
+
+function updateStats() {
+  document.getElementById('stat-tools').textContent = nodes.filter(n => n.kind === 'tool').length;
+  document.getElementById('stat-identities').textContent = nodes.filter(n => n.kind === 'identity').length;
+  document.getElementById('stat-types').textContent = nodes.filter(n => n.kind === 'type').length;
+  document.getElementById('stat-edges').textContent = edges.length;
+  document.getElementById('stat-channels').textContent = edges.filter(e => e.kind === 'sync-channel').length;
+  document.getElementById('stat-events').textContent = eventCount;
+}
+
+// Fetch initial state
+async function refresh() {
+  try {
+    const [toolsRes, idsRes] = await Promise.all([
+      fetch(API_BASE + '/api/mesh').then(r => r.json()),
+      fetch(API_BASE + '/api/identities').then(r => r.json()),
+    ]);
+    // Rebuild nodes from scratch (preserving positions of existing nodes)
+    const oldPositions = new Map();
+    for (const n of nodes) oldPositions.set(n.id, { x: n.x, y: n.y, vx: n.vx, vy: n.vy });
+    nodes = [];
+    edges = [];
+    // Tool nodes
+    for (const tool of toolsRes.tools || []) {
+      const old = oldPositions.get('tool:' + tool.toolId);
+      nodes.push({
+        id: 'tool:' + tool.toolId,
+        label: tool.name || tool.toolId,
+        kind: 'tool',
+        toolId: tool.toolId,
+        capabilities: tool.owns || [],
+        syncChannels: tool.syncChannels || [],
+        radius: 28 + (tool.owns?.length || 0) * 2,
+        x: old?.x, y: old?.y, vx: old?.vx || 0, vy: old?.vy || 0,
+      });
+    }
+    // Sync-channel edges (between tools that share a channel — inferred from data)
+    const channelsMap = new Map();
+    for (const tool of toolsRes.tools || []) {
+      for (const ch of tool.syncChannels || []) {
+        if (!channelsMap.has(ch)) channelsMap.set(ch, []);
+        channelsMap.get(ch).push(tool.toolId);
+      }
+    }
+    for (const [channel, owners] of channelsMap) {
+      if (owners.length < 2) continue;
+      for (let i = 0; i < owners.length; i++) {
+        for (let j = i + 1; j < owners.length; j++) {
+          edges.push({ from: 'tool:' + owners[i], to: 'tool:' + owners[j], kind: 'sync-channel', label: channel });
+        }
+      }
+    }
+    // Identity nodes
+    for (const identity of idsRes.identities || []) {
+      nodes.push({
+        id: 'identity:' + identity.id,
+        label: identity.metadata?.name || identity.id.slice(0, 12),
+        kind: 'identity',
+        identityId: identity.id,
+        primaryType: identity.primary.type,
+        linkedCount: identity.linked?.length || 0,
+        radius: 8,
+        x: oldPositions.get('identity:' + identity.id)?.x,
+        y: oldPositions.get('identity:' + identity.id)?.y,
+        vx: 0, vy: 0,
+      });
+    }
+    // Type nodes
+    const typesUsed = new Set();
+    for (const identity of idsRes.identities || []) {
+      typesUsed.add(identity.primary.type);
+      for (const link of identity.linked || []) typesUsed.add(link.type);
+    }
+    for (const type of typesUsed) {
+      const old = oldPositions.get('type:' + type);
+      nodes.push({
+        id: 'type:' + type, label: type, kind: 'type', typeId: type, radius: 12,
+        x: old?.x, y: old?.y, vx: 0, vy: 0,
+      });
+    }
+    // Edges: identity → types
+    for (const identity of idsRes.identities || []) {
+      edges.push({ from: 'identity:' + identity.id, to: 'type:' + identity.primary.type, kind: 'primary' });
+      for (const link of identity.linked || []) {
+        edges.push({ from: 'identity:' + identity.id, to: 'type:' + link.type, kind: 'linked', confidence: link.confidence, source: link.source });
+      }
+    }
+    initPositions();
+    rebuildIndex();
+    updateStats();
+  } catch (err) {
+    console.error('Refresh failed:', err);
+  }
+}
+
+// SSE event stream
+function connectSse() {
+  const es = new EventSource(API_BASE + '/api/events');
+  es.addEventListener('connected', () => {
+    document.getElementById('live-badge').textContent = 'LIVE';
+  });
+  es.addEventListener('message', (e) => {
+    try {
+      const evt = JSON.parse(e.data);
+      eventCount++;
+      // Pulse nodes related to this event
+      pulseEvent(evt);
+      // Log the event
+      logEvent(evt);
+      updateStats();
+    } catch (err) {
+      console.error('SSE parse error:', err);
+    }
+  });
+  es.onerror = () => {
+    document.getElementById('live-badge').textContent = 'RECONNECTING';
+  };
+}
+
+function pulseEvent(evt) {
+  // Pulse the source tool node
+  if (evt.sourceToolId) {
+    const toolNode = nodeIndex.get('tool:' + evt.sourceToolId);
+    if (toolNode) {
+      pulseNodes.set(toolNode.id, { startTime: Date.now(), intensity: 1.0 });
+      // Give it a kick
+      toolNode.vx += (Math.random() - 0.5) * 30;
+      toolNode.vy += (Math.random() - 0.5) * 30;
+    }
+  }
+  // Pulse any nodes whose identityId or typeId matches the topic/payload
+  const topic = evt.topic || '';
+  for (const n of nodes) {
+    if (n.kind === 'tool' && n.syncChannels?.includes(topic)) {
+      pulseNodes.set(n.id, { startTime: Date.now(), intensity: 0.7 });
+    }
+  }
+}
+
+function logEvent(evt) {
+  const list = document.getElementById('event-list');
+  const el = document.createElement('div');
+  el.className = 'event-row';
+  const time = new Date(evt.publishedAt).toLocaleTimeString();
+  const sourceTag = evt.sourceToolId ? ` <span style="color:#38aaa0">${evt.sourceToolId}</span>` : '';
+  el.innerHTML = `<span class="topic">${escapeHtml(evt.topic)}</span>${sourceTag}<span class="time">${time}</span>`;
+  list.insertBefore(el, list.firstChild);
+  while (list.children.length > 8) list.removeChild(list.lastChild);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Force simulation
+const cx = () => width / 2;
+const cy = () => height / 2;
+function tick() {
+  // Repulsion
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+      const force = 1800 / (dist * dist);
+      const fx = (dx / dist) * force, fy = (dy / dist) * force;
+      a.vx -= fx; a.vy -= fy;
+      b.vx += fx; b.vy += fy;
+    }
+  }
+  // Attraction
+  for (const edge of edges) {
+    const a = nodeIndex.get(edge.from), b = nodeIndex.get(edge.to);
+    if (!a || !b) continue;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+    const target = edge.kind === 'sync-channel' ? 220 : edge.kind === 'primary' ? 60 : 90;
+    const force = (dist - target) * 0.02;
+    const fx = (dx / dist) * force, fy = (dy / dist) * force;
+    a.vx += fx; a.vy += fy;
+    b.vx -= fx; b.vy -= fy;
+  }
+  // Centering
+  for (const n of nodes) {
+    n.vx += (cx() - n.x) * 0.001;
+    n.vy += (cy() - n.y) * 0.001;
+  }
+  // Apply velocity
+  for (const n of nodes) {
+    n.vx *= 0.85; n.vy *= 0.85;
+    n.x += n.vx; n.y += n.vy;
+    n.x = Math.max(50, Math.min(width - 50, n.x));
+    n.y = Math.max(50, Math.min(height - 50, n.y));
+  }
+}
+
+// Render
+let hoverNode = null;
+let dragNode = null;
+function render() {
+  ctx.clearRect(0, 0, width, height);
+  const grad = ctx.createRadialGradient(cx(), cy(), 0, cx(), cy(), Math.max(width, height));
+  grad.addColorStop(0, 'rgba(212, 165, 116, 0.05)');
+  grad.addColorStop(1, 'rgba(26, 20, 16, 0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Decay pulses
+  const now = Date.now();
+  for (const [id, p] of pulseNodes) {
+    const elapsed = now - p.startTime;
+    if (elapsed > 1500) pulseNodes.delete(id);
+  }
+
+  // Edges
+  for (const edge of edges) {
+    const a = nodeIndex.get(edge.from), b = nodeIndex.get(edge.to);
+    if (!a || !b) continue;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    if (edge.kind === 'sync-channel') { ctx.strokeStyle = 'rgba(212, 165, 116, 0.25)'; ctx.lineWidth = 1.5; }
+    else if (edge.kind === 'primary') { ctx.strokeStyle = 'rgba(56, 170, 160, 0.6)'; ctx.lineWidth = 2; }
+    else { ctx.strokeStyle = 'rgba(56, 170, 160, 0.25)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Nodes
+  for (const n of nodes) {
+    const isHovered = (n === hoverNode);
+    const pulse = pulseNodes.get(n.id);
+    const pulseFactor = pulse ? (1 - (now - pulse.startTime) / 1500) * pulse.intensity : 0;
+    // Glow
+    let glowColor;
+    if (n.kind === 'tool') glowColor = pulse ? 'rgba(212, 165, 116, ' + (0.5 + 0.3 * pulseFactor) + ')' : 'rgba(212, 165, 116, 0.25)';
+    else if (n.kind === 'identity') glowColor = pulse ? 'rgba(56, 170, 160, ' + (0.6 + 0.3 * pulseFactor) + ')' : 'rgba(56, 170, 160, 0.3)';
+    else glowColor = 'rgba(76, 175, 80, 0.25)';
+    const glowRadius = n.radius * (2 + pulseFactor * 1.5);
+    const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowRadius);
+    glow.addColorStop(0, glowColor);
+    glow.addColorStop(1, glowColor.replace(/[\d.]+\)$/, '0)'));
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+    // Body
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+    if (n.kind === 'tool') {
+      const g = ctx.createRadialGradient(n.x - n.radius/3, n.y - n.radius/3, 0, n.x, n.y, n.radius);
+      g.addColorStop(0, '#f4c430'); g.addColorStop(1, '#b8860b');
+      ctx.fillStyle = g;
+    } else if (n.kind === 'identity') {
+      const g = ctx.createRadialGradient(n.x - n.radius/3, n.y - n.radius/3, 0, n.x, n.y, n.radius);
+      g.addColorStop(0, '#5cc4ba'); g.addColorStop(1, '#2a7a72');
+      ctx.fillStyle = g;
+    } else {
+      const g = ctx.createRadialGradient(n.x - n.radius/3, n.y - n.radius/3, 0, n.x, n.y, n.radius);
+      g.addColorStop(0, '#7fb069'); g.addColorStop(1, '#3a6a35');
+      ctx.fillStyle = g;
+    }
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Label
+    ctx.fillStyle = '#f5ede0';
+    ctx.font = n.kind === 'tool' ? '600 12px Inter, sans-serif' : '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (n.kind === 'tool') ctx.fillText(n.label, n.x, n.y + n.radius + 14);
+    else if (n.kind === 'type') ctx.fillText(n.label, n.x, n.y + n.radius + 12);
+    else { ctx.font = '9px Inter, sans-serif'; ctx.fillStyle = 'rgba(230, 237, 243, 0.6)'; ctx.fillText(n.label, n.x, n.y + n.radius + 10); }
+  }
+}
+
+function nodeAt(x, y) {
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const dx = x - n.x, dy = y - n.y;
+    if (dx * dx + dy * dy <= n.radius * n.radius) return n;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  if (dragNode) { dragNode.x = mx; dragNode.y = my; dragNode.vx = 0; dragNode.vy = 0; }
+  else {
+    hoverNode = nodeAt(mx, my);
+    if (hoverNode) {
+      canvas.style.cursor = 'pointer';
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY + 14) + 'px';
+      let html = '';
+      if (hoverNode.kind === 'tool') {
+        html = '<div class="title">' + hoverNode.label + '</div>';
+        html += '<div class="row">id: <b>' + hoverNode.toolId + '</b></div>';
+        html += '<div class="row">capabilities: <b>' + hoverNode.capabilities.length + '</b></div>';
+        html += '<div class="row">sync channels: <b>' + hoverNode.syncChannels.length + '</b></div>';
+      } else if (hoverNode.kind === 'identity') {
+        html = '<div class="title">Federated Identity</div>';
+        html += '<div class="row">id: <b>' + hoverNode.identityId + '</b></div>';
+        html += '<div class="row">primary: <b>' + hoverNode.primaryType + '</b></div>';
+        html += '<div class="row">linked: <b>' + hoverNode.linkedCount + '</b></div>';
+      } else {
+        html = '<div class="title">Identifier Type</div><div class="row">type: <b>' + hoverNode.typeId + '</b></div>';
+      }
+      tooltip.innerHTML = html;
+    } else { canvas.style.cursor = 'grab'; tooltip.style.display = 'none'; }
+  }
+});
+canvas.addEventListener('mousedown', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  dragNode = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
+});
+canvas.addEventListener('mouseup', () => { dragNode = null; });
+canvas.addEventListener('mouseleave', () => { dragNode = null; hoverNode = null; tooltip.style.display = 'none'; });
+
+document.getElementById('btn-reheat').addEventListener('click', () => {
+  for (const n of nodes) { n.vx = (Math.random() - 0.5) * 20; n.vy = (Math.random() - 0.5) * 20; }
+});
+document.getElementById('btn-refresh').addEventListener('click', refresh);
+document.getElementById('btn-publish').addEventListener('click', async () => {
+  const topic = document.getElementById('publish-topic').value.trim();
+  if (!topic) { alert('Enter a topic'); return; }
+  await fetch(API_BASE + '/api/bus/publish', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ topic, type: 'manual', payload: { from: 'weave-live' } }),
+  });
+  document.getElementById('publish-topic').value = '';
+});
+
+function loop() {
+  for (let i = 0; i < 3; i++) tick();
+  render();
+  requestAnimationFrame(loop);
+}
+
+// Boot
+refresh().then(() => {
+  connectSse();
+  loop();
+});
+// Auto-refresh every 10s to pick up new identities/tools
+setInterval(refresh, 10000);
+</script>
+</body>
+</html>

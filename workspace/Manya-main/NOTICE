@@ -1,0 +1,26 @@
+NOTICE
+======
+
+This repository is licensed under the MIT License (see LICENSE), with one
+exception:
+
+The following packages were merged in from the MANYA Intelligence OS
+project and remain licensed under the Apache License, Version 2.0, per
+their own `LICENSE` files, `package.json` `license` fields, and source
+file headers. They are NOT relicensed as MIT by virtue of living in this
+repository — their original terms apply, unchanged:
+
+  - packages/constitution     (Apache-2.0)
+  - packages/contracts        (Apache-2.0)
+  - packages/council          (Apache-2.0)
+  - packages/customs-shield   (Apache-2.0)
+  - packages/nervous-system   (Apache-2.0)
+  - packages/weave            (Apache-2.0)
+
+Both licenses are permissive and compatible with each other. If you
+redistribute this repository as a whole, you must comply with both the
+MIT License (for everything else) and the Apache License, Version 2.0
+(for the six packages listed above), including preserving their
+Apache NOTICE/LICENSE files and copyright headers.
+
+Copyright (c) 2026 Uviwe Menyiwe (Azura Daemon), HAEL Foundation.

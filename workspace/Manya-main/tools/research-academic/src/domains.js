@@ -1,0 +1,101 @@
+/**
+ * Research domain definitions for the Manya Research & Academic tool.
+ * Covers the four primary research domains: Life Sciences, Physical Sciences,
+ * Social Sciences & Humanities, and Computational Sciences.
+ *
+ * Each domain declares its metadata standards, identifiers, frameworks,
+ * FAIR principles, and signal types.
+ */
+
+export const DOMAINS = {
+  life_sciences: {
+    id: 'life_sciences',
+    name: 'Life Sciences & Biomedical',
+    description: 'Biology, medicine, genetics, and biomedical research with FAIR data principles, clinical-trial registration, and biosample provenance tracking.',
+    frameworks: ['FAIR-Principles', 'NIH-Data-Management', 'GDPR-Research', 'HIPAA-Research', 'ICMJE-Recommendations', 'CONSORT-2010'],
+    dataClassifications: ['biosample-id', 'genomic-data', 'patient-record', 'clinical-trial-data', 'lab-notebook', 'researcher-pii'],
+    redactionPreset: 'life-sciences',
+    accessTemplate: 'life-sciences-rbac',
+    stampTemplate: 'life-sciences-audit',
+    signalTypes: ['trial-registration', 'biosample-collected', 'genomic-sequence', 'peer-review-submission', 'data-deposit', 'retraction-notice'],
+    vaultNamespace: 'research-life-sciences',
+    identifiers: ['doi', 'pmid', 'pmcid', 'orcid', 'isni', 'nct-number', 'array-express', 'geo-accession'],
+    metadataStandards: ['MIAME', 'MINSEQE', 'ISA-Tab', 'DICOM-Research', 'FHIR-Research'],
+    complianceNotes: [
+      'Clinical trials must be registered on ClinicalTrials.gov (NCT number) before enrollment',
+      'Genomic data must comply with GA4GH data-sharing standards and consent requirements',
+      'Biosample provenance must be tracked from collection to disposal with immutable audit trail',
+      'Patient-identifying data must be de-identified per HIPAA Safe Harbor or Expert Determination',
+      'ICMJE requires declaration of conflicts of interest and funding sources for all publications',
+      'Data Management Plans (DMPs) are mandatory for NIH-funded research and most federal grants',
+    ],
+  },
+  physical_sciences: {
+    id: 'physical_sciences',
+    name: 'Physical Sciences & Engineering',
+    description: 'Physics, chemistry, astronomy, materials science, and engineering research with reproducibility manifests, instrument provenance, and computational workflow tracking.',
+    frameworks: ['FAIR-Principles', 'NASA-Open-Data', 'OSTP-Memorandum', 'ERC-Open-Research-Data', 'NIST-Scientific-Data'],
+    dataClassifications: ['instrument-reading', 'simulation-output', 'calibration-data', 'lab-notebook', 'experimental-config', 'researcher-pii'],
+    redactionPreset: 'physical-sciences',
+    accessTemplate: 'physical-sciences-rbac',
+    stampTemplate: 'physical-sciences-audit',
+    signalTypes: ['experiment-run', 'instrument-calibration', 'simulation-submitted', 'data-deposit', 'peer-review-submission', 'retraction-notice'],
+    vaultNamespace: 'research-physical-sciences',
+    identifiers: ['doi', 'orcid', 'isni', 'arxiv-id', 'ads-bibcode', 'cas-number', 'inchi-key'],
+    metadataStandards: ['Dublin-Core', 'DataCite', 'NASA-DIF', 'CF-Metadata', 'PDS4'],
+    complianceNotes: [
+      'Reproducibility manifests must capture software versions, parameter sets, and random seeds',
+      'Instrument calibrations must be timestamped and traceable to NIST or equivalent standards',
+      'Simulation workflows must be versioned with hash-verified input/output manifests',
+      'Open data mandates require deposit of underlying data in disciplinary repositories',
+      'Author contributions must follow CRediT taxonomy for transparent attribution',
+      'Negative results must be published to combat publication bias',
+    ],
+  },
+  social_sciences: {
+    id: 'social_sciences',
+    name: 'Social Sciences & Humanities',
+    description: 'Sociology, economics, psychology, history, and humanities research with human-subjects protection, IRB protocols, qualitative-data provenance, and longitudinal study tracking.',
+    frameworks: ['FAIR-Principles', 'Belmont-Report', 'Declaration-of-Helsinki', 'Common-Rule-45-CFR-46', 'GDPR-Research', 'CARE-Principles'],
+    dataClassifications: ['participant-id', 'survey-response', 'interview-transcript', 'field-note', 'qualitative-code', 'researcher-pii'],
+    redactionPreset: 'social-sciences',
+    accessTemplate: 'social-sciences-rbac',
+    stampTemplate: 'social-sciences-audit',
+    signalTypes: ['irb-approval', 'participant-consent', 'survey-collected', 'interview-conducted', 'data-deposit', 'peer-review-submission'],
+    vaultNamespace: 'research-social-sciences',
+    identifiers: ['doi', 'orcid', 'isni', 'ror', 'crossref-funder', 'openalex-id'],
+    metadataStandards: ['DDI-Codebook', 'TEI', 'Dublin-Core', 'DataCite', 'QualiData-Standard'],
+    complianceNotes: [
+      'IRB approval must be obtained before any human-subjects data collection',
+      'Informed consent must be documented and revocable; revocation must trigger data deletion workflow',
+      'Qualitative data must preserve participant anonymity with consistent pseudonymization',
+      'Indigenous data must follow CARE principles (Collective benefit, Authority to control, Responsibility, Ethics)',
+      'Longitudinal studies require immutable consent records across time points',
+      'Pre-registration of analysis plans is required to prevent HARKing (Hypothesizing After Results Known)',
+    ],
+  },
+  computational_sciences: {
+    id: 'computational_sciences',
+    name: 'Computational Sciences & AI Research',
+    description: 'Computer science, AI/ML, and computational research with software citation, model cards, dataset datasheets, computation provenance, and reproducibility manifests.',
+    frameworks: ['FAIR-Principles', 'TRPC-Recommendations', 'ACM-Artifact-Review', 'NeurIPS-Reproducibility', 'PARTHENOS', 'FORCE11-Principles'],
+    dataClassifications: ['source-code', 'model-weights', 'dataset-reference', 'computation-result', 'notebook', 'researcher-pii'],
+    redactionPreset: 'computational-sciences',
+    accessTemplate: 'computational-sciences-rbac',
+    stampTemplate: 'computational-sciences-audit',
+    signalTypes: ['model-trained', 'dataset-released', 'artifact-deposited', 'computation-reproduced', 'peer-review-submission', 'vulnerability-disclosed'],
+    vaultNamespace: 'research-computational-sciences',
+    identifiers: ['doi', 'orcid', 'isni', 'arxiv-id', 'github-repo', 'huggingface-model', 'zenodo-record', 'rocrate'],
+    metadataStandards: ['Codemeta', 'RO-Crate', 'Model-Card', 'Datasheets-for-Datasets', 'Software-Heritage- Ontology'],
+    complianceNotes: [
+      'Software artifacts must be citable via DOI and archived in Software Heritage or Zenodo',
+      'Model cards must document training data, intended use, limitations, and ethical considerations',
+      'Datasets must include datasheets describing motivation, composition, collection, and maintenance',
+      'Reproducibility manifests must capture container image hashes, dependency versions, and seed values',
+      'AI/ML research must disclose compute resources, training duration, and environmental impact',
+      'Vulnerability disclosures in security research must follow coordinated disclosure timelines',
+    ],
+  },
+};
+
+export const DOMAIN_IDS = Object.keys(DOMAINS);

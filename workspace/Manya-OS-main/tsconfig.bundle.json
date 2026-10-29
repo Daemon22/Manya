@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "sourceMap": false,
+    "noEmitOnError": false,
+    "baseUrl": "./",
+    "paths": {
+      "@manya/keyring": ["packages/keyring/src"],
+      "@manya/attest": ["packages/attest/src"],
+      "@manya/ledger": ["packages/ledger/src"],
+      "@manya/anonymize": ["packages/anonymize/src"],
+      "@manya/customs-shield": ["packages/customs-shield/src"],
+      "@manya/weave": ["packages/weave/src"],
+      "@manya/contracts": ["packages/contracts/src"],
+      "@manya/cortex": ["packages/cortex/src"],
+      "@manya/memory": ["packages/memory/src"],
+      "@manya/constitution": ["packages/constitution/src"],
+      "@manya/council": ["packages/council/src"],
+      "@manya/nervous-system": ["packages/nervous-system/src"]
+    }
+  },
+  "include": ["packages/*/src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/tests/**", "**/benchmarks/**", "**/examples/**"]
+}

@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Manya · nervous system of innovation ────────────────────────────────
+// Members are indexed people (or delegating intelligences) placed by the
+// Resonance Index before they sign in — "signing into something alive".
+
+model Member {
+  id         String   @id @default(cuid())
+  name       String
+  handle     String   @unique
+  roles      String // JSON string[]
+  seeking    String // JSON string[]
+  domains    String // JSON string[]
+  style      String // voice-first | text-first | both
+  purpose    String
+  resonance  String // JSON ResonanceResult
+  createdAt  DateTime @default(now())
+}
+
+model Community {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  tagline     String
+  purpose     String
+  domain      String
+  accent      String // emerald | amber | fuchsia | rose | cyan | violet
+  kind        String // community | guild | circle | arena | assembly | bridge
+  memberCount Int      @default(0)
+  aliveNow    Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  kind         String // SEEKING_FUNDING | OFFERING_SUPPORT | SEEKING_PARTNERSHIP | SEEKING_TALENT | DEBATE | DISCUSSION | SHOWCASE | AID
+  title        String
+  body         String
+  author       String
+  authorKind   String   @default("HUMAN") // HUMAN | INTELLIGENCE
+  domain       String
+  communitySlug String?
+  supportCount Int      @default(0)
+  echoCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+// Reach is discovery. Connection is permission.
+model ConnectionRequest {
+  id        String    @id @default(cuid())
+  fromName  String
+  fromKind  String // HUMAN | INTELLIGENCE | DEVICE | APPLICATION | SPACE | ORGANIZATION
+  owner     String // "You" | "The Foundation" | external platform label
+  toName    String
+  note      String
+  method    String // INQUIRY | QR | CODE | PASSKEY
+  code      String?
+  status    String    @default("PENDING") // PENDING | APPROVED | DECLINED
+  createdAt DateTime  @default(now())
+  decidedAt DateTime?
+}
+
+model Pairing {
+  id        String   @id @default(cuid())
+  code      String   @unique // 7 characters
+  label     String
+  target    String
+  active    Boolean  @default(true)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Device {
+  id       String   @id @default(cuid())
+  name     String
+  kind     String // DEVICE | APPLICATION | SPACE | INTELLIGENCE
+  status   String // LINKED | PENDING | OFFLINE
+  detail   String
+  lastSeen DateTime @default(now())
+}
+
+model CallRoom {
+  id        String   @id @default(cuid())
+  name      String
+  topic     String
+  host      String
+  kind      String // VIDEO | AUDIO
+  active    Boolean  @default(false)
+  capacity  Int      @default(8)
+  createdAt DateTime @default(now())
+}
+
+model Outcome {
+  id        String   @id @default(cuid())
+  roomId    String
+  title     String
+  points    String // JSON string[]
+  by        String
+  createdAt DateTime @default(now())
+}
