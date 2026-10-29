@@ -1,4 +1,0 @@
-export {
-  DEFAULT_AGING_POLICY, mergeAgingPolicy, ageScore,
-  effectiveImportance, shouldPruneEpisodic, shouldCompressLongTerm,
-} from './aging.js';
