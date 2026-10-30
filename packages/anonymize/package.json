@@ -1,0 +1,47 @@
+{
+  "name": "@manya-os/anonymize",
+  "version": "1.1.0",
+  "description": "Research-grade anonymization for PII, PHI, sensitive metadata, OCR text, image identifiers, and document metadata — with validation reports and reproducible dataset publication for the MANYA Intelligence OS.",
+  "main": "./dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js anonymize",
+    "test": "jest --config ../../jest.config.js",
+    "bench": "node benchmarks/anonymize.bench.js",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js anonymize",
+    "build:bundle": "node ../../scripts/build-package.js anonymize --no-types && node ../../scripts/build-types.js anonymize"
+  },
+  "keywords": [
+    "manya",
+    "anonymize",
+    "pii",
+    "phi",
+    "privacy",
+    "redaction",
+    "de-identification",
+    "hipaa",
+    "gdpr"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

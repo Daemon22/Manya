@@ -1,0 +1,12 @@
+{
+  "name": "manya-os-runtime",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Executable local-first runtime for MANYA Intelligence OS.",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node index.mjs",
+    "test": "node ../scripts/test-runtime.mjs"
+  }
+}

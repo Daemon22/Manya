@@ -1,0 +1,45 @@
+{
+  "name": "@manya-os/stamp",
+  "version": "1.0.0",
+  "description": "Tamper-proof timestamping, audit trails, and provenance chains for the Manya ecosystem.",
+  "author": "Uviwe Menyiwe (Azura Daemon), HAEL Foundation",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/types.d.ts",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "timestamp",
+    "audit",
+    "provenance",
+    "chain-of-custody",
+    "manya",
+    "stamp",
+    "manya-os"
+  ],
+  "dependencies": {},
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Daemon22/Manya-OS.git",
+    "directory": "packages/stamp"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/types.d.ts",
+      "import": "./src/index.js",
+      "require": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

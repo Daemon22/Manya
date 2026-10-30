@@ -1,0 +1,46 @@
+{
+  "name": "@manya-os/memory",
+  "version": "1.1.0",
+  "description": "Unified memory system — working, episodic, semantic, procedural, long-term storage, indexing, linking, aging, compression, retrieval ranking, access permissions, synchronization, backup, and import/export for the MANYA Intelligence OS.",
+  "main": "./dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js memory",
+    "test": "jest --config ../../jest.config.js",
+    "bench": "node benchmarks/memory.bench.js",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js memory",
+    "build:bundle": "node ../../scripts/build-package.js memory --no-types && node ../../scripts/build-types.js memory"
+  },
+  "keywords": [
+    "manya",
+    "memory",
+    "episodic",
+    "semantic",
+    "procedural",
+    "long-term",
+    "knowledge-graph",
+    "recall"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

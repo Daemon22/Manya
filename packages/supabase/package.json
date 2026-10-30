@@ -1,0 +1,67 @@
+{
+  "name": "@manya-os/supabase",
+  "version": "1.1.0",
+  "description": "Supabase/Postgres persistence adapters for the MANYA Intelligence OS. Optional companion package providing durable storage for ledger, memory, keyring, and attestation packages.",
+  "main": "./dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "node ../../scripts/build-package.js supabase",
+    "test": "jest --config ../../jest.config.js",
+    "clean": "rm -rf dist build node_modules",
+    "build:types": "node ../../scripts/build-types.js supabase",
+    "build:bundle": "node ../../scripts/build-package.js supabase --no-types && node ../../scripts/build-types.js supabase"
+  },
+  "keywords": [
+    "manya",
+    "supabase",
+    "postgres",
+    "persistence",
+    "database",
+    "storage",
+    "adapter"
+  ],
+  "author": "Uviwe Menyiwe (Azura Daemon) <foundation@manyahael.org>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0",
+    "pg": "^8.23.0"
+  },
+  "peerDependencies": {
+    "@manya-os/attest": "*",
+    "@manya-os/keyring": "*",
+    "@manya-os/ledger": "*",
+    "@manya-os/memory": "*"
+  },
+  "peerDependenciesMeta": {
+    "@manya-os/ledger": {
+      "optional": true
+    },
+    "@manya-os/memory": {
+      "optional": true
+    },
+    "@manya-os/keyring": {
+      "optional": true
+    },
+    "@manya-os/attest": {
+      "optional": true
+    }
+  },
+  "module": "dist/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "migrations",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}
