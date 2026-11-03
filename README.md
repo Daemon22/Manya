@@ -38,6 +38,8 @@ npm run dev
 
 Use `npm run db:push` only with a fresh local database: it accepts data loss. Configure any additional environment variables required by integrations before using connected features.
 
+Account sign-in supports a username or email address with a password. Set a stable `NEXTAUTH_SECRET` in Vercel and point `DATABASE_URL` at durable production storage before enabling public accounts. The build applies the account table migration. Email verification and password recovery still need an email delivery service.
+
 `npm run dev` starts only the Next.js server on port 3000. For call rooms, also install Bun and Caddy, then start the signaling service and proxy in separate terminals:
 
 ```sh
