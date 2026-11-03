@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AppUser {
+  id           String   @id @default(cuid())
+  name         String
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 // ─── Manya · nervous system of innovation ────────────────────────────────
 // Members are indexed people (or delegating intelligences) placed by the
 // Resonance Index before they sign in — "signing into something alive".

@@ -1,15 +1,18 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { useManya } from '@/lib/store'
 import { NeuralCanvas } from './NeuralCanvas'
 import { CrestAtmosphere, CursorLight, DawnVeil } from './CrestAtmosphere'
 import { AliveDot, Footer, SectionHead } from './chrome'
+import { AccountDialog } from './AccountDialog'
 import { GoldRule } from './Emblem'
 import { ROLES } from '@/lib/constants'
 
 export function Landing() {
   const { go, data } = useManya()
+  const [accountOpen, setAccountOpen] = useState(false)
   const stats = data?.stats
 
   return (
@@ -86,6 +89,14 @@ export function Landing() {
             <p className="mny-rise mt-4 text-xs leading-relaxed text-muted-foreground" style={{ animationDelay: '360ms' }}>
               Indexing takes two minutes. It exists so you sign into something already alive — not an empty room.
             </p>
+            <button
+              type="button"
+              onClick={() => setAccountOpen(true)}
+              className="mny-rise mt-3 text-sm font-medium text-gold-800 underline-offset-4 transition hover:underline"
+              style={{ animationDelay: '400ms' }}
+            >
+              Sign in or create an account →
+            </button>
           </div>
         </div>
         <DawnVeil />
@@ -150,6 +161,14 @@ export function Landing() {
         <p className="mny-rise mt-4 max-w-md text-xs leading-relaxed text-muted-foreground" style={{ animationDelay: '360ms' }}>
           Indexing takes two minutes. It exists so you sign into something already alive — not an empty room.
         </p>
+        <button
+          type="button"
+          onClick={() => setAccountOpen(true)}
+          className="mny-rise mt-3 text-sm font-medium text-gold-800 underline-offset-4 transition hover:underline"
+          style={{ animationDelay: '400ms' }}
+        >
+          Sign in or create an account →
+        </button>
       </section>
 
       <GoldRule className="mx-auto max-w-2xl" />
@@ -276,6 +295,11 @@ export function Landing() {
       </section>
 
       <Footer />
+      <AccountDialog
+        open={accountOpen}
+        onOpenChange={setAccountOpen}
+        onStartIndexing={() => go('onboarding')}
+      />
     </div>
   )
 }
