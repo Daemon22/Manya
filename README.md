@@ -13,16 +13,48 @@ Manya is the public-facing application for discovering communities, building con
 - Permission-based connections
 - **MyWeb**, a personal web surface
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:053e7266e67023c9ede9a8742bfb23c297f4445114e8bdae3ca00b92c76ccfd9 -->
+
 ## Run locally
 
-Requirements: Node.js and npm.
+Requirements: Node.js 20.9 or newer and npm.
+
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:91d20025af9211326c8dc6775c5054f5e7692cfe66d6d4ed462be1ac3c871a53 -->
+
+Install dependencies and configure a fresh local SQLite database for this terminal session:
 
 ```sh
 npm ci
-npx next dev --port 3000
+export DATABASE_URL="file:./dev.db"
+npm run db:push
+npm run dev
 ```
 
-The development server runs on port 3000. Configure the environment variables required by the app's database and integrations before using connected features.
+<!-- /coderabbit-ai-generated:v1 -->
+
+Use `npm run db:push` only with a fresh local database: it accepts data loss. Configure any additional environment variables required by integrations before using connected features.
+
+`npm run dev` starts only the Next.js server on port 3000. For call rooms, also install Bun and Caddy, then start the signaling service and proxy in separate terminals:
+
+```sh
+# Terminal 2: signaling service on port 3003
+cd mini-services/conclave-service
+bun install
+bun run dev
+```
+
+```sh
+# Terminal 3: from the repository root
+caddy run --config Caddyfile
+```
+
+Open http://localhost:81 through Caddy. It routes `XTransformPort` requests to the signaling service and other requests to Next.js.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## Build and checks
 
