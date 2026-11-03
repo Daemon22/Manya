@@ -12,7 +12,7 @@ import type { Finding, PIICategory, PHICategory } from '../types.js';
 import type { Detector, DetectorConfig } from './registry.js';
 import { makeFinding } from './registry.js';
 
-interface PatternConfig extends DetectorConfig {}
+type PatternConfig = DetectorConfig;
 
 /** Build a regex detector. */
 function regexDetector(

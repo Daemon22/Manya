@@ -11,6 +11,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { EventEmitter } from 'node:events';
 import { tmpdir } from 'node:os';
 
 import {
@@ -1164,7 +1165,6 @@ describe('Sources', () => {
     });
 
     test('accepts external emitter', () => {
-      const { EventEmitter } = require('node:events');
       const ee = new EventEmitter();
       const seen: NervousEvent[] = [];
       const src = new ApplicationSource({ emitter: ee });

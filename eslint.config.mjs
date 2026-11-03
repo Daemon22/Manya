@@ -48,7 +48,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts",
     "examples/**", "skills", "repos/**", "workspace/**", "upload/**",
     "download/**", "scripts/**", "tool-results/**", "mini-services/**",
-    "dist/**", "public/**",
+    "**/dist/**", "public/**",
   ]
 }];
 
