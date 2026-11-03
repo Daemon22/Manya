@@ -15,11 +15,11 @@ Manya is the public-facing application for discovering communities, building con
 
 ## Run locally
 
-Requirements: Node.js 18 or newer and npm.
+Requirements: Node.js and npm.
 
 ```sh
 npm ci
-npm run dev
+npx next dev --port 3000
 ```
 
 The development server runs on port 3000. Configure the environment variables required by the app's database and integrations before using connected features.
@@ -36,6 +36,6 @@ Database tasks are available through the Prisma scripts in `package.json`. Use t
 ## Product split
 
 - **Manya** is the public visual application.
-- **Manya-OS** is the full software workspace, including the tools, packages, and runtime.
+- **Manya-OS** is the private full software workspace, including the tools, packages, and runtime; access is limited to maintainers.
 
 The app and the software workspace are developed as separate repositories so the public experience stays easy to discover while the complete toolset remains available to its maintainers.
