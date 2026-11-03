@@ -52,7 +52,13 @@ bun run dev
 caddy run --config Caddyfile
 ```
 
-Open http://localhost:81 through Caddy. It routes `XTransformPort` requests to the signaling service and other requests to Next.js.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:9cbed461015f1e50f936c587fae8c4fb0c93b9a8ae7498e46bc88a2a88343201 -->
+
+Open http://127.0.0.1:81 through Caddy. It routes `XTransformPort=3003` requests to the signaling service and other requests to Next.js.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
