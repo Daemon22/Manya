@@ -2,7 +2,7 @@
 
 > Unify · Collaborate · Impact
 
-Manya is the public-facing application for discovering communities, building connections, and collaborating across the Manya network. This repository contains the visual product experience; the full software workspace and tool suite is maintained separately in [Manya-OS](https://github.com/Daemon22/Manya-OS).
+Manya is the public-facing application for discovering communities, building connections, and collaborating across the Manya network. This repository contains the visual product experience. Its sibling, [Manya-OS](https://github.com/Daemon22/Manya-OS), is the sovereign, modular, local-first Intelligence Operating System, with its own architecture, packages, and runtime.
 
 ## What the app includes
 
@@ -36,6 +36,6 @@ Database tasks are available through the Prisma scripts in `package.json`. Use t
 ## Product split
 
 - **Manya** is the public visual application.
-- **Manya-OS** is the private full software workspace, including the tools, packages, and runtime; access is limited to maintainers.
+- **Manya-OS** is the separate Intelligence Operating System with its own packages, runtime, and build architecture; its repository is currently private.
 
 The app and the software workspace are developed as separate repositories so the public experience stays easy to discover while the complete toolset remains available to its maintainers.
